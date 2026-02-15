@@ -2,6 +2,7 @@
 :ID: 531B263E-9E41-40E5-BB82-26ED0CB0C377
 :END:
 #+title: Countability
+#+SETUPFILE: ../../../setup.org
 
 --------------
 

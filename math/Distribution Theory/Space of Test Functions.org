@@ -2,6 +2,7 @@
 :ID: 41EF0CA7-2ACA-494F-AF1E-242AF2579860
 :END:
 #+title: Space of Test Functions
+#+SETUPFILE: ../../setup.org
 
 --------------
 

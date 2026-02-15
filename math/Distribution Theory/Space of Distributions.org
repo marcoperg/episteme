@@ -2,6 +2,7 @@
 :ID: 6B901F9A-1391-4774-B291-8C2E9114485F
 :END:
 #+title: Space of Distributions
+#+SETUPFILE: ../../setup.org
 
 The space of distributions is the space of continuous linear [[id:14907899-E46A-4820-AC6E-61F144CD22AE][functionals]] \(T: \mathcal{D}(\mathbb{R}^n)\to \mathbb{R\text{ (or } \mathbb{C}\text{)}}\) of the [[id:41EF0CA7-2ACA-494F-AF1E-242AF2579860][space of Test Functions]].
 
