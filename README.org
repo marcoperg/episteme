@@ -19,3 +19,29 @@ houses, trips, the logistics of daily life).
 The specific selection of topics and the reason behind them may vary; usually I
 write about what I want to understand deeper, either the topic itself or its
 connections to things in another subject.
+
+* Structure
+
+org-roam notes, each its own file with an =:ID:= + =#+title=, linked by id-links
+(the graph, not the folders, is what matters). Folders are kept to one shallow
+level of broad domain --- =math/=, =physics/=, =philosophy/=, =ml/=,
+=linguistics/=, =languages/=, =telecom/=, =GIICC/=, =Libros/=, =Museos/=,
+=meditation/=, =audiovisual/=. Cross-cutting themes are better expressed with
+org-roam tags than with deeper nesting.
+
+* Support files
+
+- =setup.org= --- shared LaTeX preamble (theorem environments, packages),
+  pulled into math/physics notes via =#+SETUPFILE: ../setup.org=.
+- =citations.bib= --- bibliography for =[cite:@key]= references. This is the
+  *curated* slice (works I actually cite); the full Zotero library mirror lives
+  in the separate =bibliotheca= repo.
+- =.literature-notes/= --- one note per reference. Also holds
+  =templates/zotero-emacs-synergy.org=, the plan for the live Zotero <-> Emacs
+  citation pipeline (Better BibTeX + Citar + citar-org-roam), still to implement.
+- =.attachments/= --- images embedded in notes (linked with =[[file:...]]=).
+
+* Emacs
+
+- =org-roam-directory= -> this repo (=~/knowledge/episteme=).
+- =org-cite-global-bibliography= -> =("~/knowledge/episteme/citations.bib")=.
