@@ -35,7 +35,7 @@ Given a clause \(C = L_1 \lor \dots \lor L_n \lor D\), where \(L_i\) have the sa
 
 6. repeat until generating \(\Box\) (if possible). A sequence of resolution steps ending \(\Box\) in is called a refutation.
 
-![[file:resolution.png.org][resolution.png]]
+[[file:../../../.attachments/resolution.png]]
 
 ** Method of Saturation
 *** Theorem

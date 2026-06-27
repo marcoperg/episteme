@@ -5,11 +5,11 @@
 
 This is a type of [[file:file:Policy Gradient.org][Policy Gradient]] [[Reinforcement Learning.org][RL]] algorithm that uses a Clipped Surrogate Objective in order to achieve better robustness and efficiency. It has first introduced in [cite:@schulmanProximalPolicyOptimization2017]. It can also be implemented as a [[id:84618626-B014-424C-A26C-BC777A4D00AD][Actor Critic]] algorithm.
 
-![[file:Pasted image 20240625203146.png.org][Pasted image 20240625203146.png]]
+[[file:../../.attachments/Pasted image 20240625203146.png]]
 Algorithm from the original paper.
 
 ** Distributed PPO
 As shown in [cite:@heessEmergenceLocomotionBehaviours2017] PPO can be done efficiency in a distributed environment.
 
-![[file:Pasted image 20240625210804.png.org][Pasted image 20240625210804.png]]
+[[file:../../.attachments/Pasted image 20240625210804.png]]
 Algorithm from the paper.

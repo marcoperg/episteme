@@ -13,7 +13,7 @@ Second, in classical networks, connecting each node to each other node of the ne
 
 A trusted node is every node in a network that enables hop-by-hop data transfer from a starting node to an ending node. This intermediary nodes are the obvious solution to both aforementioned problems. The adjective trusted comes from the fact that you have to break the quantum properties of the state and, in the case of QKD, read the Key in order to forward it to the next node on the chain.
 
-![[file:Pasted image 20240525204719.png.org][Pasted image 20240525204719.png]]
+[[file:../.attachments/Pasted image 20240525204719.png]]
 Image from [cite:@aguadomartinEnablingQuantumCryptography] page 26.
 
 * Key relay Trusted Node
@@ -32,7 +32,7 @@ In this section will study the different variations of the trusted node for key 
 Different QKD networks implement different key relay protocols between trusted nodes. A priori, all of them comes with the same security implication, i.e. total trust, but when they are combined with other method they can be different in practice.
 
 *** Hop-to-hop protocol
-![[file:Pasted image 20240525204719.png.org][Pasted image 20240525204719.png]]
+[[file:../.attachments/Pasted image 20240525204719.png]]
 Image from [cite:@aguadomartinEnablingQuantumCryptography] page 26.
 
 This is the classical approach most of today's networks use. Here, the key is generated at the start node \(A_1\), and it's forwarded iteratively to the next node until it reaches the end node \(A_n.\) The protocol goes as follows: 1. \(A_1\) generates the key \(K\). 2. Between each adjacent nodes \(A_i\) and \(A_{i+1}\) a shared secure key \(k_i\) is generated using QKD. 3. \(A_1\) encrypts \(K\) using \(k_1\), usually via a XOR, and send the encrypted key to \(A_2\) through a classical channel. 4. \(A_2\) decrypts using \(k_1\) the message in order to get back the original \(K\). 5. Steps 3 and 4 are repeated between each \(A_i\) and \(A_{i+1}\) until the key reaches \(A_n\).
@@ -40,14 +40,14 @@ This is the classical approach most of today's networks use. Here, the key is ge
 Very clearly, when using this protocol, and attacker that has gained access to any one trusted node immediately gets access to the key.
 
 *** Hop-to-end protocol
-![[file:Pasted image 20240611123149.png.org][Pasted image 20240611123149.png]]
+[[file:../.attachments/Pasted image 20240611123149.png]]
 In this case, an encapsulated key is forwarded directly from node \(A_1\) to \(A_n\), and each intermediate node send a part of the encapsulation key. Using XORs as encapsulation mechanism, the protocol goes as follows: 1. \(A_1\) generates the key \(K\). 2. Between each adjacent nodes \(A_i\) and \(A_{i+1}\) a shared secure key \(k_i\) is generated using QKD. 3. \(A_1\) send \(K \oplus k_1\) to \(A_n2\) through a classical channel. 4. Each relay node XORs \(A_i\) its key with the previous node to their key with the next \(k_i \oplus k_{i+1}\) and sends it to \(A_n\). 5. \(A_n\) recovers the key \(K\) by xoring all the received partial keys
 \[K = (K\oplus k_1) \oplus (k_1\oplus k_2) \oplus \dots \oplus(k_{n-1} \oplus k_n)\]
 
 In this version of key relay, an attacker controlling one trusted node needs also to intercept the communications between every previous node and the end-node in order to gain access to the key. In regular networks this is not a key different (one can usually intercept all the traffic in a network) but when using another type of cryptography the type of attack becomes more complex.
 
 *** Central key management system
-![[file:Pasted image 20240611105843.png.org][Pasted image 20240611105843.png]]
+[[file:../.attachments/Pasted image 20240611105843.png]]
 Image from [cite:@vyasRelaxingTrustAssumptions2024]
 
 This protocol works on the same principle as the hop-to-end but with aggregation of partial keys being done in a central KMS. Each node send the same partial key to the Central KMS controlling the protocol. The Central KMS XORs the received partial keys like the end-node in the previous protocol and send the result to the last node. Then the end-node can XORs the partial keys with the QKD key it posses and get the final key.

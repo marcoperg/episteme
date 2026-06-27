@@ -16,4 +16,4 @@ For all open set \(O \in \tau\) exists a subset \(\{A_i\}_{i\in I}\) such that \
 ** Example
 Let \((X, \tau)\) be the topological space induced by the [[id:09723E35-01DA-4F26-B3BD-B3CF4C94EBDC][metric space]] \((X, d)\). Then, the set of open balls \(\mathcal{B} = \{B_\epsilon(x)\,|\, x\in X, \epsilon >0\}\) is a basis for \(\tau\).
 
-![[file:basis.pdf.org][basis.pdf]]
+[[file:../../../.attachments/basis.pdf]]

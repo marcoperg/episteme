@@ -31,4 +31,4 @@ where \(A_1\) and \(A_2\) are [[id:88A11C01-9297-431F-9E0D-B156077139E9][unifiab
 (L_{11}\lor\dots\lor L_{1p}\lor L_{21}\lor\dots\lor L_{2q})\sigma
 \]
 
-![[file:derivations.png.org][derivations.png]]
+[[file:../../../.attachments/derivations.png]]
