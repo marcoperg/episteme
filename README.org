@@ -3,18 +3,19 @@
 :END:
 #+title: README
 
-* Ontology
+* Episteme
 
 #+begin_quote
-In information science, an ontology encompasses a representation, formal
-naming, and definitions of the categories, properties, and relations between
-the concepts, data, or entities that pertain to one, many, or all domains of
-discourse.
+Epistēmē (ἐπιστήμη) is the Greek word for knowledge or understanding: the
+theoretical, reasoned grasp of how and why things are. Aristotle contrasts it
+with /praxis/ (action) and /technē/ (craft).
 #+end_quote
 
-Following the spirit of this definition this collection of obsidian notes on
-different subjects forms in a way my personal ontology of knowledge.
+Following the spirit of this word, this collection of org-roam notes on
+different subjects forms my personal map of knowledge --- the theoretical half
+of a pair whose practical counterpart lives in the =praxis= repo (possessions,
+houses, trips, the logistics of daily life).
 
-The specific selection of topics and the reason behind them may vary, usually I
+The specific selection of topics and the reason behind them may vary; usually I
 write about what I want to understand deeper, either the topic itself or its
-connections to thing in other subject.
+connections to things in another subject.

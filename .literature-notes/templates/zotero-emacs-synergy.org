@@ -1,0 +1,52 @@
+#+title: Zotero <-> Emacs synergy (to implement)
+
+# Plan captured 2026-06-27. Goal: replace the dead Obsidian Zotero-Integration
+# pipeline (this folder's zotero.org Nunjucks template + the legacy lit note)
+# with a live Zotero -> org-roam flow.
+
+* Diagnosis (why this is needed)
+- Notes cite ~15 Better-BibTeX-style keys (evansTrustedNodeQKD2021, ...).
+- citations.bib has only 2 entries, both with NATIVE keys (9405393, 10.5555/...).
+  => [cite:@...] references don't resolve; the .bib is stale.
+- zotero.org + evansTrustedNodeQKD2021.org are Obsidian artifacts
+  (Nunjucks {% %}, [!Cite] callouts, broken ...3070222.org links).
+
+* The stack
+** 1. Foundation: Better BibTeX auto-export  (only I can do this, in Zotero)
+   - Install Better BibTeX add-on.
+   - Citekey formula reproducing existing keys: ~auth + shorttitle(3,3) + year~.
+   - Pin keys so they never drift.
+   - Export library -> Better BibTeX -> "Keep updated" -> ~/knowledge/episteme/citations.bib
+** 2. Emacs UI: Citar on top of org-cite (we already use [cite:@...])
+** 3. Synergy: citar-org-roam -> one org-roam lit-note per reference here
+
+* Config (drop into init, or save as episteme/references-setup.el and load)
+#+begin_src elisp
+(use-package citar
+  :custom
+  (org-cite-global-bibliography '("~/knowledge/episteme/citations.bib"))
+  (citar-bibliography org-cite-global-bibliography)
+  (citar-library-paths '("~/Zotero/storage/"))      ; the PDFs
+  (citar-notes-paths   '("~/knowledge/episteme/.literature-notes/"))
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  :bind (:map org-mode-map ("C-c b" . #'org-cite-insert)))
+
+(use-package citar-org-roam
+  :after (citar org-roam)
+  :config (citar-org-roam-mode))
+#+end_src
+- C-c b           insert citation
+- citar-open      open a reference's PDF / URL / note
+- citar-open-notes  create/open the org-roam lit-note
+
+* Optional
+- org-noter: annotate the Zotero PDF side-by-side with the lit note.
+- zotero://select/items/@key  links (or org-zotxt) to jump back into Zotero.app.
+
+* Cleanup to do alongside
+- Replace this folder's Nunjucks zotero.org with a citar-org-roam capture
+  template (clean node: :ID:, #+title, :ROAM_REFS: [cite:@key]).
+- Migrate evansTrustedNodeQKD2021.org off the Obsidian frontmatter/callouts and
+  fix its broken ...3070222.org link.
