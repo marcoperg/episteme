@@ -1,0 +1,19 @@
+#+title: Filosofía Cristiana
+
+
+* Filosofía y Cristianismo
+
+Es un tema ampliamente discutido la posibiliad de una filosofía cristiana. Por un lado un conocimiento que ha de estar basado en la Fe y otro que ha de estarlo en la Razón, le primero se construye sobre evidencia extrínsica, proveniente de Dios, y el segundo es evidencia implícita a la que llegamos por la intuición y deducción.
+
+Fraile concluye sobre este tema diciendo que de esta exclusión semántica se sigue una incompatibilidad total. No puede haber una filosofía cristiana en el sentido estricto del término. De la misma forma que no puede haber un cristianismo filosófico puro. Puede haber una filosofía inspirada por el cristianismo o practicada por los cristinanos. 
+
+A continuación sigue el resumen de Guillermo Fraile al respecto de las diferencias en objetos y motivos formales:
+
+** Campo de la ciencia
+- Procede por demostraciones racionales. Acata la autoridad de la evidencia.
+- Su objeto formal quo es la luz de la razón.
+- La certeza se apoya siempre en la evidencia intrínseca de la verdad.
+** Campo de la fe
+- Procede por la evidencia de la autoridad. Se apoya en la fe y en la aceptación de la palabra revelada de Dios.
+- Su objeto formal quo es fe la revelación divina. La fe es una virtud sobrenatural infusa.
+- La certeza en la fe se apoya en la evidencia extrínseca del hecho de la revelación divina y en la moción interna de la gracia que determina el asentimiento.
