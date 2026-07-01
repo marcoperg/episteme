@@ -2,6 +2,7 @@
 :ID: 554A70C8-C753-4FAF-8790-791F925E4B67
 :END:
 #+title: External Direct Products
+#+SETUPFILE: ../../../setup.org
 
 --------------
 
@@ -16,6 +17,7 @@ G_1 \oplus G_2 \oplus\dots\oplus G_n = \{\,(g_1, g_2, \dots, g_n) \,|\, g_i \in 
 
 ** Order
 The order of an element in a direct product of a finite number of finite groups is the least common multiple of the orders of the components of the element:
+
 \[
 |(g_1, ...,g_n)| = lcm(|g_1|, ..., |g_n|)
 \]

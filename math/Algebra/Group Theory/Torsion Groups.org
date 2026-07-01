@@ -1,0 +1,14 @@
+:PROPERTIES:
+:ID:       425FF306-72E4-408A-A361-2431C2AEB30C
+:END:
+#+title: Torsion Groups
+#+SETUPFILE: ../../../setup.org
+
+From Reihl's Category theory in context, example 2.3.5.
+
+An action over a set can be Category-theoric defined as a [[id:04CF5E7D-FCF2-468E-A245-CD0A863FA1F7][functor]]
+$E: G\to \mathbf{Set}$ from the group category $G$. 
+
+This functor is representable, by definition, if $E(*) \cong G(*,*)$, i.e. that the set is isomorphic to be group in a compatible way. This implies that the action is free (all the stabilizers groups are trivial) and transitive (the orbit of any point is the entire set).
+
+By the [[id:475B7683-626E-43D8-AAEC-6F64C59F0731][Yoneda lemma]], the data of a representation of $E$, i.e. a specific isomorphism $G\cong E$, is determined by a choice of an element $e\in E$, serving as image of the identify of $G$. In other words, a representable $G$-set (which is another name for this functor) can be thought as a group that has forgotten its identiy. This is called a $G$-torsor.

@@ -1,0 +1,6 @@
+:PROPERTIES:
+:ID:       475B7683-626E-43D8-AAEC-6F64C59F0731
+:END:
+#+title: Yoneda's lemma
+
+* TODO
