@@ -2,11 +2,7 @@
 :ID: AC78A1AC-078C-403C-A797-2CB2A3422E51
 :END:
 #+title: Module
-
---------------
-
-aliases: - module
----
+#+setupfile: ../../setup.org
 
 A *module* is a generalization of the notion of vector space in which the [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]] of scalars is replaced by a [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]]. The concept of a /module/ also generalizes the notion of [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][abelian group]], since the abelian groups are exactly the modules over the ring of integres.
 
@@ -19,3 +15,11 @@ Suppose thar \(R\) is a [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]], and \
 4. \(1\cdot x=x\)
 
 The operation \(\cdot\) is called /scalar multiplication/. One may write \(_R{M}\) to emphasise that \(M\) is a left \(R\)-module. A right \(R\)-module \(M_R\) is defined similarly in terms of an operation \(\cdot: M\times R \to M\).
+
+
+** Some interesting modules
+
+- \(\mathbb{Z}-\)modules are abelian groups.
+- \(k-\)modules for a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]] $k$ are, of course, [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector spaces]].
+- \(k[x]-\)modules for a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]] $k$ are linear transformation over \(k-\)vector spaces.
+- Submodules of $R$ are its ideals.
