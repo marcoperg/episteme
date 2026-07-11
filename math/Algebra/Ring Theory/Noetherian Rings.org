@@ -1,0 +1,26 @@
+:PROPERTIES:
+:ID:       7535BD28-F269-43A4-BF82-ABEDE3E256CE
+:END:
+#+title: Noetherian Rings
+#+setupfile: ../../../setup.org
+
+* Definition
+
+A commutative [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][rings]] $R$ is said to be Noetherian if every ideal is finitely generated. We get the following direct theorem:
+
+\begin{theorem}
+It is equivalent:
+\begin{enumerate}
+\item $R$ is Noethen, i.e. very ideal is finetely generated.
+\item Every increasing sequence of ideals $I_1 \subseteq I_2 \subseteq I_3 \subseteq \cdots$ has a largest element. This is called the \textbf{ascending chain property}.
+\item Every nonempty set of ideals has a maximal element.
+\end{enumerate}
+\end{theorem}
+
+This equivalency requires [[id:205BD1B8-DA8E-4D85-B67B-C81F5CA8DD90][the axiom of dependent choice]].
+
+
+* Some properties
+
+1. Every quotient ring of a noetherian ring is noetherian.
+2. *Hilbert's basis theorem:* If $R$ is a Noetherian ring, then $R[x]$ is a Noetherian ring.
