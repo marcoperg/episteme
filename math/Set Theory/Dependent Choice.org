@@ -1,0 +1,21 @@
+:PROPERTIES:
+:ID:       205BD1B8-DA8E-4D85-B67B-C81F5CA8DD90
+:END:
+#+title: Dependent Choice
+
+The axiom of dependent choice is a weak form of [[id:E4068E5E-6D76-4C89-B4EC-22E84E23478F][the axiom of choice]] that is still sufficient to develop much of real analysis.
+
+
+* Statement
+
+A reletation on a set $X$ is called total if for every $a\in X$ there exists some $b\in X$ such that $a R b$.
+
+The axioms of depedent choice states that for every nonempty set $X$ and every total relation $R$ on $X$, there exists a sequence $(x_n)_{n\in\mathbb{N}}$ in $X$ such that
+\[ x_n R x_{n+1} \quad \forall \n \in\mathbb{N}\]
+
+
+* Use
+
+Wihtout this axiom one can construct inductively the first $n$ terms of the sequence, the axiom is needed in order to form a whole countbly infinite sequence.
+
+DC is the axiom of AC that is required to show the existence of a sequence constructed by transfinite recursion of countable length, if it is necessary to make a choice at each step and if some of those choices cannot be made independently of previous choices.
