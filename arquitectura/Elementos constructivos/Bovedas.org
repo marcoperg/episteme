@@ -1,0 +1,12 @@
+#+title: Bóvedas
+
+* Bóvedas de arista y de crucería
+
+Las bóvedas de arista son aquellas producidas por la interesección de dos bóvedas de cañón. Tenemos ejemplos de este tipo de bóveda en Mesopotamia y Egipto en el IV–III milenio a. C., normalmente construida con ladrillo y empleada en espacios relativamente pequeños, pasajes, tumbas o construcciones subterráneas.
+
+Las bóvedas de crucería sigues este diseño y añaden nervios en los puntos de intersección, lo que permite una mejor transmisión de las cargas. Tenemos que esperar hasta el siglo III a.C. para ver este tipo de bóvedas instalada.
+
+
+* Bóvedas sobre pechinas
+
+La bóveda sobre pechinas se considera la solución ideal técnica y formal al problema de la cúpula sobre planta cuadrada. Se emplea en las grandes iglesias bizantinas, sobre todo en Santa Sofía.
