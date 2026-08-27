@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: E1EB1AA8-A991-4643-836E-C791AD8183A1
+:ROAM_ALIASES: "Aristipo"
 :END:
 #+title: 4. Escuela Cirenaica
-
---------------
-
-aliases: - Aristipo
----
 
 Fundada por Aristipo, natural de Cirene. Asistió a las lecciones de Protágoras y ejerció la enseñanza como sofista. Su pensamiento se caracteriza por un desdén -de clara inspiración socrática- hacia la Lógica, la Física y las Matemáticas, que consideraba inútiles porque en ellas no se habla de bienes ni males. Solamente le preocupa la cuestión práctica de hallar la felicidad en la presente vida, tomando como base una orientación esencialmente materialista (y mecanicista), sensista, relativista y fenomenista, que más que a las enseñanzas socráticas corresponde a las doctrinas sofísticas de Protágoras y Pródicos.
 

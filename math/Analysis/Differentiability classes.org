@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 41D40938-C81F-4AD6-A37C-DF3D9B898A70
+:ROAM_ALIASES: "differentiability class"
 :END:
 #+title: Differentiability classes
-
---------------
-
-aliases: - differentiability class
----
 
 *Differentiability class* is a classification of functions according to the properties of their derivatives. It is a measure of the highest order of derivative that exists and is continuous for a function.
 

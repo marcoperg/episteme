@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 0A0A0964-760B-436D-B664-BD9B0C34CC42
+:ROAM_ALIASES: "homomorphism" "ring isomorphism" "isomorphism"
 :END:
 #+title: Ring Homomorphism
-
---------------
-
-aliases: - homomorphism - ring isomorphism - isomorphism
----
 
 ** Definition
 A ring /homomorphism/ \(\phi\) from a ring \(R\) to a ring \(S\) is a mapping from \(R\) to \(S\) that preserves the two ring operations; that is, for all \(a, b \in R\),

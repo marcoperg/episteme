@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 81120F1B-1F82-4BDD-AA6E-3683315922B0
+:ROAM_ALIASES: "Leucipo" "Democrito" "Demócrito"
 :END:
 #+title: 7.  Pluralismo homogéneo. Atomismo
-
---------------
-
-aliases: - Leucipo - Democrito - Demócrito
----
 
 * Leucipo
 fl. h. 430

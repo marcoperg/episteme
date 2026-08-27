@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 4F948439-BD7B-4B8E-886B-CB9921D71E64
+:ROAM_ALIASES: "Lie algebra" "Lie bracket"
 :END:
 #+title: Lie algebras
-
---------------
-
-aliases: - Lie algebra - Lie bracket
----
 
 A *Lie algebra* is a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] \(\mathfrak{g}\) over a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]] \(F\) together with a binary operation \([\cdot, \cdot] : \mathfrak{g} \times \mathfrak{g} \to \mathfrak{g}\) called the *Lie bracket*, satisfying: 1. /Bilinearity/,
 \[

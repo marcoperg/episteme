@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: C2C27C7B-D64E-424D-B062-37E2FE5C3CB8
+:ROAM_ALIASES: "complete metric space" "complete"
 :END:
 #+title: Complete Metric Spaces
-
---------------
-
-aliases: - complete metric space - complete
----
 
 A [[id:09723E35-01DA-4F26-B3BD-B3CF4C94EBDC][metric space]] \(M\) is called *complete* if every Cauchy Sequence of points in \(M\) has a limit that is also in \(M\).
 

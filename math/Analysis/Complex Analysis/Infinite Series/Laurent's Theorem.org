@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 16023FE0-4DAE-47CB-8ECF-59FD7A7C6AB2
+:ROAM_ALIASES: "Laurent's series"
 :END:
 #+title: Laurent's Theorem
-
---------------
-
-aliases: - Laurent's series
----
 
 Let \(C_1\) and \(C_2\) be concentric circles of radii \(R_1\), and \(R_2\), respectively, and center at \(a\). Suppose that \(f(z)\) is single-valued and [[id:3C67CDAF-C6A1-459F-8733-49487370C514][analytic]] inside the annulus formed between \(C_1\) and \(C_2\) and in its boundary.
 

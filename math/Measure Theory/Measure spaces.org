@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 75B6E188-5E38-40F9-85F1-EC44C3A12D0F
+:ROAM_ALIASES: "measure space"
 :END:
 #+title: Measure spaces
 #+SETUPFILE: ../../setup.org
-
---------------
-
-aliases: - measure space
----
 
 * Measurable spaces
 Let \(X\) be a set and \(\mathcal{F}\) be a [[id:B697717A-34E5-4661-8B33-1AE2690CF8EA][σ-algebra]] on \(X\). Then, the tuple \((X, \mathcal{F}\)) is called a *measurable space*.

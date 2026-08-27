@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 75C09067-1CB9-48D8-A1BF-C93A2960BE50
+:ROAM_ALIASES: "integral domain" "zero-divisor"
 :END:
 #+title: Integral Domains
-
---------------
-
-aliases: - integral domain - zero-divisor
----
 
 ** Zero-Divisors
 *** Definition

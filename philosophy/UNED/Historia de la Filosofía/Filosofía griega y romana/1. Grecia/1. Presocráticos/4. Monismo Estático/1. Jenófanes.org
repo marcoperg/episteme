@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 1EC57BE5-BB2E-475C-94BF-0D3EFDF9DB15
+:ROAM_ALIASES: "Jenofanes" "Jenófanes"
 :END:
 #+title: 1. Jenófanes
-
---------------
-
-aliases: - Jenofanes - Jenófanes
----
 
 * Jenófanes
 Parece improbable que permaneciera mucho tiempo en ninguna de las ciudades que habitó dado su carácter y profesión, y menos que llegase a fundar una escuela propiamente dicha.

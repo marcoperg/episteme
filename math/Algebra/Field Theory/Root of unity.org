@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 1A8CE77B-82C7-4EA3-A7EF-BCE2EA0780AB
+:ROAM_ALIASES: "nth-root of unity" "root of unity"
 :END:
 #+title: Root of unity
-
---------------
-
-aliases: - nth-root of unity - root of unity
----
 
 * Definition
 Let \(n\in \mathbb{Z}_{\ge0}\). Let \(L\) be a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]].

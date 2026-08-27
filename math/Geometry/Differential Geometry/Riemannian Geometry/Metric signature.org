@@ -1,11 +1,7 @@
 :PROPERTIES:
 :ID: 7746A09C-92C0-4625-A43C-A5AF98BE441C
+:ROAM_ALIASES: "metric signature"
 :END:
 #+title: Metric signature
-
---------------
-
-aliases: - metric signature
----
 
 The signature of a metric tensor is defined as the number \((v, p, r)\) of positive, negative and zero eigenvalues of any matrix (i.e. in any basis for the underlying vector space) representing the form, counted with their algebraic multiplicities. Usually, \(r = 0\) is required, which is the same as saying a metric tensor must be [[id:09B650EA-B258-4702-9130-A9282B2ABD3F][non-degenerate]], i.e. no nonzero vector is orthogonal to all vectors.

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: E5013D1E-0580-4393-B09A-B57053402595
+:ROAM_ALIASES: "homomorphism" "endomorphism"
 :END:
 #+title: Group Homomorphism
-
---------------
-
-aliases: - homomorphism - endomorphism
----
 
 *Definition* A /homomorphism/ \(\phi\) from a group \(G\) to a [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][group]] \(H\) is a mapping from \(G\) into \(H\) that preserves the group operation. That is \(\phi(ab) = \phi(a)\phi(b)\) for all \(a, b \in G\).
 

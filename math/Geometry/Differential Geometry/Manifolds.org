@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 58660F1E-EB64-4506-81E9-63FF79BD2E76
+:ROAM_ALIASES: "manifold" "locally euclidean" "atlas" "chart" "smooth manifold" "smooth structure"
 :END:
 #+title: Manifolds
 #+SETUPFILE: ../../../setup.org
-
---------------
-
-aliases: - manifold - locally euclidean - atlas - chart - smooth manifold - smooth structure
----
 
 ** Locally Euclidean
 A [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] \((X, \tau)\) is called *locally euclidean of dimension \(n\)* if:

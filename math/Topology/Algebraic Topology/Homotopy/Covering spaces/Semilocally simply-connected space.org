@@ -1,11 +1,7 @@
 :PROPERTIES:
 :ID: FE33A5CF-3453-46E1-BF80-383A5EE4F296
+:ROAM_ALIASES: "semilocally simply-connected" "semilocally simply-connected space"
 :END:
 #+title: Semilocally simply-connected space
-
---------------
-
-aliases: - semilocally simply-connected - semilocally simply-connected space
----
 
 A [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] \(X\) is called *semilocally simply-connected* if each point \(x\in X\) has a neighborhood \(U\) such that the inclusion-induced map \(\pi_1(U, x) \hookrightarrow \pi_1(X, x)\) is trivial. That is, all points of \(X\) have a neighborhood where all loops are homotopic to a point.

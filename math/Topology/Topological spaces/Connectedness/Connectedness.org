@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 2853D3BA-42CD-4A57-A958-9BC537946A64
+:ROAM_ALIASES: "connectedness" "connected space" "disconnected space" "separation" "connected"
 :END:
 #+title: Connectedness
-
---------------
-
-aliases: - connectedness - connected space - disconnected space - separation - connected
----
 
 ** Connectedness
 A [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] \(A\) is said to be /connected/ if the only two subsets of \(X\) that are simultaneously open and close are \(X\) itself and the empty set \(\emptyset\). A topological space which is not connected is said to be /disconnected/.

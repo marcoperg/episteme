@@ -1,11 +1,7 @@
 :PROPERTIES:
 :ID: AF1FF3F3-C5BA-41B3-8DDE-E0A3C2546B63
+:ROAM_ALIASES: "topological vector space"
 :END:
 #+title: Topological Vector Spaces
-
---------------
-
-aliases: - topological vector space
----
 
 A topological vector space (VTS) is a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] with an endowed [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topology]] such that the operations of scalar multiplication and vector addition are continuous w.r.t that topology.

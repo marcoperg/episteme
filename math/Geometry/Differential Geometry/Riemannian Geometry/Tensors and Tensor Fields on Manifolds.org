@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 67465580-C555-4F2E-842B-1E8814F831C4
+:ROAM_ALIASES: "tensor field"
 :END:
 #+title: Tensors and Tensor Fields on Manifolds
-
---------------
-
-aliases: - tensor field
----
 
 Let \(M\) be a [[id:58660F1E-EB64-4506-81E9-63FF79BD2E76][smooth manifold]]. We define the *bundle of mixed \((k,l)\)-tensors on \(M\) by*
 \[T^{(k,l)}T^*M = \coprod_{p\in M}T^{(k,l)}T^*_p M.\]

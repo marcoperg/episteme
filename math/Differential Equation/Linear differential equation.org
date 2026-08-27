@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: A5BB8D67-9464-41F2-B54F-A6934EBACD2A
+:ROAM_ALIASES: "linear differential equation"
 :END:
 #+title: Linear differential equation
-
---------------
-
-aliases: - linear differential equation
----
 
 Are equations of the form:
 \[

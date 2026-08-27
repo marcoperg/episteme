@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 1302FEFA-1598-4E04-8506-6102FCA5D425
+:ROAM_ALIASES: "multi-indices"
+:ROAM_TAGS: "notation"
 :END:
 #+title: Multi-indices
-
---------------
-
-aliases: - multi-indices
-tags: - notation
----
 
 A muti-index of size \(n\) is an n-tuple of natural numbers, that is, a member of \(\mathbb{N}^n\). The length of a multi-index \(\alpha = (\alpha_1, \alpha_2, \dots, \alpha_n)\) is defined as \(\alpha_1 + \alpha_2 + \dots + \alpha_n\) and denoted \(|\alpha|\).
 

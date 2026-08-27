@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: C5EBDB18-8574-431C-A794-07E2BAADF831
+:ROAM_ALIASES: "regular" "regular space"
 :END:
 #+title: T3 and regular spaces
-
---------------
-
-aliases: - regular - regular space
----
 
 Let \((X, \tau)\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]]. \((X, \tau)\) is said to be a \(T_3\) if for all points \(x \in X\) and closed subsets \(C \subset X\) there are disjoint neighborhoods of \(x\) and \(C\).
 

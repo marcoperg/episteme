@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 32DD9FBC-97BE-4089-BA38-6C425F5D0AAF
+:ROAM_ALIASES: "endomorphisms ring"
 :END:
 #+title: Endomorphism Ring
-
---------------
-
-aliases: - endomorphisms ring
----
 
 The [[id:E5013D1E-0580-4393-B09A-B57053402595][endomorphisms]] of an [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][abelian group]] \(X\) forms a [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]]. This ring is called the *endomorphism ring* of \(X\), and denoted \(End(X)\), i.e. the set of all [[id:0A0A0964-760B-436D-B664-BD9B0C34CC42][homomorphism]] of \(X\) to itself. Addition of endomorphism aries naturally in a pointwise manner and multiplication via endomorphism composition.
 

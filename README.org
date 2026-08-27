@@ -22,12 +22,47 @@ connections to things in another subject.
 
 * Structure
 
-org-roam notes, each its own file with an =:ID:= + =#+title=, linked by id-links
-(the graph, not the folders, is what matters). Folders are kept to one shallow
-level of broad domain --- =math/=, =physics/=, =philosophy/=, =ml/=,
+The directory tree is the primary organizational structure. It gives every note
+a canonical home and records its main context: broad domain, subject, course,
+source, period, author, or another useful hierarchy. Different parts of the tree
+therefore express different kinds of organization; being below a directory does
+not automatically make a note an ontological instance of every ancestor.
+
+The main domains include =math/=, =physics/=, =philosophy/=, =ml/=,
 =linguistics/=, =languages/=, =telecom/=, =GIICC/=, =Libros/=, =Museos/=,
-=meditation/=, =audiovisual/=. Cross-cutting themes are better expressed with
-org-roam tags than with deeper nesting.
+=meditation/=, and =audiovisual/=. Deeper directories are intentional when they
+preserve meaningful subject, curriculum, source, or geographic context.
+
+Org IDs and links complement this tree rather than replace it:
+
+- A directory records a note's primary context.
+- An =:ID:= gives a note or heading a persistent address. It does not by itself
+  declare an ontology entity.
+- An =id:= link records a durable relation that crosses the directory tree or
+  should survive a file move.
+- A =:ROAM_ALIASES:= property records alternative names for an addressable note.
+  Aliases aid lookup and link insertion; they do not create additional nodes or
+  ontological relations. Values containing spaces are quoted, for example
+  =:ROAM_ALIASES: "RL" "reinforcement learning"=.
+- A relative =file:= link is suitable for local structural relationships whose
+  path is itself useful context.
+- Citations record bibliographic provenance; they are not substitutes for note
+  identity or conceptual links.
+
+IDs are required for notes explicitly used as ontology or research nodes, notes
+exported to another system, and targets of durable semantic links. They remain
+optional for course notes, reading extracts, outlines, and other material that
+does not need an independent persistent identity. A note can be promoted later
+by assigning an ID when it first becomes a meaningful link target.
+
+=:ROAM_ALIASES:= is the canonical alias representation. Obsidian/YAML forms such
+as =aliases: - first name - second name= are migration artifacts and are not
+interpreted as Org metadata.
+
+This produces a tree plus graph: the tree supplies canonical context, while IDs
+and links express relationships that cannot be represented by a single parent
+directory. Notes should not be duplicated across directories merely to express
+multiple classifications.
 
 * Support files
 

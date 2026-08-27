@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 2A0946D9-C3E9-4839-AC7F-DA38835A6D07
+:ROAM_ALIASES: "Empédocles"
 :END:
 #+title: 5. Eclecticismo
-
---------------
-
-aliases: - Empédocles
----
 
 * Empédocles
 fl. h. 450

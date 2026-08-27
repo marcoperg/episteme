@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 6D2FADA3-B191-4E3E-B7B9-454DFA6026B2
+:ROAM_ALIASES: "terminal object" "initial object"
 :END:
 #+title: Terminal and Initial Objects
-
---------------
-
-aliases: - terminal object - initial object
----
 
 * Initial Objects
 An object \(I\) of a [[id:6B755D9E-EB8E-4673-ADD0-B4411D410D52][category]] \(\mathcal{C}\) is *initial* if, for every object \(A\), there exists a unique arrow from \(I\) to \(A\).

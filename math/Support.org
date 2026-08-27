@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: DEAD4589-177E-4A11-B483-D2849B267A98
+:ROAM_ALIASES: "support"
 :END:
 #+title: Support
-
---------------
-
-aliases: - support
----
 
 The *support* of a function \(f: X \to \mathbb{R}\) \(supp(f)\) is the set of of points in X where f is non-zero:
 

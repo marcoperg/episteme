@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: EFDE2168-D683-47A6-AAD9-06ED125121C8
+:ROAM_ALIASES: "Euclidean domain" "ED"
 :END:
 #+title: Euclidean Domains
-
---------------
-
-aliases: - Euclidean domain - ED
----
 
 * Definition
 Given a [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]] \(A\) it is said to be a Euclidean domain if there is a map

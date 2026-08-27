@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: BC052561-28D5-45CC-9115-E86A8B2ED448
+:ROAM_ALIASES: "entropy" "Entropy"
 :END:
 #+title: Shannon's Entropy
-
---------------
-
-aliases: - entropy - Entropy
----
 
 The *entropy* of a random variable is the average level of "information", "surprise", or "uncertainty" inherent to the variable's possible outcomes. If we don't know the outcome of the variable we can use the entropy as our level of uncertainty, if we come to know it we can use it to measure the information we've gained.
 

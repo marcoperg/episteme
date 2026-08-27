@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: C2E40A22-5964-4868-B316-89D5D28D92DD
+:ROAM_ALIASES: "ideals" "quotient rings" "quotient ring" "prime" "prime ideal"
 :END:
 #+title: Ideals and Quotient Rings
-
---------------
-
-aliases: - ideals - quotient rings - quotient ring - prime - prime ideal
----
 
 ** Definition
 A subring \(A\) of a a ring \(R\) is called an /ideal/ of \(R\) if for every \(r \in R\) and every \(a \in A\) both \(ra\) and \(ar\) are in \(A\).

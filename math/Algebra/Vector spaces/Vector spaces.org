@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: C31DD475-75D9-4BB9-9DD5-536453386F9D
+:ROAM_ALIASES: "vector space" "vector" "linear subspace"
 :END:
 #+title: Vector spaces
-
---------------
-
-aliases: - vector space - vector - linear subspace
----
 
 ** Definition
 A *vector space* over a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]] \(F\) is a non-empty set \(V\) together with two binary operations that satisfy the next list of eight axioms.

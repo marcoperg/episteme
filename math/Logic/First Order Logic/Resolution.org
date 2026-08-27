@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 3E5E5349-BEEE-4F11-86F7-E1E2D53B0C4F
+:ROAM_ALIASES: "MGU resolution" "saturation" "reso"
 :END:
 #+title: Resolution
-
---------------
-
-aliases: - MGU resolution - saturation - reso
----
 
 ** MGU resolution rule
 Let

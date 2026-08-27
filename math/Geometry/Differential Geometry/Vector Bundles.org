@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: A5FA66EF-5DD4-4738-8545-29C5622498B8
+:ROAM_ALIASES: "vector bundle"
 :END:
 #+title: Vector Bundles
-
---------------
-
-aliases: - vector bundle
----
 
 Let \(M\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]]. A *(real) vector bundle of rank \(\mathbf{k}\) over \(\mathbf{M}\)* is a topological space \(E\) together with a surjective continuous map \(\pi: E\to M\) satisfying the following conditions 1. For each \(p\in M\), the fiber \(E_p = \pi^{-1}(p)\) over \(p\) is endowed with the structure of a \(k\)-dimensional [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]]. 2. For each \(p\in M\), there exists a neighborhood \(U\) of \(p\) in \(M\) and a homeomorphism \(\Phi:\pi^{-1}(U) \to U \times \mathbb{R}^k\) (called a *local trivialization of \(E\) over \(U\)*), satisfying the following conditions: - \(\pi_U \circ \Phi = \pi\) (where \(\pi_U: U\times \mathbb{R}^k \to U\) is the projection) - for each \(q\in U\), the restriction of \(\Phi\) to \(E_q\) is a vector space isomorphism from \(E_q\) to \(\{q\} \times \mathbb{R}^k \cong \mathbb{R}^k\).
 

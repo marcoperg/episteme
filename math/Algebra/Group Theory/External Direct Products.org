@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 554A70C8-C753-4FAF-8790-791F925E4B67
+:ROAM_ALIASES: "direct product" "direct sum"
 :END:
 #+title: External Direct Products
 #+SETUPFILE: ../../../setup.org
-
---------------
-
-aliases: - direct product - direct sum
----
 
 Let \(G_1, G_2, ..., G_n\) be a finite collection of [[file:groups.org][groups]]. The /external direct product/ of \(G_1, G_2, .. G_n\), is
 

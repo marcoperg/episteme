@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 1B6368CE-EB75-4424-A202-2E5A45E9C629
+:ROAM_ALIASES: "tensor product" "tensor" "tensors"
 :END:
 #+title: Tensor product
-
---------------
-
-aliases: - tensor product - tensor - tensors
----
 
 There are multiple analogous definitions/constructions of the tensor product.
 ​## Definition as a Quotient Space

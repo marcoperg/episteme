@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: EBF663AC-9E40-4D8F-82AB-F55F1A69682D
+:ROAM_ALIASES: "path-connected"
 :END:
 #+title: Path-connected
-
---------------
-
-aliases: - path-connected
----
 
 ** Path
 Let \(X\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]]. A continuous function \(f: [0, 1] \to X\) is called a *path* in \(X\). The path \(f\) is said to /connect/ the point \(f(0)\) to the point \(f(1)\). If \(f\) is a path, \(f([0,1])\) is called a /curve/ in \(X\).

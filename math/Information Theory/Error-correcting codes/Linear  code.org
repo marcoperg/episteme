@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 41EA4065-F658-4538-8A60-26A7B07ACA33
+:ROAM_ALIASES: "linear code"
 :END:
 #+title: Linear  code
-
---------------
-
-aliases: - linear code
----
 
 A *linear code* of length \(n\) and dimension \(k\) is a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][linear subspace]] \(C\) with dimension \(k\) of the [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] \(\mathbb{F}^n_q\) where \(\mathbb{F}_q\) is the [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][finite field]] with \(q\) elements. In the most extended case where \(q = 2\) we call the code binary. The size of a code is the number of codewords and equals \(q^k\).
 

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: A49CA006-042C-422B-A3F5-7FA4E8B7C95B
+:ROAM_ALIASES: "stabilizer code"
 :END:
 #+title: Stabilizer code
-
---------------
-
-aliases: - stabilizer code
----
 
 ** Definition
 Let us define an \([n,k]\) stabilizer quantum error-correcting code to encode \(k\) logical qubits into \(n\) physical qubits.

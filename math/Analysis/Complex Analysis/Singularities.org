@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 3F120E4D-96C6-4B80-AC3A-01D1FD27E395
+:ROAM_ALIASES: "pole" "removable singularitie" "essential singularitie" "meromorphic function"
 :END:
 #+title: Singularities
-
---------------
-
-aliases: - pole - removable singularitie - essential singularitie - meromorphic function
----
 
 ** Definition
 A function \(f(z)\) that fails to be [[id:3C67CDAF-C6A1-459F-8733-49487370C514][analytic]] at \(z = z_0\) is said to have a singularity at \(z_0\).

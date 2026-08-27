@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: FF8E67B9-9DD1-4E63-80E2-8899F0EA6B76
+:ROAM_ALIASES: "Zenón"
 :END:
 #+title: 3. Zenón de Elea
-
---------------
-
-aliases: - Zenón
----
 
 * Zenón de Elea
 fl. h. 464 a.c.

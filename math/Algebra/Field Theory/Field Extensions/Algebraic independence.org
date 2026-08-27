@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 10BDCBE5-0AB5-4839-B7F0-D047101EC245
+:ROAM_ALIASES: "transcendeltal" "algebraic" "simple algebraic extension" "algebraic extension" "algebraic number"
 :END:
 #+title: Algebraic independence
-
---------------
-
-aliases: - transcendeltal - algebraic - simple algebraic extension - algebraic extension - algebraic number
----
 
 If \(E/K\) is a [[id:2F01C024-2ED3-4614-BC4B-DFCF4EC04C27][field extension]] and \(a_1, \dots, a_n\) elements of \(E\). We have a homomorphism (of evaluation)
 \[K\left[X_1, \dots, X_2 \right] \to E: f \mapsto f(a_1, \dots, a_n)\]

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: FB66E6DE-D0C5-4AED-BDA0-5037A982E55D
+:ROAM_ALIASES: "Filosofía"
 :END:
 #+title: Noción de Filosofía
-
---------------
-
-aliases: - Filosofía
----
 
 * La Filosofía y las Ciencias
 ** Disociación Ciencia-Filosofía

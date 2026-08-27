@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 5FA0079D-EFB7-4222-B9DD-F216C918E7B6
+:ROAM_ALIASES: "tangent space" "tangent vector"
 :END:
 #+title: Tangent Space
 #+SETUPFILE: ../../../setup.org
-
---------------
-
-aliases: - tangent space - tangent vector
----
 
 Let \(M\) be a [[id:58660F1E-EB64-4506-81E9-63FF79BD2E76][manifold]] and let \(p\in M\). A linear map \(v: C^\infty\to \mathbb{R}\) is called a *derivation at* \(p\) if it satisfies
 \[v(fg) = v(f)g + fv(g)\quad \text{for all } f,g \in C^\infty(M).\]

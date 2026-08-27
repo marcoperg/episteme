@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 886F9E7C-95BA-437B-977F-637686061F7E
+:ROAM_ALIASES: "simply-connected" "multiply-connected"
 :END:
 #+title: Simply and Multiply Connected Regions
-
---------------
-
-aliases: - simply-connected - multiply-connected
----
 
 A region \(\mathcal{R}\) is called /simply connected/ if any simple closed curve, which lies in \(\mathcal{R}\), can be shrunk to a point without leaving \(\mathcal{R}\). A region \(\mathcal{R}\), which is not simply connected is called /multiply-connected/.
 

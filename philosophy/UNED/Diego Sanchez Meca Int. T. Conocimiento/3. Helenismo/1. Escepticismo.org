@@ -1,11 +1,7 @@
 :PROPERTIES:
 :ID: 41AF5F89-206A-43B0-AD07-EACC227362D9
+:ROAM_ALIASES: "Escepticismo"
 :END:
 #+title: 1. Escepticismo
-
---------------
-
-aliases: - Escepticismo
----
 
 El escepticismo conforma una corriente filosófica que se centra en la negación de la posibilidad de acercarse a la verdad. Como es característico de los filósofos helenísticos, los escépticos se centran en la obtención de la felicidad como ataraxia. Para ello establecen una actitud vital, la apojé.

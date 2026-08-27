@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 675DEA76-DAA8-4607-BE69-FC8877AFFD7C
+:ROAM_ALIASES: "separable"
 :END:
 #+title: Separable extension
-
---------------
-
-aliases: - separable
----
 
 * Definition
 An [[id:10BDCBE5-0AB5-4839-B7F0-D047101EC245][algebraic extension]] \(L/k\) is *separable* if every irreducible polynomial in \(k[x]\) with a root in \(L\) does not have multiple roots in its [[id:4D7BF589-E231-44D0-98A2-D2A4BCE4E1F2][splitting field]].

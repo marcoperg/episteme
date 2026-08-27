@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 66B953C1-5B75-4CA7-A128-350A81DC11A5
+:ROAM_ALIASES: "UFD" "unique factorization domain"
 :END:
 #+title: Unique Factorization Domains
-
---------------
-
-aliases: - UFD - unique factorization domain
----
 
 A [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]] \(R\) is called a unique factorization domain (UFD) if it is an [[id:75C09067-1CB9-48D8-A1BF-C93A2960BE50][integral domain]] in which the following conditions are satisfied: 1. Every irreducible element is [[id:C2E40A22-5964-4868-B316-89D5D28D92DD][prime]]. 2. Every not null element that is not a unit is the product of irreducible elements.
 

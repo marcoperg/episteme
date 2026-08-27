@@ -1,10 +1,8 @@
 :PROPERTIES:
 :ID: 571323C9-F216-4B72-9128-FBB8267F15B3
+:ROAM_ALIASES: "substitution"
 :END:
 #+title: Substitution
 
---------------
-
-** aliases: substitution
 ** Definition
 A /substitution/ is a total mapping \(\sigma: V \to T\) from the set of variables \(V\) to the set of terms \(T\) of the language. The notation \(\sigma = \{x_1\mapsto t_1, \dots x_k \mapsto t_k\}\), or alternatively \(\{x_1/ t_1, \dots x_k / t_k\}\), refers to a substitution mapping each variable \(x_i\) to the corresponding term \(t_i\), for \(i = 1, \dots, k\), and every other variable to itself.

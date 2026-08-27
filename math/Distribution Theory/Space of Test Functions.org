@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 41EF0CA7-2ACA-494F-AF1E-242AF2579860
+:ROAM_ALIASES: "space of Test Functions"
 :END:
 #+title: Space of Test Functions
 #+SETUPFILE: ../../setup.org
-
---------------
-
-aliases: - space of Test Functions
----
 
 Let \(U\) be an open subset of the Euclidean space \(\mathbb{R}^n\). Given a non-negative integer \(k\), \(C^k(U)\) denotes de [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] of all \(k\)-times continuously differentiable real or complex-valued functions on \(U\). And let \(C^k_c(U)\) denote the set of functions \(f \in C^k(U)\) that have [[id:8E24A191-E911-4243-8DDA-3404B256A715][compact]] [[id:DEAD4589-177E-4A11-B483-D2849B267A98][support]].
 

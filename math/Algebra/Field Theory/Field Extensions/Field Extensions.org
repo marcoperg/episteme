@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 2F01C024-2ED3-4614-BC4B-DFCF4EC04C27
+:ROAM_ALIASES: "field extension"
 :END:
 #+title: Field Extensions
-
---------------
-
-aliases: - field extension
----
 
 Let \(K, E\) be [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][fields]]. It is said that \(E\) is an extension of \(K\) and denoted \(E/K\) is there is a [[id:0A0A0964-760B-436D-B664-BD9B0C34CC42][homomorphism]] \(j: K \to E\). Since \(K\) is a field, \(j\) is necessarily surjective, and \(K \cong(K)\).
 

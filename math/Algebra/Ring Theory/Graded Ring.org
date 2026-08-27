@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 73E815F6-9B87-4410-A952-D7D8D9B23918
+:ROAM_ALIASES: "graded ring"
 :END:
 #+title: Graded Ring
-
---------------
-
-aliases: - graded ring
----
 
 A *graded ring* is a [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]] such that the underlying additive [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][group]] is a [[id:554A70C8-C753-4FAF-8790-791F925E4B67][direct sum]] of abelian groups \(R_i\) such that \(R_i R_j\subseteq R_{i+j}\).
 

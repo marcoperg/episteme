@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 2A850792-1DC3-44DF-B00A-A809613B34C0
+:ROAM_ALIASES: "sequence" "series" "converge"
 :END:
 #+title: Sequence and series of functions
-
---------------
-
-aliases: - sequence - series - converge
----
 
 * Sequence of functions
 Let \(u_1(z), u_2(z), u_3(z), ..., u_n(z), ...\), denoted briefly \(\{u_n(z)\}\), be a series of functions of \(z\) defined and single valued in some region of the \(z\) plane. We call \(U(z)\) the limit of \(u_n(z)\) as \(n \to = \infty\), and write \(\lim_{n\to \infty} u_n(z) = U(z)\), if given any positive number \(\epsilon\), we can find a number \(N\) such that

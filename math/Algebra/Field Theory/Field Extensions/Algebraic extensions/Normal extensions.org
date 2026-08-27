@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 12AF798B-5180-45A8-8712-670E2474F31C
+:ROAM_ALIASES: "normal"
 :END:
 #+title: Normal extensions
-
---------------
-
-aliases: - normal
----
 
 * Definition
 Let \(L/k\) be an [[id:10BDCBE5-0AB5-4839-B7F0-D047101EC245][algebraic extension]]. Then, \(L/k\) is called *normal* if every polynomial \(f\in k[x]\) with a zero in \(L\) splits over \(L\) into linear factors.

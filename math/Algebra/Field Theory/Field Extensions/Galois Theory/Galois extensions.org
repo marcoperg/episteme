@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: F05053D8-D6C0-4A45-AB38-94F126D93416
+:ROAM_ALIASES: "Galois extension"
 :END:
 #+title: Galois extensions
-
---------------
-
-aliases: - Galois extension
----
 
 A [[id:2F01C024-2ED3-4614-BC4B-DFCF4EC04C27][field extension]] is called a *Galois extension* if it is [[id:675DEA76-DAA8-4607-BE69-FC8877AFFD7C][separable]] and [[id:12AF798B-5180-45A8-8712-670E2474F31C][normal]].
 

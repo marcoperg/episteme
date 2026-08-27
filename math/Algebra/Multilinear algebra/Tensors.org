@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: E873E077-390C-4A09-9EDA-D3CC159D531F
+:ROAM_ALIASES: "tensor" "tensors"
 :END:
 #+title: Tensors
-
---------------
-
-aliases: - tensor - tensors
----
 
 Let \(V\) be a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]].
 

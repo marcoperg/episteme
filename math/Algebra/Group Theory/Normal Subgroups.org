@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 4B308F7F-0A57-4A72-89C8-1760CA129305
+:ROAM_ALIASES: "quotient groups"
 :END:
 #+title: Normal Subgroups
-
---------------
-
-aliases: - quotient groups
----
 
 ** Definiton
 A subgroup \(H\) of a [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][group]] \(G\) is called a /normal/ subgroup of \(G\) if

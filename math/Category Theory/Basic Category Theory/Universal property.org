@@ -1,9 +1,5 @@
 :PROPERTIES:
 :ID: 2D08730D-DFC5-4BEB-BC48-5D15FD64A1E0
+:ROAM_ALIASES: "universal property"
 :END:
 #+title: Universal property
-
---------------
-
-aliases: - universal property
----

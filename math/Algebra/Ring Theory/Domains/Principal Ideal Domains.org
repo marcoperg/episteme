@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: ED8C1E6C-C25A-4AEA-A484-6323522680DF
+:ROAM_ALIASES: "principal ideal domain" "PID"
 :END:
 #+title: Principal Ideal Domains
-
---------------
-
-aliases: - principal ideal domain - PID
----
 
 * Definition
 A [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]] \(R\) is said to be a Principal Ideal Domain (PID) if all its [[id:C2E40A22-5964-4868-B316-89D5D28D92DD][ideals]] are principal.

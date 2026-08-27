@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: EA5EA1C2-B0C8-41B9-B4AE-30F98E2B5320
+:ROAM_ALIASES: "homotopy"
 :END:
 #+title: Path homotopy
-
---------------
-
-aliases: - homotopy
----
 
 Let \(F_0, F_1\) be two paths in a topological space \(X\) with the same initial point \(p_0 = F_0(0) = F_1(0)\) and the same terminal point \(p_1 = F_0(1) = F_1(1)\). \(F_0\) is said to be *homotopic* to \(F_1\) if there is a continuous function \(H: I^2 \to X\) such that
 \[

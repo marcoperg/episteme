@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: B95CB367-2854-4CA5-BF9F-81D0050E6A4A
+:ROAM_ALIASES: "poset" "partially ordered set" "partial order" "supremum" "infimum" "partially ordered sets" "posets"
 :END:
 #+title: Partially ordered set
-
---------------
-
-aliases: - poset - partially ordered set - partial order - supremum - infimum - partially ordered sets - posets
----
 
 A *partially ordered set* is a set \(P\) together with a binary relation \(\le\) satisfying the following properties 1. reflexive: \(\forall x\in P: x\le x\) 2. transitive: \(\forall x,y,z \in P: x\le y \land y\le z \implies x\le z\) 3. antisymmetric: \(forall x,y\in P: x\le y \land y\le x \implies x=y\)
 

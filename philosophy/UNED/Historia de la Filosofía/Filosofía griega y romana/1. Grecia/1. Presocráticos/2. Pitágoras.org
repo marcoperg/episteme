@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 905F8A43-4909-491A-A666-B24CB0933E61
+:ROAM_ALIASES: "Pitágoras"
 :END:
 #+title: 2. Pitágoras
-
---------------
-
-aliases: - Pitágoras
----
 
 * Pitágoras
 A destacar dos ideas fundamentales de Zeller: a) el sistema pitagórico, tal como lo conocemos, es obra de distintos hombres y de distintos tiempos; y b) es difícil discernir en él elementos propiamente pertenecientes a Pitágoras.

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 06C79471-2FC1-4BA8-B597-9ED445DE1B62
+:ROAM_ALIASES: "doctrinas socráticas"
 :END:
 #+title: 4. Doctrinas
-
---------------
-
-aliases: - doctrinas socráticas
----
 
 ** La reflexión del hombre sobre sí mismo
 Típicamente socrático es su insistente llamamiento a la interioridad, invitando al hombre a reflexionar sobre sí mismo. A la pretenciosa omnisciencia de los sofistas ("Preguntad..."), Sócrates opone modestamente su "sólo sé que no sé nada". El principio fundamenta de la sabiduría consisten, por una parte, en el reconocimiento de la propia ignorancia, pero al mismo tiempo en reflexionar sobre el propio yo para conocerse a sí mismo.

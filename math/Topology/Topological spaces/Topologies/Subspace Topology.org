@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: D280DC17-60D3-4164-9C71-B7BC14D099D5
+:ROAM_ALIASES: "subspace topology"
 :END:
 #+title: Subspace Topology
-
---------------
-
-aliases: - subspace topology
----
 
 Let \(X\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]], and \(Y \subset X\), \(\tau_Y =\left\{ Y \cap U : U \text{ open in } X\right\}\) is the subspace topology of \(Y\) as a subset of \(X\).
 

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 22050FC5-ED0E-40E7-B592-15648D52939D
+:ROAM_ALIASES: "algebra"
 :END:
 #+title: Algebra
-
---------------
-
-aliases: - algebra
----
 
 An /algebra over a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]]/ is a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] equipped with a bilinear product. Thus, an algebra is an algebraic structure consisting of a set together with operations of multiplication and addition and scalar multiplication by elements of a field and satisfying the axioms implied by "vector space" and "bilinear".
 ​## Definition

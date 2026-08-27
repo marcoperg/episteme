@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 3C67CDAF-C6A1-459F-8733-49487370C514
+:ROAM_ALIASES: "holomorphic functions" "analytic" "analytic function"
 :END:
 #+title: Analytic function
-
---------------
-
-aliases: - holomorphic functions - analytic - analytic function
----
 
 ** Definition
 A function \(f\) is /complex analytic/ on an [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][open set]] \(D\) in the complex plane if for any \(z_0 \in D\) one can write

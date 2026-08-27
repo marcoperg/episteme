@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 0A6751A9-127F-40CA-BD65-2F69B68F0DD8
+:ROAM_ALIASES: "field" "characteristic"
 :END:
 #+title: Fields
-
---------------
-
-aliases: - field - characteristic
----
 
 ** Definition
 A /field/ is a commutative [[id:3CC31C84-CF5C-4C2C-90A6-623847BFF49F][ring]] with unity in which every nonzero element is a unit.

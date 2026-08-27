@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 07BCB638-C2FB-4BE7-A621-2AFAE7069010
+:ROAM_ALIASES: "solvable"
 :END:
 #+title: Solvable group
-
---------------
-
-aliases: - solvable
----
 
 * Definition
 A [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][group]] \(G\) is *solvable* if there exists a chain of subgroups

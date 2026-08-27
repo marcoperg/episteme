@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7
+:ROAM_ALIASES: "group"
 :END:
 #+title: Groups
-
---------------
-
-aliases: - group
----
 
 ** Definiton
 Let \(G\) be a set. A /binary operation/ \(\star:G\times G \to G\) on \(G\) is a function that assigns each ordered pair of elements of \(G\).

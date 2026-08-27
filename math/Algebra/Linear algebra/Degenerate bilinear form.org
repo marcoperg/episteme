@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 09B650EA-B258-4702-9130-A9282B2ABD3F
+:ROAM_ALIASES: "degenerate" "non-degenerate"
 :END:
 #+title: Degenerate bilinear form
-
---------------
-
-aliases: - degenerate - non-degenerate
----
 
 Let \(V\) be a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] over a field \(\mathbb{F}\). Then a bilinear form on \(V\), i.e. a bilinear map \(f:V\times V\to \mathbb{F}\), is said to be *degenerate* if the map from \(V\) to \(V^*\) given by \((v\mapsto (x\mapsto f(x,v)))\) is not an isomorphism. Otherwise, is said to be *non-degenerate*.
 

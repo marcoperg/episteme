@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 88A11C01-9297-431F-9E0D-B156077139E9
+:ROAM_ALIASES: "MGU" "unifier"
 :END:
 #+title: Unification
-
---------------
-
-aliases: - MGU - unifier
----
 
 ** Definition
 A [[id:571323C9-F216-4B72-9128-FBB8267F15B3][substitution]] \(\alpha\) is a /unifier/ of two atoms \(A\) and \(B\) if \(A\alpha = B \alpha\).

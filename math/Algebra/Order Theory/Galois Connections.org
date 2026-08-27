@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 8FCB75D2-D669-4DAF-80BB-F0FCCB7A857F
+:ROAM_ALIASES: "Galois connection"
 :END:
 #+title: Galois Connections
-
---------------
-
-aliases: - Galois connection
----
 
 Let \((A, \le)\), \((B, \le)\) be two [[id:B95CB367-2854-4CA5-BF9F-81D0050E6A4A][partially ordered sets]]. A *monotone Galois connection* between these [[id:B95CB367-2854-4CA5-BF9F-81D0050E6A4A][posets]] consists on two monotone functions, \(F: A \to B\) and \(G: B\to A\), such that for all \(a\) in \(A\) and \(b\) in \(B\), we have
 \[F(a) \le b \iff a \le G(b)\]

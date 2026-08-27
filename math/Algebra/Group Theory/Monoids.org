@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: E421E5DE-E75C-4A72-BDD5-9F454CA3F6A2
+:ROAM_ALIASES: "monoid"
 :END:
 #+title: Monoids
-
---------------
-
-aliases: - monoid
----
 
 * Definition
 A *monoid* is a set equipped with an associative binary operation and an identity element.

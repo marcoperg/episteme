@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: F07AE388-8FEF-487B-99AD-302C15E7DDDD
+:ROAM_ALIASES: "model" "structure"
 :END:
 #+title: Structure
-
---------------
-
-aliases: - model - structure
----
 
 A structure consists of a set along with a collection of finitary operations and relation that are defined on it.
 

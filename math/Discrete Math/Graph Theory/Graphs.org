@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 06F8A232-B4F7-424C-9F0B-098AC6CBEE6D
+:ROAM_ALIASES: "graph"
 :END:
 #+title: Graphs
-
---------------
-
-aliases: - graph
----
 
 ** Definition
 A *graph* is a pair \(G=(V, E)\) where - \(V\) is a non-empty finite set of elements called vertices. - \(E\) is a finite set of not-ordered pairs of vertices \(V\), called edges. - If \(e = {u, v}\) is an edge of \(G\) - \(e\) joins the vertices \(u, v\). - \(u, v\) are de ends of the edge \(e\).

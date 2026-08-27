@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: ABBE2CAB-E14B-48D0-BB46-A5D35CC15334
+:ROAM_ALIASES: "cínicos" "cínico"
 :END:
 #+title: 3. Escuela Cínica
-
---------------
-
-aliases: - cínicos - cínico
----
 
 Atribuyeron a Antístenes la fundación de la escuela, para justificar su ascendencia socrática, aunque como verdadero fundador debe considerarse a su oyente Diógenes de Sínope.
 

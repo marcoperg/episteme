@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 8C14C330-D573-4B4D-82FA-79E2F95A73D5
+:ROAM_ALIASES: "mixed state" "pure state"
 :END:
 #+title: Pure vs mixed sates
-
---------------
-
-aliases: - mixed state - pure state
----
 
 A /pure/ state is a state that can be described by a single ket vector. A /mixed/ state is a statistical ensemble of pure sates. /Mixed/ state arise in two different situations:
 

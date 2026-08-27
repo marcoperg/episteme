@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 02332673-D764-4E02-B708-3279AC3E50B7
+:ROAM_ALIASES: "Anaxágoras"
 :END:
 #+title: 6. Pluralismo heterogéneo
-
---------------
-
-aliases: - Anaxágoras
----
 
 * Anaxágoras
 fl. h. 460

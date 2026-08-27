@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: B612585B-35F9-41FE-A564-94419D915475
+:ROAM_ALIASES: "cover" "fiber" "lifting" "covering space"
 :END:
 #+title: Covering spaces
-
---------------
-
-aliases: - cover - fiber - lifting - covering space
----
 
 * Definition
 Let \(E, B\) [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological spaces]]. A continuous surjective map \(p: E \to B\) is a *covering* if each \(b\in B\) has a neighborhood \(U\) which is /evenly covered/ by \(p\). That is, \(p^{-1} (U)\) is a disjoint union of open sets \(V_\alpha\), \(\alpha\) in some index set \(J\).

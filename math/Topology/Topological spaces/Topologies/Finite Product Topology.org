@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: B9061035-7120-47E0-94B8-A5678CF5B087
+:ROAM_ALIASES: "product topology"
 :END:
 #+title: Finite Product Topology
-
---------------
-
-aliases: - product topology
----
 
 Let \(X, Y\) be [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological spaces]]. Then
 \[\mathscr{B} = \left\{ U\times V : U \text{ open in } X, \text{ open in } Y\right\}\]

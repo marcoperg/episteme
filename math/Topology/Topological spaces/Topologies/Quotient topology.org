@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: FE594882-26D7-43A6-86D8-AB44E105CDFA
+:ROAM_ALIASES: "quotient topology" "quotient map"
 :END:
 #+title: Quotient topology
-
---------------
-
-aliases: - quotient topology - quotient map
----
 
 * Definition
 Let \(X\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] and let \(\sim\) be an equivalence relation on \(X\). Define \(Y := X/\sim\) to be the set of equivalence classes.

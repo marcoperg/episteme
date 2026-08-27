@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 7FE95847-AD01-48AA-B20D-C66B62B31A0A
+:ROAM_ALIASES: "associative algebra"
 :END:
 #+title: Associative Algebra
-
---------------
-
-aliases: - associative algebra
----
 
 ** Definition
 An *associative algebra* is a [[id:C31DD475-75D9-4BB9-9DD5-536453386F9D][vector space]] \(A\) over a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]] \(K\), together with an associative bilinear product:

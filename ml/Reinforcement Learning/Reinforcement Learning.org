@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 5DE3C6C3-FA62-4E00-95A7-FFAEB7928175
+:ROAM_ALIASES: "RL"
 :END:
 #+title: Reinforcement Learning
-
---------------
-
-aliases: - RL
----
 
 In reinforcement learning (RL) we are given an Environment \(\mathcal{E}\) which can be in any state \(s\) of the state space \(\mathcal{S}\) and we have an Agent which can take any action \(a\) in the action space \(\mathcal{A}\). At time \(t\), if the environment is at state \(s_t \in \mathcal{S}\) each action \(a_t\in\mathcal{A}\) has an associated reward \(r_t\) (usually in \(\mathbb{R}\)) we wish to maximize. In order to do so, we have an policy \(\pi: \mathcal{S} \to \mathcal{A}\) that our agent follows.
 

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: C638B02C-AA05-4FD6-913E-312ABD139634
+:ROAM_ALIASES: "algebraically closed" "algebraic closure"
 :END:
 #+title: Algebraic closure
-
---------------
-
-aliases: - algebraically closed - algebraic closure
----
 
 * Definition
 Let \(L\) a [[id:0A6751A9-127F-40CA-BD65-2F69B68F0DD8][field]], L is *algebraically closed* if the following equivalent statements hold 1. Every \(f \in L[x]\backslash L\) has a zero in L. 2. Every \(f \in L[x]\backslash L\) splits over \(L\) into linear factors, i.e. there are \(b, a_1, \dots, a_n \in L\) such that \(f = b(x-a_1)\dots (x-a_n)\).

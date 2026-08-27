@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 5C6634ED-0C6A-41BE-AEC7-86E744E8C5BB
+:ROAM_ALIASES: "Taylor's series" "Taylor's expansion"
 :END:
 #+title: Taylor's theorem
-
---------------
-
-aliases: - Taylor's series - Taylor's expansion
----
 
 Let \(f(z)\) be [[id:3C67CDAF-C6A1-459F-8733-49487370C514][analytic]] inside and on a simple closed curve \(C\). Let \(a\) and \(a+h\) be two points inside \(C\). Then
 \[

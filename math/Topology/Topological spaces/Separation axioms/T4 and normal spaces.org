@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: A5A52835-3BD0-4B3B-B366-3FEC36B2CA9B
+:ROAM_ALIASES: "normal" "normal space"
 :END:
 #+title: T4 and normal spaces
-
---------------
-
-aliases: - normal - normal space
----
 
 Let \((X, \tau)\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]]. \((X, \tau)\) is said to be a \(T_4\) if for all closed subsets \(C_1, C_2 \subset X\) there are disjoint neighborhoods of \(C_1\) and \(C_2\).
 

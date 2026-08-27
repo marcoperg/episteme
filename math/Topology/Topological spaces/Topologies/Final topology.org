@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 96D71126-FCC6-4570-85D5-3EFB52F3CB5F
+:ROAM_ALIASES: "final topology"
 :END:
 #+title: Final topology
-
---------------
-
-aliases: - final topology
----
 
 * Definition
 Given a set \(X\) and an \(I\)-indexed family of [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] \((Y_i, v_i)\) with associated functions

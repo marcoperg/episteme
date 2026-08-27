@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: C0ADBA68-2416-4041-A4E8-E3F3778D9938
+:ROAM_ALIASES: "topological space" "topology" "neighborhood" "topological spaces"
 :END:
 #+title: Topological spaces
 #+SETUPFILE: ../../../setup.org
-
---------------
-
-aliases: - topological space - topology - neighborhood - topological spaces
----
 
 ** Definition
 Let \(X\) be a non-empty set and \(\tau\) a collection of subsets of \(X\) (i.e. \(\tau \subset \mathcal{P}(X)\)) such that: 1. \(X \in \tau\) 2. \(\emptyset \in \tau\) 3. If \(O_1, O_2, ...O_n \in \tau\), then \(O_1 \cap O_2 \cap ...\cap O_n \in \tau\) 4. If for each \(\alpha \in I\), \(O_\alpha \in \tau\), then \(\bigcup_{\alpha \in I}O_\alpha\in\tau\)

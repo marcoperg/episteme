@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: E5B1D38D-297B-4867-91DA-75156F747A92
+:ROAM_ALIASES: "Hilbert Space"
 :END:
 #+title: Hilbert Spaces
-
---------------
-
-aliases: - Hilbert Space
----
 
 ** Definition
 A /Hilbert space/ is a real or complex [[id:E17584F3-6B4A-4D32-882C-80D6924A6933][inner product space]] that is also a [[id:C2C27C7B-D64E-424D-B062-37E2FE5C3CB8][complete metric space]] with respect to the distance function induced by the inner product.

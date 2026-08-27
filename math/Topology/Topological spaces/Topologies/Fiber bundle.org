@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 0E8BF171-237E-4E60-8AA0-15804304692E
+:ROAM_ALIASES: "fiber bundle"
 :END:
 #+title: Fiber bundle
-
---------------
-
-aliases: - fiber bundle
----
 
 A fiber bundle is a structure \((E, B, \pi, F)\) where \(E\), \(B\) and \(F\) are [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological spaces]] (\(B\) connected) and \(\pi: E \to B\) is a continuous surjection satisfying the next /local triviality/ condition:
 

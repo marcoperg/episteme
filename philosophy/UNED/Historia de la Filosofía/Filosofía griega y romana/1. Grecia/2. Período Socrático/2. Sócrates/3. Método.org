@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 34E79540-40F9-491B-9CD4-ACB8CC8E9228
+:ROAM_ALIASES: "mayéutica"
 :END:
 #+title: 3. Método
-
---------------
-
-aliases: - mayéutica
----
 
 Por contraste con los discursos retóricos Sócrates adoptó el /diálogo/, que en la enseñanza tiene la ventaja de hacer más íntima la comunicación entre maestro y discípulo.
 

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 9CEE2BBE-9DB7-4A0B-824C-512B3FEDF01B
+:ROAM_ALIASES: "isomorphism" "isomorphisms" "automorphism"
 :END:
 #+title: Group Isomorphisms
-
---------------
-
-aliases: - isomorphism - isomorphisms - automorphism
----
 
 *Definition* An /isomorphism/ \(\phi\) from a [[id:48FAF6F8-DD4A-49F5-89B1-DCE13AE4A2F7][group]] \(G\) to a group \(H\) is a one-to-one mapping from \(G\) onto \(H\) that preserver the group operation. That is
 \[\phi(ab) = \phi(a)\phi(b) \quad\quad \text{for all a,b }\in G\]

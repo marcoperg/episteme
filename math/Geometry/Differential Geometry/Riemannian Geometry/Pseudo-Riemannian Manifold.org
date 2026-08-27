@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: FA18C9A1-CAA7-4F77-BA79-CBC201F8B4AB
+:ROAM_ALIASES: "pseudo-Riemannian manifold" "Lorentzian manifold"
 :END:
 #+title: Pseudo-Riemannian Manifold
-
---------------
-
-aliases: - pseudo-Riemannian manifold - Lorentzian manifold
----
 
 A *pseudo-Riemannian manifold* \((M, g)\) is a [[id:58660F1E-EB64-4506-81E9-63FF79BD2E76][manifold]] \(M\) equipped with a everywhere [[id:09B650EA-B258-4702-9130-A9282B2ABD3F][non-degenerate]], smooth, symmetric metric tensor \(g\).
 

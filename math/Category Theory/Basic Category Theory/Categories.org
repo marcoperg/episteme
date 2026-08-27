@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: 6B755D9E-EB8E-4673-ADD0-B4411D410D52
+:ROAM_ALIASES: "category" "categories"
 :END:
 #+title: Categories
-
---------------
-
-aliases: - category - categories
----
 
 * Definition
 A category \(C\) consists of the following mathematical entities - A class \(ob(C)\) whose elements are called /objects/. - A class \(hom(C)\) whose elements are called /morphisms/ or /arrows/.

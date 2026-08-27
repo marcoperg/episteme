@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: CDB04BD2-C2D2-400F-8C70-F3CFF4097980
+:ROAM_ALIASES: "second-countable space" "basis" "subbasis"
 :END:
 #+title: Basis (topology)
-
---------------
-
-aliases: - second-countable space - basis - subbasis
----
 
 ** Definition
 Given a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] \((X, \tau)\), a *basis* for the topology \(\tau\) is a set \(\mathcal{B} \subseteq \tau\) of open sets such that every open set of the topology ca be represented as the union of some subset of \(\mathcal{B}\). In symbols,

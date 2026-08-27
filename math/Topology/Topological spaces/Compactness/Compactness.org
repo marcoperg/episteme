@@ -1,13 +1,9 @@
 :PROPERTIES:
 :ID: 8E24A191-E911-4243-8DDA-3404B256A715
+:ROAM_ALIASES: "compact"
 :END:
 #+title: Compactness
 #+SETUPFILE: ../../../../setup.org
-
---------------
-
-aliases: - compact
----
 
 ** Definition
 Let \((X, \tau)\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]] and \(A \subseteq X\), $A$ is said to be *compact* if for all covers \(\{U_i\}_{i\in I}\) of \(A\) there exist a finite subcover \(\{U_i\}_{i \in I_0 \subseteq I}\). In symbols,

@@ -1,12 +1,8 @@
 :PROPERTIES:
 :ID: E6C72A0F-0EC0-4169-ACD8-A553C2EBA727
+:ROAM_ALIASES: "Protágoras" "Gorgias"
 :END:
 #+title: 3. Representantes de la Sofística
-
---------------
-
-aliases: - Protágoras - Gorgias
----
 
 * Protágoras
 fl. h. 444-1
