@@ -6,7 +6,7 @@
 
 Let \((X, \tau)\) be a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]]. \((X, \tau)\) is said to be a \(T_4\) if for all closed subsets \(C_1, C_2 \subset X\) there are disjoint neighborhoods of \(C_1\) and \(C_2\).
 
-A space that is \(T_4\) and [[id:6B3DF1E4-E443-4231-A062-491506342881][T1]] is called *normal*. A normal space is always [[file:T3 space.org][regular]].
+A space that is \(T_4\) and [[id:6B3DF1E4-E443-4231-A062-491506342881][T1]] is called *normal*. A normal space is always [[id:C5EBDB18-8574-431C-A794-07E2BAADF831][regular]].
 
 ** Theorems
 1. Every [[id:09723E35-01DA-4F26-B3BD-B3CF4C94EBDC][metric space]] is normal.

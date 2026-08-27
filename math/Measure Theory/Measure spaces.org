@@ -13,7 +13,7 @@ The sets in \(\mathcal{F}\) are called measurable sets.
 *** Common examples
 If \(X\) is countable, the σ-algebra formed by the power set of \(X\) leads to a measurable set \((X, \mathcal{P}(X))\).
 
-If \(X\) is a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]], the σ-algebra formed by the [[file:Borel Sets .org][Borel sets]] \(\mathcal{B}\) leads to the measurable set \((X, \mathcal{B})\).
+If \(X\) is a [[id:C0ADBA68-2416-4041-A4E8-E3F3778D9938][topological space]], the σ-algebra formed by the [[id:35870FDB-C98B-4EA3-89D2-E3153FABF842][Borel sets]] \(\mathcal{B}\) leads to the measurable set \((X, \mathcal{B})\).
 
 * Measure spaces
 A measure space is a triplet \((X, \mathcal{A}, \mu)\), where - \(X\) is a set - \(\mathcal{A}\) is a σ-algebra on \(X\) - \(\mu: \mathcal{A}\to [0, \infty]\) is a function satisfying: - \(\mu(\emptyset) = 0\) - \(\mu\) is countable additive, i.e. if \(\{A_j\}_{j=0}^\infty\) is a countable collection of disjoint sets in \(\mathcal{A}\), then:

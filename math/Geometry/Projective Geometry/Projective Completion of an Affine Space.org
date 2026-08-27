@@ -9,7 +9,7 @@ The following lemma acts as and definition for the Projective Completion of an A
   <ins>
 #+end_html
 
-Lemma 5.8 [[file:Jean%20Gallier's%20_Geometry%20Methods%20and%20Applications_][1]]:
+Lemma 5.8 [1]:
 
 #+begin_html
   </ins>

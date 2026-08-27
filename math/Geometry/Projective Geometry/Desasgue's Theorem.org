@@ -16,7 +16,7 @@ Theorem:
 Given two triangles \((a, b, c)\) and \((a', b', c')\) in \(\mathbb{RP^2}\), where the points \(a, b, c, a', b', c'\) are pairwise distinct an the lines \(A = \langle b, c \rangle\), \(B = \langle a, c \rangle\), \(C = \langle a, b \rangle\), \(A' = \langle b', c' \rangle\), \(B' = \langle a', c' \rangle\), \(C' = \langle a', b' \rangle\) are pairwise distinct, if the lines \(\langle a, a' \rangle\), \(\langle b, b' \rangle\), \(\langle c, c' \rangle\) intersect in a common point \(d\) disticnt from \(a, b, c, a', b', c'\), then the intersection points \(p = A \cap A'\), \(q = B \cap B'\), \(r = C \cap C'\) belong to a common line distinct from \(A, B, C, A', B', C'\).
 
 #+caption: Desargues's theorem - Wikipedia
-[[file:https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdwAprKNeBYczT_boES-M7kvz_FViPHEonMvcTWXD_cw&s.org][https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdwAprKNeBYczT_boES-M7kvz_FViPHEonMvcTWXD_cw&s]]
+[[https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdwAprKNeBYczT_boES-M7kvz_FViPHEonMvcTWXD_cw&s][https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdwAprKNeBYczT_boES-M7kvz_FViPHEonMvcTWXD_cw&s]]
 
 \(Pf:\)
 

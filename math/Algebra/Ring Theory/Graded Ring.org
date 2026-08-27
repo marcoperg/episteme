@@ -17,4 +17,4 @@ A nonzero element of \(R_n\) is said to be /homogeneous of degree/ \(n\). By def
 
 - \(R_0\) is a subring of \(R\), in particular, the multiplicative identity \(1\) is a homogeneous element of degree \(0\).
 - For any \(n\), \(R_n\) is a two-sided \(R_0\)-[[id:AC78A1AC-078C-403C-A797-2CB2A3422E51][module]], and the direct sum decomposition is a direct sum of \(R_0\)-modules.
-- \(R\) is an \(R_0\)-[[file:Associative algebra.org][associative algebra]].
+- \(R\) is an \(R_0\)-[[id:7FE95847-AD01-48AA-B20D-C66B62B31A0A][associative algebra]].

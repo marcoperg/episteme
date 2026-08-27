@@ -34,4 +34,4 @@ A space $X$ is said to be *locally compact* if every point $x$ of $X$ has a comp
 
 
 ** Heine--Borel theorem
-The theorem states that for a subset \(S\) of the Euclidean space \(\mathbb{R}^n\), the following statements are equivalent: - \(S\) is closed and [[file:Bounded set .org][bounded]]. - \(S\) is compact.
+The theorem states that for a subset \(S\) of the Euclidean space \(\mathbb{R}^n\), the following statements are equivalent: - \(S\) is closed and [[id:F2BC27DF-E289-44A4-9344-149FEF23B888][bounded]]. - \(S\) is compact.

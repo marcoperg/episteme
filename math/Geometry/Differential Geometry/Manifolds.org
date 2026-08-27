@@ -12,7 +12,7 @@ For all \(x\in X\) there is an open set \(U \in \tau\) and a homeomorphism \(\va
 The map \(\varphi: U\to U'\) is called a *chart* of \((X, \tau)\). More precisely, the tuple \((U, \varphi)\) forms a chart.
 
 ** Manifold
-A manifold is a topological spacer \((M, \tau)\) that satisfies three properties: 1. \(M\) is a [[file:file:Hausdorff space.org][Hausdorff space]] 2. \(M\) is a [[Basis (topology).org][second-countable space]] 3. \(M\) is locally Euclidean of dimension \(n\)
+A manifold is a topological spacer \((M, \tau)\) that satisfies three properties: 1. \(M\) is a [[id:14F2DB4F-672A-42CD-B683-BE90B7E3F5C9][Hausdorff space]] 2. \(M\) is a [[Basis (topology).org][second-countable space]] 3. \(M\) is locally Euclidean of dimension \(n\)
 
 A nonempty \(n\)-dimensional topological manifold cannot be homeomorphic to an \(m\)-dimensional manifold unless \(m=n\).
 

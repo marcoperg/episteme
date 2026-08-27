@@ -3,7 +3,7 @@
 :END:
 #+title: Dual code
 
-The *dual code* of the [[file:Linear code.org][linear code]]
+The *dual code* of the [[id:41EA4065-F658-4538-8A60-26A7B07ACA33][linear code]]
 \[
 C =\subset \mathbb{F}^n_q
 \]

@@ -2,7 +2,7 @@
 :ID:       9F26BE51-0943-4C1F-80F5-0054ED587A06
 :END:
 #+title: Bessel's inequality
-#+SETUPFILE: ../../setup.org
+#+SETUPFILE: ../../../setup.org
 
 Let $\{ x_\theta : \theta \in I\}$ be an orthonormal famility in a [[id:E5B1D38D-297B-4867-91DA-75156F747A92][Hilbert space]] $X$ (or pre-hilbert). Then, for all $x\in X$, let $\alpha_\theta = \langle x, x_\theta\rangle$:
 

@@ -3,7 +3,7 @@
 :END:
 #+title: Proximal Policy Optimization
 
-This is a type of [[file:file:Policy Gradient.org][Policy Gradient]] [[Reinforcement Learning.org][RL]] algorithm that uses a Clipped Surrogate Objective in order to achieve better robustness and efficiency. It has first introduced in [cite:@schulmanProximalPolicyOptimization2017]. It can also be implemented as a [[id:84618626-B014-424C-A26C-BC777A4D00AD][Actor Critic]] algorithm.
+This is a type of [[id:D46095A0-F3E1-481E-AFF5-5C79E6EB1A61][Policy Gradient]] [[Reinforcement Learning.org][RL]] algorithm that uses a Clipped Surrogate Objective in order to achieve better robustness and efficiency. It has first introduced in [cite:@schulmanProximalPolicyOptimization2017]. It can also be implemented as a [[id:84618626-B014-424C-A26C-BC777A4D00AD][Actor Critic]] algorithm.
 
 [[file:../../.attachments/Pasted image 20240625203146.png]]
 Algorithm from the original paper.

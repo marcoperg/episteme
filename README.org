@@ -66,6 +66,17 @@ multiple classifications.
 
 * Support files
 
+- =bin/check-integrity.py= --- validates duplicate IDs, unresolved =id:= links,
+  relative =file:= links, =SETUPFILE= paths, property drawers, and alias syntax.
+  Missing IDs and deep directory structures are intentionally allowed. Run it
+  together with its standard-library tests using:
+  #+begin_src sh
+  PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+  bin/check-integrity.py
+  #+end_src
+  The dead Obsidian/Nunjucks template
+  =.literature-notes/templates/zotero.org= is excluded until the citation
+  migration replaces it.
 - =setup.org= --- shared LaTeX preamble (theorem environments, packages),
   pulled into math/physics notes via =#+SETUPFILE: ../setup.org=.
 - =citations.bib= --- bibliography for =[cite:@key]= references. This is the

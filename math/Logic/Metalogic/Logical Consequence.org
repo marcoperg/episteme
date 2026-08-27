@@ -6,7 +6,7 @@
 Depending if one is working in a proof theory or a model theory setting it makes sense to use one of two kinds of consequence in logic.
 
 ** Syntactic Consequence (\(\vdash\))
-A formula \(A\) is a syntactic consequence within a [[file:Formal Theory .org][formal theory]] (or formal system) \(\mathcal{FS}\) of a set \(\Gamma\) of formulas if there is a formal proof in \(\mathcal{FS}\) of \(A\) from the set \(\Gamma\). This is denoted \(\Gamma \vdash_{\mathcal{FS}}A\).
+A formula \(A\) is a syntactic consequence within a [[id:6A524683-ABBC-4776-81DC-C61786CE4B4A][formal theory]] (or formal system) \(\mathcal{FS}\) of a set \(\Gamma\) of formulas if there is a formal proof in \(\mathcal{FS}\) of \(A\) from the set \(\Gamma\). This is denoted \(\Gamma \vdash_{\mathcal{FS}}A\).
 
 ** Semantic Consequence (\(\vDash\))
 A formula \(A\) is a semantic consequence within a or formal system \(\mathcal{FS}\) of a set \(\Gamma\) of formulas iff there is no [[id:F07AE388-8FEF-487B-99AD-302C15E7DDDD][model]] \(\mathcal{I}\) in which all member of \(\Gamma\) are true and \(A\) is false. This is denoted \(\Gamma \vDash_{\mathcal{FS}}A\).

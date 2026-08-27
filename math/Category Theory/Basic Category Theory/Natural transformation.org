@@ -2,7 +2,7 @@
 :ID: F23D46CF-CE5C-4996-A3D3-FCC83C03F9A8
 :END:
 #+title: Natural transformation
-#+SETUPFILE: ../../setup.org
+#+SETUPFILE: ../../../setup.org
 
 * Definition
 

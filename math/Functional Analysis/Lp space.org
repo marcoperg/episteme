@@ -16,7 +16,7 @@ Formally, let \((S, \Sigma, \mu)\) be a [[id:75B6E188-5E38-40F9-85F1-EC44C3A12D0
 the norm can be also extended to the case \(p = \infty\).
 
 * typical example
-\(l^2\) usually denotes the [[id:e5b1d38d-297b-4867-91da-75156f747a92][hilbert space]] form by the square integrable functions, that is, functions \(f:\mathbb{r} \to \mathbb{c}\) such that:
+\(l^2\) usually denotes the [[id:E5B1D38D-297B-4867-91DA-75156F747A92][Hilbert space]] form by the square integrable functions, that is, functions \(f:\mathbb{r} \to \mathbb{c}\) such that:
 \[
 \int_{-\infty}^\infty |f(x)|^2\,dx < \infty
 \]

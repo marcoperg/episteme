@@ -2,6 +2,6 @@
 :ID: 14907899-E46A-4820-AC6E-61F144CD22AE
 :END:
 #+title: Functionals
-#+SETUPFILE: ../../setup.org
+#+SETUPFILE: ../../../setup.org
 
 Let \(X\) be a [[id:AF1FF3F3-C5BA-41B3-8DDE-E0A3C2546B63][topological vector space]] over a field \(\mathbb{F}\), all maps \(f: X\to \mathbb{F}\) are called the functionals of \(X\).

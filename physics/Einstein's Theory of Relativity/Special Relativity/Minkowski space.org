@@ -3,7 +3,7 @@
 :END:
 #+title: Minkowski space
 
-Minkowski spacetime, denoted by \(\mathbb{M}\), is the [[file:[Pseudo-Riemannian Manifold.org][Lorentzian manifold]] \(\mathbb{R}^4\) coordinates \((t, x, y, z)\), where we assume \(c = 1\),takes the form
+Minkowski spacetime, denoted by \(\mathbb{M}\), is the [[id:FA18C9A1-CAA7-4F77-BA79-CBC201F8B4AB][Lorentzian manifold]] \(\mathbb{R}^4\) coordinates \((t, x, y, z)\), where we assume \(c = 1\),takes the form
 \[
 g(t, x, y, z) = \begin{pmatrix}
 -1 & 0 & 0 & 0 \\

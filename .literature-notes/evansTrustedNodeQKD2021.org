@@ -14,7 +14,7 @@ dateread:
 
 #+begin_quote
 [!Cite]
-Evans, P. G., Alshowkan, M., Earl, D., Mulkey, D. D., Newell, R., Peterson, G., Safi, C., Tripp, J. L., & Peters, N. A. (2021). Trusted Node QKD at an Electrical Utility. /IEEE Access/, /9/, 105220--105229. [[file:https://doi.org/10.1109/ACCESS.2021.3070222.org][https://doi.org/10.1109/ACCESS.2021.3070222]]
+Evans, P. G., Alshowkan, M., Earl, D., Mulkey, D. D., Newell, R., Peterson, G., Safi, C., Tripp, J. L., & Peters, N. A. (2021). Trusted Node QKD at an Electrical Utility. /IEEE Access/, /9/, 105220--105229. [[https://doi.org/10.1109/ACCESS.2021.3070222][https://doi.org/10.1109/ACCESS.2021.3070222]]
 #+end_quote
 
 #+begin_quote
@@ -49,7 +49,7 @@ Evans, P. G., Alshowkan, M., Earl, D., Mulkey, D. D., Newell, R., Peterson, G., 
 #+begin_quote
 [!LINK]
 
-[[file:///Users/meu/Zotero/storage/TDRYE9CV/Evans%20et%20al.%20-%202021%20-%20Trusted%20Node%20QKD%20at%20an%20Electrical%20Utility.pdf][Evans et al. - 2021 - Trusted Node QKD at an Electrical Utility.pdf]].
+[[zotero://open-pdf/library/items/TDRYE9CV][PDF in Zotero]].
 #+end_quote
 
 #+begin_quote

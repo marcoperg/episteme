@@ -2,7 +2,7 @@
 :ID:       66C006AF-BA8C-400C-A2D3-AC19A0FAE3EE
 :END:
 #+title: Hölder's Inequality
-#+SETUPFILE: ../../setup.org
+#+SETUPFILE: ../../../setup.org
 
 * Statement of the theorem
 

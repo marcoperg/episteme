@@ -3,4 +3,4 @@
 :END:
 #+title: Zorn's Lemma
 
-If \(S\) is a nonempty [[file:file:partially ordered set.org][partially ordered set]] in which every chain (a set of pairwise comparable elements) has an upper bound, then \(S\) has a maximal element. This statement is equivalent to the [[Zermelo--Fraenkel Set Theory Axioms.org][axiom of choice]].
+If \(S\) is a nonempty [[id:B95CB367-2854-4CA5-BF9F-81D0050E6A4A][partially ordered set]] in which every chain (a set of pairwise comparable elements) has an upper bound, then \(S\) has a maximal element. This statement is equivalent to the [[Zermelo--Fraenkel Set Theory Axioms.org][axiom of choice]].

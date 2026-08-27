@@ -2,7 +2,7 @@
 :ID: 04CF5E7D-FCF2-468E-A245-CD0A863FA1F7
 :END:
 #+title: Functor
-#+SETUPFILE: ../../setup.org
+#+SETUPFILE: ../../../setup.org
 #+STARTUP: latexpreview
 
 
