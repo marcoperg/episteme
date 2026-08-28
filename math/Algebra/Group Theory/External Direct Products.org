@@ -5,7 +5,7 @@
 #+title: External Direct Products
 #+SETUPFILE: ../../../setup.org
 
-Let \(G_1, G_2, ..., G_n\) be a finite collection of [[file:groups.org][groups]]. The /external direct product/ of \(G_1, G_2, .. G_n\), is
+Let \(G_1, G_2, ..., G_n\) be a finite collection of [[file:Groups.org][groups]]. The /external direct product/ of \(G_1, G_2, .. G_n\), is
 
 \[
 G_1 \oplus G_2 \oplus\dots\oplus G_n = \{\,(g_1, g_2, \dots, g_n) \,|\, g_i \in G_i\}

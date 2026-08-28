@@ -110,6 +110,14 @@ aliases: - obsolete
         self.assertTrue(any("missing file target" in message for message in messages))
         self.assertTrue(any("duplicated file: prefix" in message for message in messages))
 
+    def test_file_target_case_must_match_on_case_insensitive_filesystems(self) -> None:
+        self.write("Target.org", "#+title: Target\n")
+        self.write("note.org", "[[file:target.org][Target]]\n")
+
+        messages = [issue.message for issue in check_integrity.check_repository(self.root)]
+
+        self.assertIn("missing file target: target.org", messages)
+
     def test_literal_examples_are_not_checked_as_live_links(self) -> None:
         self.write(
             "README.org",

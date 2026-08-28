@@ -181,6 +181,19 @@ def _resolve_file_target(document: OrgDocument, raw_target: str) -> tuple[Path |
     return path.resolve(strict=False), None
 
 
+def _exists_with_exact_case(root: Path, target: Path) -> bool:
+    try:
+        relative = target.relative_to(root)
+    except ValueError:
+        return target.exists()
+    current = root
+    for part in relative.parts:
+        if not current.is_dir() or part not in {entry.name for entry in current.iterdir()}:
+            return False
+        current /= part
+    return current.exists()
+
+
 def check_repository(root: Path) -> list[Issue]:
     root = root.expanduser().resolve()
     documents: list[OrgDocument] = []
@@ -231,7 +244,7 @@ def check_repository(root: Path) -> list[Issue]:
                     _issue("WARNING", document, link.line, f"external file link is not portable: {raw_path}")
                 )
                 continue
-            if not target.exists():
+            if not _exists_with_exact_case(root, target):
                 issues.append(_issue("ERROR", document, link.line, f"missing file target: {link.value}"))
                 continue
             if target in documents_by_path:
@@ -241,7 +254,7 @@ def check_repository(root: Path) -> list[Issue]:
             target, error = _resolve_file_target(document, setup.value)
             if error:
                 issues.append(_issue("ERROR", document, setup.line, f"invalid SETUPFILE: {error}"))
-            elif target is not None and not target.exists():
+            elif target is not None and not _exists_with_exact_case(root, target):
                 issues.append(_issue("ERROR", document, setup.line, f"missing SETUPFILE: {setup.value}"))
 
     for target, incoming in incoming_file_links.items():

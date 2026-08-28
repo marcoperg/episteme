@@ -4,4 +4,4 @@
 #+title: Banach algebra
 
 * Definition
-A Banach algebra is an [[file:Associative algebra.org][associative algebra]] \(A\) over the real or complex numbers that at the same time is also a [[id:29768ACE-BD6A-47E1-9E63-EAFAEDB474AA][Banach space]].
+A Banach algebra is an [[file:Associative Algebra.org][associative algebra]] \(A\) over the real or complex numbers that at the same time is also a [[id:29768ACE-BD6A-47E1-9E63-EAFAEDB474AA][Banach space]].
