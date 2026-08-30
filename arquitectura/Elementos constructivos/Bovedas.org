@@ -1,5 +1,9 @@
 #+title: Bóvedas
 
+:RELATIONS:
+- informed-by :: [cite:@muller&vogelMullerVogelAtlas1995]
+:END:
+
 * Bóvedas de arista y de crucería
 
 Las bóvedas de arista son aquellas producidas por la interesección de dos bóvedas de cañón. Tenemos ejemplos de este tipo de bóveda en Mesopotamia y Egipto en el IV–III milenio a. C., normalmente construida con ladrillo y empleada en espacios relativamente pequeños, pasajes, tumbas o construcciones subterráneas.

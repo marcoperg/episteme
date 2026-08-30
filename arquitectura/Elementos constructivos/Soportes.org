@@ -1,5 +1,9 @@
 #+title: Soportes
 
+:RELATIONS:
+- informed-by :: [cite:@muller&vogelMullerVogelAtlas1995]
+:END:
+
 * Capiteles
 
 Uno de los usos estructurales de los capiteles es acomodar la unión entre arcos y columna aportando la magnitud que el arco necesita mientras se mantiene un grosos más sutil.

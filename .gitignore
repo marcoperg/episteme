@@ -1,6 +1,10 @@
 .DS_Store
 __pycache__/
 *.py[cod]
+/relations/generated/
+*.itf
+*.po
+*.ast
 # Created by https://www.toptal.com/developers/gitignore/api/emacs
 # Edit at https://www.toptal.com/developers/gitignore?templates=emacs
 

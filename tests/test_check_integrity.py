@@ -132,6 +132,109 @@ aliases: - example
 
         self.assertEqual(check_integrity.check_repository(self.root), [])
 
+    def test_informed_by_relation_resolves_against_bibliography(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:RELATIONS:
+- informed-by :: [cite:@sourceKey]
+:END:
+""",
+        )
+        self.write("library.bib", "@book{sourceKey,\n  title = {Source}\n}\n")
+
+        self.assertEqual(
+            check_integrity.check_repository(self.root, self.root / "library.bib"),
+            [],
+        )
+
+    def test_informed_by_relation_does_not_require_sibling_bibliography(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:RELATIONS:
+- informed-by :: [cite:@sourceKey]
+:END:
+""",
+        )
+
+        self.assertEqual(check_integrity.check_repository(self.root), [])
+
+    def test_direct_citations_are_collected_outside_relations_and_examples(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:RELATIONS:
+- informed-by :: [cite:@sourceKey]
+:END:
+Text [cite:@firstKey p. 3; @secondKey].
+[cite/t:@thirdKey]
+#+begin_src org
+[cite:@exampleKey]
+#+end_src
+""",
+        )
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(issues, [])
+        self.assertEqual(
+            [(citation.key, citation.line) for citation in documents[0].citations],
+            [("firstKey", 5), ("secondKey", 5), ("thirdKey", 6)],
+        )
+
+    def test_relation_errors(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:RELATIONS:
+- related-to :: [cite:@sourceKey]
+- informed-by :: [cite:@missingKey]
+- informed-by :: [cite:@sourceKey; @secondKey]
+not a relation
+:END:
+""",
+        )
+        self.write("library.bib", "@book{sourceKey,\n  title = {Source}\n}\n")
+
+        messages = [
+            issue.message
+            for issue in check_integrity.check_repository(self.root, self.root / "library.bib")
+        ]
+
+        self.assertIn("unknown relation predicate: related-to", messages)
+        self.assertIn("unresolved informed-by citation key: missingKey", messages)
+        self.assertTrue(any("must be exactly one Org citation" in message for message in messages))
+        self.assertTrue(any("malformed relation" in message for message in messages))
+
+    def test_unclosed_relations_drawer(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:RELATIONS:
+- informed-by :: [cite:@sourceKey]
+""",
+        )
+
+        messages = [issue.message for issue in check_integrity.check_repository(self.root)]
+
+        self.assertIn("unclosed relations drawer", messages)
+
+    def test_relations_drawer_must_be_file_level(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+* Section
+:RELATIONS:
+- informed-by :: [cite:@sourceKey]
+:END:
+""",
+        )
+
+        messages = [issue.message for issue in check_integrity.check_repository(self.root)]
+
+        self.assertIn("relations drawer must be file-level", messages)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -49,6 +49,24 @@ Org IDs and links complement this tree rather than replace it:
 - Citations record bibliographic provenance; they are not substitutes for note
   identity or conceptual links.
 
+A file-level =:RELATIONS:= drawer records explicit typed relations whose subject
+is the current note. Place it before the first heading. The first supported
+predicate is =informed-by=:
+
+#+begin_src org
+:RELATIONS:
+- informed-by :: [cite:@langAlgebra2002]
+:END:
+#+end_src
+
+This means that the note's content or the author's understanding was
+meaningfully informed by that source. It does not claim that the source is
+primary, that every statement derives from it, or that it supports every claim.
+Use one item per source and keep qualifications in the note's prose. Specific
+claims and quotations should still receive direct citations. No date is stored
+in the relation; Git records when it is introduced, changed, or removed. Use
+=C-c b= after the =::= to select its citation with Citar.
+
 IDs are required for notes explicitly used as ontology or research nodes, notes
 exported to another system, and targets of durable semantic links. They remain
 optional for course notes, reading extracts, outlines, and other material that
@@ -64,10 +82,36 @@ and links express relationships that cannot be represented by a single parent
 directory. Notes should not be duplicated across directories merely to express
 multiple classifications.
 
+* Relation queries
+
+The =relations/= Ciao package provides a rebuildable query layer over explicit
+=:RELATIONS:= entries and direct Org citations. Org files remain authoritative;
+=bin/build-relations.py= parses them through the integrity checker's shared
+parser and writes an ignored =relations/generated/relation_facts.pl= module.
+
+The stable API in =relations/episteme_relations.pl= supports authored facts with
+provenance, incoming and outgoing traversal, semantic inverses, subproperties,
+symmetric predicates, and explicitly enabled transitive predicates. Incoming
+traversal does not change a predicate: traversing an =informed_by= assertion
+backwards is distinct from deriving its semantic inverse, =informs=.
+
+#+begin_src sh
+bin/build-relations.py
+bin/query-relations references muller\&vogelMullerVogelAtlas1995
+bin/relation-toplevel
+ciaopp -V relations/relation_schema.pl
+ciaopp -V relations/episteme_relations.pl
+#+end_src
+
+See [[file:relations/README.org][=relations/README.org=]] for the data model, API, schema policy, and
+verification commands.
+
 * Support files
 
 - =bin/check-integrity.py= --- validates duplicate IDs, unresolved =id:= links,
-  relative =file:= links, =SETUPFILE= paths, property drawers, and alias syntax.
+  relative =file:= links, =SETUPFILE= paths, property and relations drawers,
+  alias syntax, and relation citation keys when Bibliotheca is available. Its
+  parser also exposes direct citations to the relation generator.
   Missing IDs and deep directory structures are intentionally allowed. Run it
   together with its standard-library tests using:
   #+begin_src sh
@@ -86,5 +130,7 @@ multiple classifications.
 - =org-roam-directory= -> this repo (=~/knowledge/episteme=).
 - =org-cite-global-bibliography= ->
   =("~/knowledge/bibliotheca/zotero-library.bib")=.
-- =C-c b= inserts a citation with Citar; =C-c B= opens a reference in the
-  generated Bibliotheca catalogue.
+- =C-c b= inserts a citation with Citar; =C-c B= opens the citation at point in
+  the generated Bibliotheca catalogue. In a Bibliotheca item, =C-c B= queries
+  the Ciao relation graph and opens a referencing Episteme note. Elsewhere it
+  selects a reference when point is not on a citation.

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Rebuild the disposable relation facts, then open the stable Ciao query API.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+"$ROOT/bin/build-relations.py" --quiet
+exec ciao toplevel -u "$ROOT/relations/episteme_relations.pl" "$@"

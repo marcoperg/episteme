@@ -1,0 +1,95 @@
+#+title: Episteme relations
+
+* Purpose
+
+This package is a rebuildable Ciao query layer over relations authored in
+Episteme Org files. Org remains authoritative. The package stores each assertion
+once and derives incoming navigation, semantic inverses, symmetric relations,
+subproperties and explicitly enabled transitive closure.
+
+* Files
+
+- =episteme_relations.pl= --- typed query API and inference rules.
+- =relation_schema.pl= --- inverse, symmetric, transitive and subproperty
+  declarations.
+- =query_relations.pl= --- command-line adapter used by Emacs.
+- =generated/relation_facts.pl= --- generated and ignored Ciao facts.
+- =../bin/build-relations.py= --- Org-to-Ciao compiler frontend.
+- =../bin/query-relations= --- rebuild-and-query wrapper.
+- =../bin/relation-toplevel= --- rebuild-and-open interactive Ciao wrapper.
+
+* Data model
+
+The generator emits identified assertions:
+
+#+begin_src prolog
+asserted(Id, Subject, Predicate, Object, Origin).
+#+end_src
+
+Current node forms are =note(Path)= and =source(CiteKey)=. Origins use
+=org(Path, Line)=. Direct citations produce =cites= assertions; file-level
+=:RELATIONS:= entries produce their declared predicate.
+
+Two generated physical indexes support efficient lookup in either direction.
+They do not constitute duplicate authored relations.
+
+* Query semantics
+
+- =asserted_relation/5= returns exactly authored assertions with provenance.
+- =immediate_relation/3= includes direct assertions and non-transitive schema
+  consequences.
+- =relation/3= additionally includes enabled transitive consequences.
+- =outgoing/3= queries from subject to object.
+- =incoming/3= queries the same predicate from object to subject.
+
+Incoming navigation is not semantic inversion. For example, querying an
+=informed_by= edge backwards retains that predicate, while the declaration
+=inverse_relation(informed_by, informs)= derives a distinct =informs= edge.
+
+Unknown predicates remain ordinary directed relations. Do not mark a predicate
+symmetric or transitive merely to make navigation convenient.
+
+* Usage
+
+Generate the fact module:
+
+#+begin_src sh
+bin/build-relations.py
+#+end_src
+
+List notes that cite or are informed by a source:
+
+#+begin_src sh
+bin/query-relations references muller\&vogelMullerVogelAtlas1995
+#+end_src
+
+The wrapper regenerates facts before querying, so interactive results follow the
+current Org files. The Emacs =C-c B= command uses this query when invoked from a
+generated Bibliotheca item; it opens the only referencing note or prompts when
+several notes cite or are informed by that source.
+
+For exploratory queries, rebuild and open the stable API in a Ciao top level:
+
+#+begin_src sh
+bin/relation-toplevel
+#+end_src
+
+The launcher imports =relations/episteme_relations.pl=. Query
+=asserted_relation/5= for authored facts with provenance, or =incoming/3=,
+=outgoing/3=, and =relation/3= for semantic traversal.
+
+* Verification
+
+Run Python tests, generate facts, check the Ciao modules and run the end-to-end
+query test:
+
+#+begin_src sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+bin/build-relations.py
+ciaopp -V relations/relation_schema.pl
+ciaopp -V relations/episteme_relations.pl
+#+end_src
+
+Ciao's tabled execution is used for cyclic schema and transitive queries. The
+graph is finite and generated without term-building recursion, which keeps the
+tabled relations finite.
