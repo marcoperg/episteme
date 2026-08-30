@@ -20,7 +20,6 @@ HEADING_RE = re.compile(r"^\*+\s")
 BEGIN_LITERAL_BLOCK_RE = re.compile(r"^#\+begin_(?:src|example|export|verbatim)\b", re.IGNORECASE)
 END_LITERAL_BLOCK_RE = re.compile(r"^#\+end_(?:src|example|export|verbatim)\b", re.IGNORECASE)
 INLINE_VERBATIM_RE = re.compile(r"(?<!\w)([=~]).*?\1")
-EXCLUDED_ORG_PATHS = {Path(".literature-notes/templates/zotero.org")}
 
 
 @dataclass(frozen=True)
@@ -200,8 +199,6 @@ def check_repository(root: Path) -> list[Issue]:
     issues: list[Issue] = []
     for path in sorted(root.rglob("*.org")):
         if ".git" in path.parts:
-            continue
-        if path.relative_to(root) in EXCLUDED_ORG_PATHS:
             continue
         document, parse_issues = _parse_document(path, root)
         documents.append(document)

@@ -74,20 +74,17 @@ multiple classifications.
   PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
   bin/check-integrity.py
   #+end_src
-  The dead Obsidian/Nunjucks template
-  =.literature-notes/templates/zotero.org= is excluded until the citation
-  migration replaces it.
 - =setup.org= --- shared LaTeX preamble (theorem environments, packages),
   pulled into math/physics notes via =#+SETUPFILE: ../setup.org=.
-- =citations.bib= --- bibliography for =[cite:@key]= references. This is the
-  *curated* slice (works I actually cite); the full Zotero library mirror lives
-  in the separate =bibliotheca= repo.
-- =.literature-notes/= --- one note per reference. Also holds
-  =templates/zotero-emacs-synergy.org=, the plan for the live Zotero <-> Emacs
-  citation pipeline (Better BibTeX + Citar + citar-org-roam), still to implement.
+- =../bibliotheca/zotero-library.bib= --- full Better BibTeX bibliography used
+  by Org Cite and Citar. If a source needs substantive commentary beyond its
+  catalogue metadata, write a normal contextual Episteme note and cite it there.
 - =.attachments/= --- images embedded in notes (linked with =[[file:...]]=).
 
 * Emacs
 
 - =org-roam-directory= -> this repo (=~/knowledge/episteme=).
-- =org-cite-global-bibliography= -> =("~/knowledge/episteme/citations.bib")=.
+- =org-cite-global-bibliography= ->
+  =("~/knowledge/bibliotheca/zotero-library.bib")=.
+- =C-c b= inserts a citation with Citar; =C-c B= opens a reference in the
+  generated Bibliotheca catalogue.

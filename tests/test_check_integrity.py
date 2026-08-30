@@ -132,14 +132,6 @@ aliases: - example
 
         self.assertEqual(check_integrity.check_repository(self.root), [])
 
-    def test_deferred_legacy_zotero_template_is_excluded(self) -> None:
-        self.write(
-            ".literature-notes/templates/zotero.org",
-            "aliases: - legacy\n[[file:missing.org][Generated placeholder]]\n",
-        )
-
-        self.assertEqual(check_integrity.check_repository(self.root), [])
-
 
 if __name__ == "__main__":
     unittest.main()
