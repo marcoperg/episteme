@@ -1,7 +1,7 @@
 :PROPERTIES:
 :ID: 20F97F45-A573-4DE7-8603-9077C3956686
 :END:
-#+title: README
+#+title: Episteme
 
 * Episteme
 
@@ -19,6 +19,37 @@ houses, trips, the logistics of daily life).
 The specific selection of topics and the reason behind them may vary; usually I
 write about what I want to understand deeper, either the topic itself or its
 connections to things in another subject.
+
+* Design principles
+
+- *Authored text is authoritative.* Notes, citations and =:RELATIONS:= drawers
+  are the source of truth. Generated indexes may always be deleted and rebuilt.
+- *The tree gives primary context.* Directory placement answers where a note
+  principally belongs; links and relations express connections that cross it.
+- *Bibliographic identity comes from Bibliotheca.* Stable Better BibTeX citekeys
+  connect notes to the sibling Zotero mirror without creating metadata-only
+  source notes in Episteme. Once used, a key should be pinned in Better BibTeX;
+  an intentional rename must update both catalogues and every Episteme use in
+  one checked change.
+- *Provenance has two levels.* =informed-by= records broad intellectual
+  influence on a note. A direct citation records evidence for a particular
+  claim or quotation and may carry a passage locator.
+- *Semantics are explicit.* Ciao derives only declared inverses, symmetry,
+  subproperties and transitivity. Reverse navigation alone never changes the
+  meaning of a predicate.
+
+* Requirements and layout
+
+Episteme is normally checked out as =~/knowledge/episteme= beside
+=~/knowledge/bibliotheca=. The sibling bibliography is optional for parsing but
+required to validate citekeys and use the full citation workflow.
+
+- Python 3 is required for integrity checks and fact generation; no third-party
+  Python packages are used.
+- Ciao is required for semantic queries and =bin/relation-toplevel=.
+- Emacs with Org and Citar is optional, but provides citation insertion and
+  bidirectional navigation.
+- Org-roam is optional and supplies note discovery and durable ID links.
 
 * Structure
 
@@ -67,6 +98,26 @@ claims and quotations should still receive direct citations. No date is stored
 in the relation; Git records when it is introduced, changed, or removed. Use
 =C-c b= after the =::= to select its citation with Citar.
 
+Passage-level citations support particular claims and quotations. Put the
+citation immediately after the material it supports and include the most stable
+available locator:
+
+#+begin_src org
+This construction appears in the third millennium BCE [cite:@sourceKey p. 42].
+
+#+begin_quote
+Exact quoted passage.
+#+end_quote
+[cite:@sourceKey pp. 42-43]
+#+end_src
+
+Use =p.= or =pp.= for pages, =chap.= for chapters, =sec.= for sections, =fig.=
+for figures, and =HH:MM:SS= for audiovisual timestamps. A stable named section
+is appropriate when pagination is unavailable. A locator is not required when a
+citation genuinely refers to the whole work. The locator's wording is preserved
+without semantic interpretation, but runs of whitespace are normalized for
+deterministic storage and display.
+
 IDs are required for notes explicitly used as ontology or research nodes, notes
 exported to another system, and targets of durable semantic links. They remain
 optional for course notes, reading extracts, outlines, and other material that
@@ -89,19 +140,35 @@ The =relations/= Ciao package provides a rebuildable query layer over explicit
 =bin/build-relations.py= parses them through the integrity checker's shared
 parser and writes an ignored =relations/generated/relation_facts.pl= module.
 
+#+begin_example
+Org notes
+   -> bin/check-integrity.py shared parser
+   -> bin/build-relations.py
+   -> relations/generated/relation_facts.pl
+   -> relations/episteme_relations.pl
+   -> Ciao top level, CLI and Emacs
+#+end_example
+
+The generated Ciao module is deliberately not committed. After a fresh clone,
+build it explicitly or invoke a wrapper that builds it first:
+
 The stable API in =relations/episteme_relations.pl= supports authored facts with
-provenance, incoming and outgoing traversal, semantic inverses, subproperties,
-symmetric predicates, and explicitly enabled transitive predicates. Incoming
-traversal does not change a predicate: traversing an =informed_by= assertion
-backwards is distinct from deriving its semantic inverse, =informs=.
+provenance, individual citation occurrences with locators, incoming and outgoing
+traversal, semantic inverses, subproperties, symmetric predicates, and explicitly
+enabled transitive predicates. Incoming traversal does not change a predicate:
+traversing an =informed_by= assertion backwards is distinct from deriving its
+semantic inverse, =informs=.
 
 #+begin_src sh
 bin/build-relations.py
 bin/query-relations references muller\&vogelMullerVogelAtlas1995
 bin/relation-toplevel
-ciaopp -V relations/relation_schema.pl
-ciaopp -V relations/episteme_relations.pl
 #+end_src
+
+=bin/query-relations= and =bin/relation-toplevel= always rebuild before loading
+the Ciao API, so they cannot silently query a stale snapshot. Generation runs
+the full repository integrity checker first and refuses malformed relations,
+broken links, or unresolved citekeys.
 
 See [[file:relations/README.org][=relations/README.org=]] for the data model, API, schema policy, and
 verification commands.
@@ -110,13 +177,19 @@ verification commands.
 
 - =bin/check-integrity.py= --- validates duplicate IDs, unresolved =id:= links,
   relative =file:= links, =SETUPFILE= paths, property and relations drawers,
-  alias syntax, and relation citation keys when Bibliotheca is available. Its
-  parser also exposes direct citations to the relation generator.
+  alias syntax, and all citation keys when Bibliotheca is available. Its parser
+  also exposes direct citation locators and exact positions to the relation
+  generator.
   Missing IDs and deep directory structures are intentionally allowed. Run it
   together with its standard-library tests using:
   #+begin_src sh
   PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+  emacs --batch -Q -L lisp -l tests/episteme-citations-test.el \
+    -f ert-run-tests-batch-and-exit
   bin/check-integrity.py
+  bin/build-relations.py
+  ciaopp -V relations/relation_schema.pl
+  ciaopp -V relations/episteme_relations.pl
   #+end_src
 - =setup.org= --- shared LaTeX preamble (theorem environments, packages),
   pulled into math/physics notes via =#+SETUPFILE: ../setup.org=.
@@ -127,10 +200,36 @@ verification commands.
 
 * Emacs
 
-- =org-roam-directory= -> this repo (=~/knowledge/episteme=).
-- =org-cite-global-bibliography= ->
-  =("~/knowledge/bibliotheca/zotero-library.bib")=.
-- =C-c b= inserts a citation with Citar; =C-c B= opens the citation at point in
-  the generated Bibliotheca catalogue. In a Bibliotheca item, =C-c B= queries
-  the Ciao relation graph and opens a referencing Episteme note. Elsewhere it
-  selects a reference when point is not on a citation.
+=lisp/episteme-citations.el= owns the knowledge-system behavior because it
+consumes Episteme's CLI contract. Personal package choices and keybindings remain
+in dotfiles. A minimal setup is:
+
+#+begin_src emacs-lisp
+(setq org-roam-directory (file-truename "~/knowledge/episteme")
+      org-cite-global-bibliography
+      (list (expand-file-name
+             "~/knowledge/bibliotheca/zotero-library.bib")))
+
+(add-to-list 'load-path
+             (expand-file-name "~/knowledge/episteme/lisp"))
+(require 'citar)
+(require 'episteme-citations)
+
+(setq org-cite-insert-processor 'citar
+      org-cite-follow-processor 'citar
+      org-cite-activate-processor 'citar
+      citar-bibliography org-cite-global-bibliography
+      citar-open-entry-function #'episteme-open-bibliotheca-entry)
+
+(global-set-key (kbd "C-c B") #'episteme-citation-dwim)
+(define-key org-mode-map (kbd "C-c b") #'org-cite-insert)
+#+end_src
+
+=C-c b= inserts a citation with Citar. =C-c B= opens the citation at point in
+the generated Bibliotheca catalogue; in a Bibliotheca item it queries the Ciao
+index and opens an exact referencing occurrence. The prompt includes predicate,
+locator, line and column, and repeated citations in one note remain separate.
+
+The package variables =episteme-directory=, =episteme-bibliotheca-file= and
+=episteme-relation-query= can be customized when the repositories do not use the
+default =~/knowledge= layout.

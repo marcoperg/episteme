@@ -16,14 +16,25 @@ FILE_LINK_RE = re.compile(r"\[\[file:([^\]\n]+)")
 SETUPFILE_RE = re.compile(r"^#\+SETUPFILE:\s*(.+?)\s*$", re.IGNORECASE)
 PROPERTY_RE = re.compile(r"^\s*:([A-Za-z0-9_]+):\s*(.*?)\s*$")
 BROKEN_ALIAS_RE = re.compile(r"^\s*(?:aliases?\s*:|\*+\s+aliases?\s*:)", re.IGNORECASE)
-HEADING_RE = re.compile(r"^\*+\s")
-BEGIN_LITERAL_BLOCK_RE = re.compile(r"^#\+begin_(?:src|example|export|verbatim)\b", re.IGNORECASE)
-END_LITERAL_BLOCK_RE = re.compile(r"^#\+end_(?:src|example|export|verbatim)\b", re.IGNORECASE)
+HEADING_CONTENT_RE = re.compile(r"^(?P<stars>\*+)\s+(?P<title>.*)$")
+COMMENT_HEADING_RE = re.compile(
+    r"^(?:[A-Z][A-Z0-9_-]*\s+)?(?:\[#[A-Z0-9]\]\s+)?COMMENT(?:\s|$)"
+)
+DRAWER_RE = re.compile(r"^:([A-Za-z][A-Za-z0-9_-]*):$")
+FIXED_WIDTH_RE = re.compile(r"^\s*:(?:\s|$)")
+BEGIN_LITERAL_BLOCK_RE = re.compile(
+    r"^#\+begin_(?:src|example|export|verbatim|comment)\b", re.IGNORECASE
+)
+END_LITERAL_BLOCK_RE = re.compile(
+    r"^#\+end_(?:src|example|export|verbatim|comment)\b", re.IGNORECASE
+)
 INLINE_VERBATIM_RE = re.compile(r"(?<!\w)([=~]).*?\1")
 RELATION_ITEM_RE = re.compile(r"^\s*-\s+([a-z][a-z0-9-]*)\s+::\s+(.+?)\s*$")
 CITATION_TARGET_RE = re.compile(r"^\[cite:@([^\]\s;]+)\]$")
 ORG_CITATION_RE = re.compile(r"\[cite(?:/[^\]:\]]+)?(?::[^\]]*)?\]")
-ORG_CITATION_KEY_RE = re.compile(r"@([^\s;,\]\[]+)")
+ORG_CITATION_REFERENCE_RE = re.compile(
+    r"@(?P<key>[^\s;,\]\[]+)(?P<locator>[^;@\]]*)"
+)
 BIBTEX_ENTRY_RE = re.compile(r"^@[A-Za-z]+\s*\{\s*([^,\s]+)\s*,", re.MULTILINE)
 RELATION_PREDICATES = {"informed-by"}
 
@@ -44,7 +55,9 @@ class LocatedRelation:
 @dataclass(frozen=True)
 class LocatedCitation:
     key: str
+    locator: str | None
     line: int
+    column: int
 
 
 @dataclass(frozen=True)
@@ -91,6 +104,8 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
     drawer_ids: list[LocatedValue] = []
     drawer_aliases: list[LocatedValue] = []
     relations_drawer_start: int | None = None
+    other_drawer_start: int | None = None
+    comment_subtree_depth: int | None = None
     seen_heading = False
     in_literal_block = False
 
@@ -104,8 +119,30 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
             continue
         if in_literal_block:
             continue
-        if HEADING_RE.match(line):
+        heading_match = HEADING_CONTENT_RE.match(line)
+        if heading_match:
             seen_heading = True
+            heading_depth = len(heading_match.group("stars"))
+            if comment_subtree_depth is not None and heading_depth <= comment_subtree_depth:
+                comment_subtree_depth = None
+            if COMMENT_HEADING_RE.match(heading_match.group("title")):
+                comment_subtree_depth = heading_depth
+            if comment_subtree_depth is not None:
+                continue
+        elif comment_subtree_depth is not None:
+            continue
+
+        drawer_match = DRAWER_RE.match(stripped)
+        if (
+            drawer_match
+            and drawer_match.group(1).upper() not in {"PROPERTIES", "RELATIONS", "END"}
+            and drawer_start is None
+            and relations_drawer_start is None
+            and other_drawer_start is None
+        ):
+            other_drawer_start = line_number
+        elif stripped == ":END:" and other_drawer_start is not None:
+            other_drawer_start = None
 
         if stripped == ":PROPERTIES:":
             if drawer_start is not None or relations_drawer_start is not None:
@@ -194,7 +231,9 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
                     else:
                         drawer_aliases.append(located)
 
-        content_line = INLINE_VERBATIM_RE.sub("", line)
+        content_line = INLINE_VERBATIM_RE.sub(
+            lambda match: " " * len(match.group(0)), line
+        )
         if re.match(r"^\s*#(?!\+)", content_line):
             content_line = ""
         if BROKEN_ALIAS_RE.match(content_line):
@@ -216,17 +255,31 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         setup_match = SETUPFILE_RE.match(line)
         if setup_match:
             document.setupfiles.append(LocatedValue(setup_match.group(1), line_number))
-        if relations_drawer_start is None:
+        if (
+            drawer_start is None
+            and relations_drawer_start is None
+            and other_drawer_start is None
+            and not FIXED_WIDTH_RE.match(content_line)
+        ):
             for citation_match in ORG_CITATION_RE.finditer(content_line):
-                document.citations.extend(
-                    LocatedCitation(key, line_number)
-                    for key in ORG_CITATION_KEY_RE.findall(citation_match.group(0))
-                )
+                citation = citation_match.group(0)
+                for reference_match in ORG_CITATION_REFERENCE_RE.finditer(citation):
+                    locator = " ".join(reference_match.group("locator").split()) or None
+                    document.citations.append(
+                        LocatedCitation(
+                            reference_match.group("key"),
+                            locator,
+                            line_number,
+                            citation_match.start() + reference_match.start() + 1,
+                        )
+                    )
 
     if drawer_start is not None:
         issues.append(_issue("ERROR", document, drawer_start, "unclosed property drawer"))
     if relations_drawer_start is not None:
         issues.append(_issue("ERROR", document, relations_drawer_start, "unclosed relations drawer"))
+    if other_drawer_start is not None:
+        issues.append(_issue("ERROR", document, other_drawer_start, "unclosed Org drawer"))
     return document, issues
 
 
@@ -285,7 +338,11 @@ def parse_repository(root: Path) -> tuple[list[OrgDocument], list[Issue]]:
     return documents, issues
 
 
-def check_repository(root: Path, bibliography: Path | None = None) -> list[Issue]:
+def check_repository(
+    root: Path,
+    bibliography: Path | None = None,
+    parsed: tuple[list[OrgDocument], list[Issue]] | None = None,
+) -> list[Issue]:
     root = root.expanduser().resolve()
     if bibliography is None:
         sibling_bibliography = root.parent / "bibliotheca" / "zotero-library.bib"
@@ -293,7 +350,8 @@ def check_repository(root: Path, bibliography: Path | None = None) -> list[Issue
     else:
         bibliography = bibliography.expanduser().resolve()
     citation_keys = _bibliography_keys(bibliography) if bibliography is not None else None
-    documents, issues = parse_repository(root)
+    documents, parsed_issues = parsed if parsed is not None else parse_repository(root)
+    issues = list(parsed_issues)
 
     ids: dict[str, list[tuple[OrgDocument, LocatedValue]]] = {}
     for document in documents:
@@ -356,6 +414,16 @@ def check_repository(root: Path, bibliography: Path | None = None) -> list[Issue
                             f"unresolved informed-by citation key: {relation.target}",
                         )
                     )
+            for citation in document.citations:
+                if citation.key not in citation_keys:
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            citation.line,
+                            f"unresolved citation key: {citation.key}",
+                        )
+                    )
 
     for target, incoming in incoming_file_links.items():
         target_document = documents_by_path[target]
@@ -389,7 +457,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--bibliography",
         type=Path,
-        help="BibTeX file used to resolve relation targets (defaults to the sibling Bibliotheca export)",
+        help="BibTeX file used to resolve citations (defaults to the sibling Bibliotheca export)",
     )
     args = parser.parse_args(argv)
 

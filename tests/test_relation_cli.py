@@ -36,9 +36,30 @@ class RelationCliTests(unittest.TestCase):
         self.assertEqual(
             set(result.stdout.splitlines()),
             {
-                "informed_by\tarquitectura/Elementos constructivos/Bovedas.org\t4",
-                "informed_by\tarquitectura/Elementos constructivos/Escaleras.org\t4",
-                "informed_by\tarquitectura/Elementos constructivos/Soportes.org\t4",
+                "informed_by\tarquitectura/Elementos constructivos/Bovedas.org\t4\t1\t",
+                "informed_by\tarquitectura/Elementos constructivos/Escaleras.org\t4\t1\t",
+                "informed_by\tarquitectura/Elementos constructivos/Soportes.org\t4\t1\t",
+            },
+        )
+
+    def test_reference_query_preserves_individual_citation_locations(self) -> None:
+        result = subprocess.run(
+            [
+                str(ROOT / "bin" / "query-relations"),
+                "references",
+                "inestaOptimalEntanglementDistribution2023",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+
+        self.assertEqual(
+            set(result.stdout.splitlines()),
+            {
+                "cites\tGIICC/Entanglement Management System.org\t12\t184\t",
+                "cites\tGIICC/Preguntas QIA.org\t7\t17\t",
             },
         )
 

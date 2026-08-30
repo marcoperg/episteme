@@ -1,7 +1,12 @@
 :- module(episteme_relations, [
     relation_node/1,
     relation_origin/1,
+    citation_locator/1,
+    citation_origin/1,
     asserted_relation/5,
+    citation_occurrence/5,
+    citations_from/4,
+    citations_to/4,
     immediate_relation/3,
     relation/3,
     outgoing/3,
@@ -12,14 +17,18 @@
 :- doc(author, "Marco Pérez").
 :- doc(module, "Queries the relation graph generated from Episteme Org files.
 
-Authored assertions are stored once. Incoming navigation, declared inverses,
-symmetric relations, subproperties, and transitive closure are derived views.
-Generated facts remain disposable; Org is the authoritative representation.").
+Authored assertions are stored once, while citation occurrences retain locators
+and exact positions. Incoming navigation, declared inverses, symmetric relations,
+subproperties, and transitive closure are derived views. Generated facts remain
+disposable; Org is the authoritative representation.").
 
 :- use_module('generated/relation_facts', [
     asserted/5,
     from_index/5,
-    to_index/5
+    to_index/5,
+    asserted_citation/5,
+    citation_from_index/5,
+    citation_to_index/5
 ]).
 :- use_module(relation_schema, [
     inverse_relation/2,
@@ -38,6 +47,15 @@ Generated facts remain disposable; Org is the authoritative representation.").
 :- trust pred to_index(Object, Predicate, Subject, Id, Origin)
    => (relation_node(Object), atm(Predicate), relation_node(Subject),
        atm(Id), relation_origin(Origin)).
+:- trust pred asserted_citation(Id, Note, Source, Locator, Origin)
+   => (atm(Id), relation_node(Note), relation_node(Source),
+       citation_locator(Locator), citation_origin(Origin)).
+:- trust pred citation_from_index(Note, Source, Locator, Id, Origin)
+   => (relation_node(Note), relation_node(Source), citation_locator(Locator),
+       atm(Id), citation_origin(Origin)).
+:- trust pred citation_to_index(Source, Note, Locator, Id, Origin)
+   => (relation_node(Source), relation_node(Note), citation_locator(Locator),
+       atm(Id), citation_origin(Origin)).
 
 :- table immediate_relation/3.
 :- table relation/3.
@@ -53,6 +71,18 @@ relation_origin(org(Path, Line)) :-
     atm(Path),
     int(Line).
 
+:- regtype citation_locator/1 # "A normalized Org citation locator, or @tt{no_locator}.".
+
+citation_locator(no_locator).
+citation_locator(locator(Value)) :- atm(Value).
+
+:- regtype citation_origin/1 # "The exact location of a citation reference.".
+
+citation_origin(org(Path, Line, Column)) :-
+    atm(Path),
+    int(Line),
+    int(Column).
+
 :- pred asserted_relation(Id, Subject, Predicate, Object, Origin)
    => (atm(Id), relation_node(Subject), atm(Predicate),
        relation_node(Object), relation_origin(Origin))
@@ -60,6 +90,30 @@ relation_origin(org(Path, Line)) :-
 
 asserted_relation(Id, Subject, Predicate, Object, Origin) :-
     asserted(Id, Subject, Predicate, Object, Origin).
+
+:- pred citation_occurrence(Id, Note, Source, Locator, Origin)
+   => (atm(Id), relation_node(Note), relation_node(Source),
+       citation_locator(Locator), citation_origin(Origin))
+   # "Returns an authored citation reference with locator and exact origin.".
+
+citation_occurrence(Id, Note, Source, Locator, Origin) :-
+    asserted_citation(Id, Note, Source, Locator, Origin).
+
+:- pred citations_from(+Note, Source, Locator, Origin)
+   => (relation_node(Note), relation_node(Source), citation_locator(Locator),
+       citation_origin(Origin))
+   # "Enumerates citation occurrences authored in @var{Note}.".
+
+citations_from(Note, Source, Locator, Origin) :-
+    citation_from_index(Note, Source, Locator, _, Origin).
+
+:- pred citations_to(+Source, Note, Locator, Origin)
+   => (relation_node(Source), relation_node(Note), citation_locator(Locator),
+       citation_origin(Origin))
+   # "Enumerates citation occurrences referring to @var{Source}.".
+
+citations_to(Source, Note, Locator, Origin) :-
+    citation_to_index(Source, Note, Locator, _, Origin).
 
 :- pred immediate_relation(Subject, Predicate, Object)
    => (relation_node(Subject), atm(Predicate), relation_node(Object))

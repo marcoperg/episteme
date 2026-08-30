@@ -14,7 +14,7 @@ Second, in classical networks, connecting each node to each other node of the ne
 A trusted node is every node in a network that enables hop-by-hop data transfer from a starting node to an ending node. This intermediary nodes are the obvious solution to both aforementioned problems. The adjective trusted comes from the fact that you have to break the quantum properties of the state and, in the case of QKD, read the Key in order to forward it to the next node on the chain.
 
 [[file:../.attachments/Pasted image 20240525204719.png]]
-Image from [cite:@aguadomartinEnablingQuantumCryptography] page 26.
+Image from [cite:@aguadomartinEnablingQuantumCryptography p. 26].
 
 * Key relay Trusted Node
 Let \(A_1, \dots, A_n\) be adjacent nodes in a QKD network, in order to forward a key from \(A_1\) to \(A_n\) in a secure manner each intermediate node must satisfy the requirements defined in this section.
@@ -33,7 +33,7 @@ Different QKD networks implement different key relay protocols between trusted n
 
 *** Hop-to-hop protocol
 [[file:../.attachments/Pasted image 20240525204719.png]]
-Image from [cite:@aguadomartinEnablingQuantumCryptography] page 26.
+Image from [cite:@aguadomartinEnablingQuantumCryptography p. 26].
 
 This is the classical approach most of today's networks use. Here, the key is generated at the start node \(A_1\), and it's forwarded iteratively to the next node until it reaches the end node \(A_n.\) The protocol goes as follows: 1. \(A_1\) generates the key \(K\). 2. Between each adjacent nodes \(A_i\) and \(A_{i+1}\) a shared secure key \(k_i\) is generated using QKD. 3. \(A_1\) encrypts \(K\) using \(k_1\), usually via a XOR, and send the encrypted key to \(A_2\) through a classical channel. 4. \(A_2\) decrypts using \(k_1\) the message in order to get back the original \(K\). 5. Steps 3 and 4 are repeated between each \(A_i\) and \(A_{i+1}\) until the key reaches \(A_n\).
 

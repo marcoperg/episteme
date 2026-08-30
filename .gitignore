@@ -348,6 +348,8 @@ TSWLatexianTemp*
 # auto folder when using emacs and auctex
 ./auto/*
 *.el
+!lisp/episteme-citations.el
+!tests/episteme-citations-test.el
 
 # expex forward references with \gathertags
 *-tags.tex

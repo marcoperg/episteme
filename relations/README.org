@@ -7,6 +7,19 @@ Episteme Org files. Org remains authoritative. The package stores each assertion
 once and derives incoming navigation, semantic inverses, symmetric relations,
 subproperties and explicitly enabled transitive closure.
 
+The layer exists to answer concrete questions --- which notes use a source,
+where a passage was cited, what relations leave a note, and what consequences
+follow from an explicitly declared schema --- without turning generated Prolog
+into another database that must be edited or synchronized by hand.
+
+* Requirements and lifecycle
+
+Run commands from the Episteme repository root. Generation needs Python 3;
+queries need Ciao. The ignored =generated/relation_facts.pl= file is absent after
+a fresh clone and is created by =bin/build-relations.py=. Both query wrappers
+rebuild it automatically. Org edits never need a corresponding manual Prolog
+edit or commit.
+
 * Files
 
 - =episteme_relations.pl= --- typed query API and inference rules.
@@ -17,6 +30,7 @@ subproperties and explicitly enabled transitive closure.
 - =../bin/build-relations.py= --- Org-to-Ciao compiler frontend.
 - =../bin/query-relations= --- rebuild-and-query wrapper.
 - =../bin/relation-toplevel= --- rebuild-and-open interactive Ciao wrapper.
+- =../lisp/episteme-citations.el= --- Emacs consumer of the query CLI.
 
 * Data model
 
@@ -30,12 +44,35 @@ Current node forms are =note(Path)= and =source(CiteKey)=. Origins use
 =org(Path, Line)=. Direct citations produce =cites= assertions; file-level
 =:RELATIONS:= entries produce their declared predicate.
 
-Two generated physical indexes support efficient lookup in either direction.
-They do not constitute duplicate authored relations.
+Each direct citation also produces an occurrence fact:
+
+#+begin_src prolog
+asserted_citation(Id, Note, Source, locator(Locator),
+                  org(Path, Line, Column)).
+#+end_src
+
+=Locator= is the whitespace-normalized Org reference suffix, such as
+=locator('p. 42')=, or =no_locator= when none was authored. Occurrences complement rather
+than replace the graph-level =cites= assertion. They preserve repeated citations
+of the same source within one note as independently navigable evidence.
+Because graph assertions carry line but not column, repeated citations of the
+same source on one line collapse to one =cites= assertion. Use the occurrence
+API, not graph-fact counts, for exact evidence locations or citation frequency.
+
+=note(Path)= is a repository-relative query address, not the note's durable Org
+=:ID:=. Renaming or moving a file therefore changes its Ciao node. Generated
+relation and occurrence IDs also include source position and are not stable
+external identifiers; only the authored Org IDs and citekeys carry durable
+identity across rebuilds.
+
+Generated physical indexes support efficient relation and citation lookup in
+either direction. They do not constitute duplicate authored information.
 
 * Query semantics
 
 - =asserted_relation/5= returns exactly authored assertions with provenance.
+- =citation_occurrence/5= returns authored citation occurrences with locators.
+- =citations_from/4= and =citations_to/4= use the occurrence indexes.
 - =immediate_relation/3= includes direct assertions and non-transitive schema
   consequences.
 - =relation/3= additionally includes enabled transitive consequences.
@@ -48,6 +85,11 @@ Incoming navigation is not semantic inversion. For example, querying an
 
 Unknown predicates remain ordinary directed relations. Do not mark a predicate
 symmetric or transitive merely to make navigation convenient.
+
+The engine supports inverse, symmetric, transitive and subproperty declarations.
+The current schema enables only =informed_by=/=informs= and
+=cites=/=cited_by= inverses; no predicate is currently declared symmetric,
+transitive or a subproperty.
 
 * Usage
 
@@ -64,9 +106,12 @@ bin/query-relations references muller\&vogelMullerVogelAtlas1995
 #+end_src
 
 The wrapper regenerates facts before querying, so interactive results follow the
-current Org files. The Emacs =C-c B= command uses this query when invoked from a
-generated Bibliotheca item; it opens the only referencing note or prompts when
-several notes cite or are informed by that source.
+current Org files. Its tab-separated rows contain predicate, path, line, column,
+and locator; the final field is empty when no locator was authored. A relation
+drawer assertion has no exact character position, so its reported column is the
+synthetic value =1=. The Emacs =C-c B= command uses these rows from a generated Bibliotheca
+item; it opens the only occurrence or prompts with every citation and
+=informed-by= assertion referring to that source.
 
 For exploratory queries, rebuild and open the stable API in a Ciao top level:
 
@@ -75,8 +120,24 @@ bin/relation-toplevel
 #+end_src
 
 The launcher imports =relations/episteme_relations.pl=. Query
-=asserted_relation/5= for authored facts with provenance, or =incoming/3=,
-=outgoing/3=, and =relation/3= for semantic traversal.
+=asserted_relation/5= for authored graph facts, =citation_occurrence/5= for exact
+passage references, or =incoming/3=, =outgoing/3=, and =relation/3= for semantic
+traversal.
+
+#+begin_src prolog
+?- citations_to(source('sourceKey'), Note, Locator, Origin).
+
+?- asserted_relation(Id, note(Path), informed_by,
+                     source('sourceKey'), Origin).
+
+?- incoming(source('sourceKey'), Predicate, note(Path)).
+
+?- outgoing(source('sourceKey'), informs, note(Path)).
+#+end_src
+
+The second query returns only authored facts and their provenance. The third
+traverses authored direction backwards without changing =Predicate=. The fourth
+asks for the separately declared semantic inverse of =informed_by=.
 
 * Verification
 
@@ -85,10 +146,20 @@ query test:
 
 #+begin_src sh
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+emacs --batch -Q -L lisp -l tests/episteme-citations-test.el \
+  -f ert-run-tests-batch-and-exit
 bin/build-relations.py
 ciaopp -V relations/relation_schema.pl
 ciaopp -V relations/episteme_relations.pl
 #+end_src
+
+The expected CiaoPP baseline is zero false assertions. =relation_schema.pl=
+checks all current contracts. Analysis of =episteme_relations.pl= also reports
+unverified contracts and unknown internal tabling predicates because the
+analyzer does not model the tabled package completely; runtime semantics are
+therefore sampled by =tests/check_relation_semantics.pl= through the Python
+suite, including authored provenance, incoming traversal, semantic inversion and
+citation lookup.
 
 Ciao's tabled execution is used for cyclic schema and transitive queries. The
 graph is finite and generated without term-building recursion, which keeps the

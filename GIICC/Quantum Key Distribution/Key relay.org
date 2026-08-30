@@ -8,11 +8,11 @@ The key relay operation consist of the transmission from node \(A_1\) to node \(
 ** Protocols
 *** Darpa (2005) protocol
 [[file:../../.attachments/Pasted image 20240525204429.png]]
-Image from [cite:@aguadomartinEnablingQuantumCryptography] page 23.
+Image from [cite:@aguadomartinEnablingQuantumCryptography p. 23].
 
 ** Q3P (SECOQC)
 [[file:../../.attachments/Pasted image 20240525204719.png]]
-Image from [cite:@aguadomartinEnablingQuantumCryptography] page 26.
+Image from [cite:@aguadomartinEnablingQuantumCryptography p. 26].
 
 ** Airbus CKMS
 [[file:../../.attachments/Pasted image 20240611105843.png]]

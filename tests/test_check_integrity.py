@@ -179,9 +179,85 @@ Text [cite:@firstKey p. 3; @secondKey].
 
         self.assertEqual(issues, [])
         self.assertEqual(
-            [(citation.key, citation.line) for citation in documents[0].citations],
-            [("firstKey", 5), ("secondKey", 5), ("thirdKey", 6)],
+            [
+                (citation.key, citation.locator, citation.line, citation.column)
+                for citation in documents[0].citations
+            ],
+            [
+                ("firstKey", "p. 3", 5, 12),
+                ("secondKey", None, 5, 28),
+                ("thirdKey", None, 6, 9),
+            ],
         )
+
+    def test_citations_inside_comment_blocks_are_not_collected(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+#+begin_comment
+[cite:@commentedKey p. 2]
+#+end_comment
+Text [cite:@liveKey p. 3].
+""",
+        )
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(issues, [])
+        self.assertEqual(
+            [(citation.key, citation.locator) for citation in documents[0].citations],
+            [("liveKey", "p. 3")],
+        )
+
+    def test_non_org_citations_are_not_collected(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:PROPERTIES:
+:CUSTOM: [cite:@propertyKey]
+:END:
+:LOGBOOK:
+[cite:@drawerKey]
+:END:
+: [cite:@fixedWidthKey]
+* TODO COMMENT Disabled
+[cite:@commentSubtreeKey]
+** Child
+[cite:@commentChildKey]
+* Live
+[cite:@liveKey]
+""",
+        )
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(issues, [])
+        self.assertEqual(
+            [citation.key for citation in documents[0].citations],
+            ["liveKey"],
+        )
+
+    def test_unclosed_generic_drawer_is_an_error(self) -> None:
+        self.write("note.org", "#+title: Note\n:LOGBOOK:\n[cite:@hiddenKey]\n")
+
+        messages = [
+            issue.message for issue in check_integrity.check_repository(self.root)
+        ]
+
+        self.assertIn("unclosed Org drawer", messages)
+
+    def test_direct_citation_key_resolves_against_bibliography(self) -> None:
+        self.write("note.org", "#+title: Note\nText [cite:@missingKey p. 3].\n")
+        self.write("library.bib", "@book{otherKey,\n  title = {Other}\n}\n")
+
+        messages = [
+            issue.message
+            for issue in check_integrity.check_repository(
+                self.root, self.root / "library.bib"
+            )
+        ]
+
+        self.assertIn("unresolved citation key: missingKey", messages)
 
     def test_relation_errors(self) -> None:
         self.write(
