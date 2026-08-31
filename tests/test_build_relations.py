@@ -34,31 +34,45 @@ class RelationBuildTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
 
+    def graph_note(self, content: str, identifier: str = "note-id") -> str:
+        return (
+            ":PROPERTIES:\n"
+            f":ID: {identifier}\n"
+            ":END:\n"
+            f"{content}"
+        )
+
     def test_generates_relation_and_citation_facts_with_two_indexes(self) -> None:
         self.write(
             "notes/O'Brien.org",
-            """#+title: Note
+            self.graph_note("""#+title: Note
 :RELATIONS:
 - informed-by :: [cite:@source&Key]
 :END:
 Direct [cite:@otherKey p. 2].
-""",
+"""),
         )
 
-        facts, citations, issues = build_relations.relation_facts(self.root)
-        rendered = build_relations.render_module(facts, citations)
+        notes, facts, citations, issues = build_relations.relation_facts(self.root)
+        rendered = build_relations.render_module(notes, facts, citations)
 
         self.assertEqual(issues, [])
+        self.assertEqual(len(notes), 1)
         self.assertEqual(len(facts), 2)
         self.assertEqual(len(citations), 1)
         self.assertIn("informed_by, source('source&Key')", rendered)
         self.assertIn("cites, source('otherKey')", rendered)
-        self.assertIn("note('notes/O\\'Brien.org')", rendered)
+        self.assertIn("note('note-id')", rendered)
+        self.assertIn(
+            "note_index(note('note-id'), 'notes/O\\'Brien.org', context('notes'))",
+            rendered,
+        )
+        self.assertIn("context_parent_index(context('notes'), context('.'))", rendered)
         self.assertEqual(rendered.count("asserted("), 2)
         self.assertEqual(rendered.count("\nfrom_index("), 2)
         self.assertEqual(rendered.count("\nto_index("), 2)
         self.assertIn("locator('p. 2')", rendered)
-        self.assertIn("org('notes/O\\'Brien.org', 5, 14)", rendered)
+        self.assertIn("org('notes/O\\'Brien.org', 8, 14)", rendered)
         self.assertEqual(rendered.count("asserted_citation("), 1)
         self.assertEqual(rendered.count("citation_from_index("), 1)
         self.assertEqual(rendered.count("citation_to_index("), 1)
@@ -66,11 +80,11 @@ Direct [cite:@otherKey p. 2].
     def test_generation_refuses_malformed_relations_without_replacing_output(self) -> None:
         self.write(
             "note.org",
-            """#+title: Note
+            self.graph_note("""#+title: Note
 :RELATIONS:
 not a relation
 :END:
-""",
+"""),
         )
         output = self.root / "facts.pl"
         output.write_text("existing\n", encoding="utf-8")
@@ -102,12 +116,15 @@ not a relation
     def test_repeated_citations_keep_distinct_occurrences(self) -> None:
         self.write(
             "note.org",
-            "#+title: Note\n[cite:@sourceKey p. 2] and [cite:@sourceKey p. 9].\n",
+            self.graph_note(
+                "#+title: Note\n[cite:@sourceKey p. 2] and [cite:@sourceKey p. 9].\n"
+            ),
         )
 
-        facts, citations, issues = build_relations.relation_facts(self.root)
+        notes, facts, citations, issues = build_relations.relation_facts(self.root)
 
         self.assertEqual(issues, [])
+        self.assertEqual([note.identifier for note in notes], ["note-id"])
         self.assertEqual(len(facts), 1)
         self.assertEqual(
             [(citation.locator, citation.column) for citation in citations],
@@ -117,19 +134,27 @@ not a relation
     def test_authored_locator_values_do_not_collide_with_missing_locator(self) -> None:
         self.write(
             "note.org",
-            "#+title: Note\n[cite:@first none] [cite:@second -] [cite:@third]\n",
+            self.graph_note(
+                "#+title: Note\n[cite:@first none] [cite:@second -] [cite:@third]\n"
+            ),
         )
 
-        facts, citations, issues = build_relations.relation_facts(self.root)
-        rendered = build_relations.render_module(facts, citations)
+        notes, facts, citations, issues = build_relations.relation_facts(self.root)
+        rendered = build_relations.render_module(notes, facts, citations)
 
         self.assertEqual(issues, [])
         self.assertIn("locator('none')", rendered)
         self.assertIn("locator('-')", rendered)
         self.assertIn("source('third'), no_locator", rendered)
+        self.assertIn(
+            "note_index(note('note-id'), 'note.org', context('.'))", rendered
+        )
 
     def test_concurrent_generation_uses_independent_temporary_files(self) -> None:
-        self.write("note.org", "#+title: Note\n[cite:@sourceKey p. 2]\n")
+        self.write(
+            "note.org",
+            self.graph_note("#+title: Note\n[cite:@sourceKey p. 2]\n"),
+        )
         output = self.root / "facts.pl"
 
         with ThreadPoolExecutor(max_workers=2) as executor:
@@ -145,6 +170,49 @@ not a relation
         self.assertEqual(results, [0, 0])
         self.assertIn("asserted_citation(", output.read_text(encoding="utf-8"))
         self.assertEqual(os.stat(output).st_mode & 0o777, 0o644)
+
+    def test_generation_refuses_graph_note_without_file_id(self) -> None:
+        self.write("note.org", "#+title: Note\n[cite:@sourceKey]\n")
+        output = self.root / "facts.pl"
+
+        errors = io.StringIO()
+        with contextlib.redirect_stderr(errors):
+            result = build_relations.main(
+                ["--root", str(self.root), "--output", str(output), "--quiet"]
+            )
+
+        self.assertEqual(result, 1)
+        self.assertIn("require a file-level :ID:", errors.getvalue())
+        self.assertFalse(output.exists())
+
+    def test_file_move_changes_context_without_changing_note_identity(self) -> None:
+        self.write(
+            "first/note.org",
+            self.graph_note("#+title: Note\n[cite:@sourceKey p. 2]\n"),
+        )
+        before_notes, before_facts, before_citations, before_issues = (
+            build_relations.relation_facts(self.root)
+        )
+        (self.root / "second").mkdir()
+        (self.root / "first" / "note.org").rename(
+            self.root / "second" / "note.org"
+        )
+
+        after_notes, after_facts, after_citations, after_issues = (
+            build_relations.relation_facts(self.root)
+        )
+
+        self.assertEqual(before_issues, [])
+        self.assertEqual(after_issues, [])
+        self.assertEqual(before_notes[0].identifier, after_notes[0].identifier)
+        self.assertEqual((before_notes[0].path, before_notes[0].context),
+                         ("first/note.org", "first"))
+        self.assertEqual((after_notes[0].path, after_notes[0].context),
+                         ("second/note.org", "second"))
+        self.assertEqual(before_facts[0].identifier, after_facts[0].identifier)
+        self.assertEqual(
+            before_citations[0].identifier, after_citations[0].identifier
+        )
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import os
 from pathlib import Path
+from pathlib import PurePosixPath
 import sys
 import tempfile
 
@@ -30,7 +31,15 @@ def load_integrity_module():
 
 
 @dataclass(frozen=True, order=True)
+class NoteRecord:
+    identifier: str
+    path: str
+    context: str
+
+
+@dataclass(frozen=True, order=True)
 class RelationFact:
+    note_id: str
     path: str
     line: int
     predicate: str
@@ -39,12 +48,13 @@ class RelationFact:
 
     @property
     def identifier(self) -> str:
-        value = f"{self.path}\0{self.line}\0{self.predicate}\0{self.target_kind}\0{self.target}"
+        value = f"{self.note_id}\0{self.line}\0{self.predicate}\0{self.target_kind}\0{self.target}"
         return "relation_" + hashlib.sha256(value.encode()).hexdigest()[:16]
 
 
 @dataclass(frozen=True)
 class CitationOccurrence:
+    note_id: str
     path: str
     line: int
     column: int
@@ -53,24 +63,38 @@ class CitationOccurrence:
 
     @property
     def identifier(self) -> str:
-        value = f"{self.path}\0{self.line}\0{self.column}\0{self.key}\0{self.locator or ''}"
+        value = f"{self.note_id}\0{self.line}\0{self.column}\0{self.key}\0{self.locator or ''}"
         return "citation_" + hashlib.sha256(value.encode()).hexdigest()[:16]
 
 
 def relation_facts(
     root: Path,
-) -> tuple[list[RelationFact], list[CitationOccurrence], list[object]]:
+) -> tuple[
+    list[NoteRecord],
+    list[RelationFact],
+    list[CitationOccurrence],
+    list[object],
+]:
     """Return normalized relation and citation facts plus parser issues."""
     integrity = load_integrity_module()
     parsed = integrity.parse_repository(root)
     documents, _ = parsed
     issues = integrity.check_repository(root, parsed=parsed)
+    notes: set[NoteRecord] = set()
     facts: set[RelationFact] = set()
     citations: set[CitationOccurrence] = set()
     for document in documents:
+        if not document.relations and not document.citations:
+            continue
+        if document.file_id is None:
+            continue
         path = document.relative_path.as_posix()
+        note_id = document.file_id.value
+        context = document.relative_path.parent.as_posix()
+        notes.add(NoteRecord(note_id, path, context))
         facts.update(
             RelationFact(
+                note_id,
                 path,
                 relation.line,
                 relation.predicate.replace("-", "_"),
@@ -80,11 +104,14 @@ def relation_facts(
             for relation in document.relations
         )
         facts.update(
-            RelationFact(path, citation.line, "cites", "source", citation.key)
+            RelationFact(
+                note_id, path, citation.line, "cites", "source", citation.key
+            )
             for citation in document.citations
         )
         citations.update(
             CitationOccurrence(
+                note_id,
                 path,
                 citation.line,
                 citation.column,
@@ -94,6 +121,7 @@ def relation_facts(
             for citation in document.citations
         )
     return (
+        sorted(notes),
         sorted(facts),
         sorted(
             citations,
@@ -117,7 +145,9 @@ def prolog_atom(value: str) -> str:
 
 
 def render_module(
-    facts: list[RelationFact], citations: list[CitationOccurrence]
+    notes: list[NoteRecord],
+    facts: list[RelationFact],
+    citations: list[CitationOccurrence],
 ) -> str:
     """Render a deterministic Ciao module with bidirectional lookup indexes."""
     lines = [
@@ -128,14 +158,16 @@ def render_module(
         "    to_index/5,",
         "    asserted_citation/5,",
         "    citation_from_index/5,",
-        "    citation_to_index/5",
+        "    citation_to_index/5,",
+        "    note_index/3,",
+        "    context_parent_index/2",
         "], []).",
         "",
     ]
     rendered_facts = []
     for fact in facts:
         identifier = prolog_atom(fact.identifier)
-        subject = f"note({prolog_atom(fact.path)})"
+        subject = f"note({prolog_atom(fact.note_id)})"
         predicate = fact.predicate
         target = f"{fact.target_kind}({prolog_atom(fact.target)})"
         origin = f"org({prolog_atom(fact.path)}, {fact.line})"
@@ -158,7 +190,7 @@ def render_module(
     rendered_citations = []
     for citation in citations:
         identifier = prolog_atom(citation.identifier)
-        note = f"note({prolog_atom(citation.path)})"
+        note = f"note({prolog_atom(citation.note_id)})"
         source = f"source({prolog_atom(citation.key)})"
         locator = (
             "no_locator"
@@ -183,6 +215,25 @@ def render_module(
         f"citation_to_index({source}, {note}, {locator}, {identifier}, {origin})."
         for identifier, note, source, locator, origin in rendered_citations
     )
+    lines.append("")
+    lines.extend(
+        f"note_index(note({prolog_atom(note.identifier)}), "
+        f"{prolog_atom(note.path)}, context({prolog_atom(note.context)}))."
+        for note in notes
+    )
+    lines.append("")
+    context_edges: set[tuple[str, str]] = set()
+    for note in notes:
+        child = PurePosixPath(note.context)
+        while child.as_posix() != ".":
+            parent = child.parent
+            context_edges.add((child.as_posix(), parent.as_posix()))
+            child = parent
+    lines.extend(
+        f"context_parent_index(context({prolog_atom(child)}), "
+        f"context({prolog_atom(parent)}))."
+        for child, parent in sorted(context_edges)
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -198,7 +249,7 @@ def main(argv: list[str] | None = None) -> int:
     if not root.is_dir():
         parser.error(f"repository root does not exist: {root}")
 
-    facts, citations, issues = relation_facts(root)
+    notes, facts, citations, issues = relation_facts(root)
     errors = [issue for issue in issues if issue.severity == "ERROR"]
     if errors:
         for issue in errors:
@@ -214,13 +265,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         os.fchmod(fd, mode)
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
-            stream.write(render_module(facts, citations))
+            stream.write(render_module(notes, facts, citations))
         temporary.replace(output)
     finally:
         temporary.unlink(missing_ok=True)
     if not args.quiet:
         print(
-            f"Wrote {output} ({len(facts)} relation(s), "
+            f"Wrote {output} ({len(notes)} note(s), {len(facts)} relation(s), "
             f"{len(citations)} citation occurrence(s))"
         )
     return 0

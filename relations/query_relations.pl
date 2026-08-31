@@ -35,9 +35,9 @@ print_reference_notes(Key) :-
    # "Returns one authored relation or citation occurrence for @var{Key}.".
 
 reference_row(Key, row(Path, Line, Column, cites, Locator)) :-
-    citations_to(source(Key), note(Path), Locator, org(Path, Line, Column)).
+    citations_to(source(Key), note(_Id), Locator, org(Path, Line, Column)).
 reference_row(Key, row(Path, Line, 1, Predicate, no_locator)) :-
-    asserted_relation(_, note(Path), Predicate, source(Key), org(Path, Line)),
+    asserted_relation(_, note(_Id), Predicate, source(Key), org(Path, Line)),
     Predicate \== cites.
 
 :- pred print_rows(Rows) : list(Rows)

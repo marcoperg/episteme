@@ -1,5 +1,9 @@
 :- module(episteme_relations, [
     relation_node/1,
+    note_node/1,
+    source_node/1,
+    context_node/1,
+    repository_path/1,
     relation_origin/1,
     citation_locator/1,
     citation_origin/1,
@@ -7,6 +11,9 @@
     citation_occurrence/5,
     citations_from/4,
     citations_to/4,
+    note_path/2,
+    primary_context/2,
+    parent_context/2,
     immediate_relation/3,
     relation/3,
     outgoing/3,
@@ -18,9 +25,11 @@
 :- doc(module, "Queries the relation graph generated from Episteme Org files.
 
 Authored assertions are stored once, while citation occurrences retain locators
-and exact positions. Incoming navigation, declared inverses, symmetric relations,
-subproperties, and transitive closure are derived views. Generated facts remain
-disposable; Org is the authoritative representation.").
+and exact positions. Notes use durable Org IDs; current paths and directory
+contexts remain queryable structural facts. Incoming navigation, declared
+inverses, symmetric relations, subproperties, and transitive closure are derived
+views. Generated facts remain disposable; Org is the authoritative
+representation.").
 
 :- use_module('generated/relation_facts', [
     asserted/5,
@@ -28,7 +37,9 @@ disposable; Org is the authoritative representation.").
     to_index/5,
     asserted_citation/5,
     citation_from_index/5,
-    citation_to_index/5
+    citation_to_index/5,
+    note_index/3,
+    context_parent_index/2
 ]).
 :- use_module(relation_schema, [
     inverse_relation/2,
@@ -48,22 +59,43 @@ disposable; Org is the authoritative representation.").
    => (relation_node(Object), atm(Predicate), relation_node(Subject),
        atm(Id), relation_origin(Origin)).
 :- trust pred asserted_citation(Id, Note, Source, Locator, Origin)
-   => (atm(Id), relation_node(Note), relation_node(Source),
-       citation_locator(Locator), citation_origin(Origin)).
+   => (atm(Id), note_node(Note), source_node(Source),
+        citation_locator(Locator), citation_origin(Origin)).
 :- trust pred citation_from_index(Note, Source, Locator, Id, Origin)
-   => (relation_node(Note), relation_node(Source), citation_locator(Locator),
-       atm(Id), citation_origin(Origin)).
+   => (note_node(Note), source_node(Source), citation_locator(Locator),
+        atm(Id), citation_origin(Origin)).
 :- trust pred citation_to_index(Source, Note, Locator, Id, Origin)
-   => (relation_node(Source), relation_node(Note), citation_locator(Locator),
-       atm(Id), citation_origin(Origin)).
+   => (source_node(Source), note_node(Note), citation_locator(Locator),
+        atm(Id), citation_origin(Origin)).
+:- trust pred note_index(Note, Path, Context)
+   => (note_node(Note), repository_path(Path), context_node(Context)).
+:- trust pred context_parent_index(Context, Parent)
+   => (context_node(Context), context_node(Parent)).
 
 :- table immediate_relation/3.
 :- table relation/3.
 
 :- regtype relation_node/1 # "An addressable node in the relation graph.".
 
-relation_node(note(Path)) :- atm(Path).
-relation_node(source(Key)) :- atm(Key).
+relation_node(Note) :- note_node(Note).
+relation_node(Source) :- source_node(Source).
+relation_node(Context) :- context_node(Context).
+
+:- regtype note_node/1 # "A note identified by a durable file-level Org ID.".
+
+note_node(note(Id)) :- atm(Id).
+
+:- regtype source_node/1 # "A bibliographic source identified by a citekey.".
+
+source_node(source(Key)) :- atm(Key).
+
+:- regtype context_node/1 # "A directory context in the Episteme tree.".
+
+context_node(context(Path)) :- repository_path(Path).
+
+:- regtype repository_path/1 # "A repository-relative file or directory path.".
+
+repository_path(Path) :- atm(Path).
 
 :- regtype relation_origin/1 # "The exact location of an authored assertion.".
 
@@ -92,7 +124,7 @@ asserted_relation(Id, Subject, Predicate, Object, Origin) :-
     asserted(Id, Subject, Predicate, Object, Origin).
 
 :- pred citation_occurrence(Id, Note, Source, Locator, Origin)
-   => (atm(Id), relation_node(Note), relation_node(Source),
+   => (atm(Id), note_node(Note), source_node(Source),
        citation_locator(Locator), citation_origin(Origin))
    # "Returns an authored citation reference with locator and exact origin.".
 
@@ -100,7 +132,7 @@ citation_occurrence(Id, Note, Source, Locator, Origin) :-
     asserted_citation(Id, Note, Source, Locator, Origin).
 
 :- pred citations_from(+Note, Source, Locator, Origin)
-   => (relation_node(Note), relation_node(Source), citation_locator(Locator),
+   => (note_node(Note), source_node(Source), citation_locator(Locator),
        citation_origin(Origin))
    # "Enumerates citation occurrences authored in @var{Note}.".
 
@@ -108,12 +140,42 @@ citations_from(Note, Source, Locator, Origin) :-
     citation_from_index(Note, Source, Locator, _, Origin).
 
 :- pred citations_to(+Source, Note, Locator, Origin)
-   => (relation_node(Source), relation_node(Note), citation_locator(Locator),
+   => (source_node(Source), note_node(Note), citation_locator(Locator),
        citation_origin(Origin))
    # "Enumerates citation occurrences referring to @var{Source}.".
 
 citations_to(Source, Note, Locator, Origin) :-
     citation_to_index(Source, Note, Locator, _, Origin).
+
+:- pred note_path(Note, Path)
+   => (note_node(Note), repository_path(Path))
+   # "Returns the current repository-relative path of an identified note.".
+
+note_path(Note, Path) :-
+    note_index(Note, Path, _).
+
+:- pred primary_context(Note, Context)
+   => (note_node(Note), context_node(Context))
+   # "Returns the note's current directory classification.".
+
+primary_context(Note, Context) :-
+    note_index(Note, _, Context).
+
+:- pred parent_context(Context, Parent)
+   => (context_node(Context), context_node(Parent))
+   # "Returns the direct parent of a repository context.".
+
+parent_context(Context, Parent) :-
+    context_parent_index(Context, Parent).
+
+:- pred structural_relation(Subject, Predicate, Object)
+   => (relation_node(Subject), atm(Predicate), relation_node(Object))
+   # "Returns a relation derived from the current repository path tree.".
+
+structural_relation(Note, primary_context, Context) :-
+    primary_context(Note, Context).
+structural_relation(Context, parent_context, Parent) :-
+    parent_context(Context, Parent).
 
 :- pred immediate_relation(Subject, Predicate, Object)
    => (relation_node(Subject), atm(Predicate), relation_node(Object))
@@ -121,8 +183,13 @@ citations_to(Source, Note, Locator, Origin) :-
 
 immediate_relation(Subject, Predicate, Object) :-
     from_index(Subject, Predicate, Object, _, _).
+immediate_relation(Subject, Predicate, Object) :-
+    structural_relation(Subject, Predicate, Object).
 immediate_relation(Subject, Inverse, Object) :-
     to_index(Subject, Predicate, Object, _, _),
+    inverse_pair(Predicate, Inverse).
+immediate_relation(Subject, Inverse, Object) :-
+    structural_relation(Object, Predicate, Subject),
     inverse_pair(Predicate, Inverse).
 immediate_relation(Subject, Predicate, Object) :-
     symmetric_relation(Predicate),

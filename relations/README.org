@@ -40,9 +40,24 @@ The generator emits identified assertions:
 asserted(Id, Subject, Predicate, Object, Origin).
 #+end_src
 
-Current node forms are =note(Path)= and =source(CiteKey)=. Origins use
-=org(Path, Line)=. Direct citations produce =cites= assertions; file-level
+Current node forms are =note(Id)=, =source(CiteKey)=, and =context(Path)=.
+=note(Id)= uses the note's file-level Org =:ID:=; origins independently retain
+=org(Path, Line)=. Direct citations produce =cites= assertions, while file-level
 =:RELATIONS:= entries produce their declared predicate.
+
+For every graph-participating note, the generator also records identity/location
+and the directory branch needed to classify it:
+
+#+begin_src prolog
+note_index(note(Id), Path, context(Directory)).
+context_parent_index(context(Directory), context(Parent)).
+#+end_src
+
+The stable API exposes these as =note_path/2=, =primary_context/2=, and
+=parent_context/2=. ID-bearing files without authored relations or citations are
+outside this generated graph, as are unrelated directory branches. Structural
+edges for participating notes also enter =relation/3=;
+=contains_note= and =child_context= are their declared semantic inverses.
 
 Each direct citation also produces an occurrence fact:
 
@@ -59,11 +74,12 @@ Because graph assertions carry line but not column, repeated citations of the
 same source on one line collapse to one =cites= assertion. Use the occurrence
 API, not graph-fact counts, for exact evidence locations or citation frequency.
 
-=note(Path)= is a repository-relative query address, not the note's durable Org
-=:ID:=. Renaming or moving a file therefore changes its Ciao node. Generated
-relation and occurrence IDs also include source position and are not stable
-external identifiers; only the authored Org IDs and citekeys carry durable
-identity across rebuilds.
+=note(Id)= is stable across a file move. =note_path/2= retains the complete
+repository-relative navigation address, and =primary_context/2= records its
+current parent directory. Moving a file therefore changes its path and structural
+relations without changing the node. Generated relation and occurrence IDs also
+include source position and are not stable external identifiers; authored Org
+IDs and citekeys carry durable identity across rebuilds.
 
 Generated physical indexes support efficient relation and citation lookup in
 either direction. They do not constitute duplicate authored information.
@@ -73,6 +89,8 @@ either direction. They do not constitute duplicate authored information.
 - =asserted_relation/5= returns exactly authored assertions with provenance.
 - =citation_occurrence/5= returns authored citation occurrences with locators.
 - =citations_from/4= and =citations_to/4= use the occurrence indexes.
+- =note_path/2= maps a graph note's durable identity to its current file path.
+- =primary_context/2= and =parent_context/2= query its generated directory branch.
 - =immediate_relation/3= includes direct assertions and non-transitive schema
   consequences.
 - =relation/3= additionally includes enabled transitive consequences.
@@ -87,9 +105,9 @@ Unknown predicates remain ordinary directed relations. Do not mark a predicate
 symmetric or transitive merely to make navigation convenient.
 
 The engine supports inverse, symmetric, transitive and subproperty declarations.
-The current schema enables only =informed_by=/=informs= and
-=cites=/=cited_by= inverses; no predicate is currently declared symmetric,
-transitive or a subproperty.
+The current schema enables =informed_by=/=informs=, =cites=/=cited_by=,
+=primary_context=/=contains_note=, and =parent_context=/=child_context= inverses.
+No predicate is currently declared symmetric, transitive or a subproperty.
 
 * Usage
 
@@ -127,17 +145,23 @@ traversal.
 #+begin_src prolog
 ?- citations_to(source('sourceKey'), Note, Locator, Origin).
 
-?- asserted_relation(Id, note(Path), informed_by,
+?- note_path(note(NoteId), Path).
+
+?- primary_context(note(NoteId), Context).
+
+?- asserted_relation(Id, note(NoteId), informed_by,
                      source('sourceKey'), Origin).
 
-?- incoming(source('sourceKey'), Predicate, note(Path)).
+?- incoming(source('sourceKey'), Predicate, note(NoteId)).
 
-?- outgoing(source('sourceKey'), informs, note(Path)).
+?- outgoing(source('sourceKey'), informs, note(NoteId)).
 #+end_src
 
-The second query returns only authored facts and their provenance. The third
-traverses authored direction backwards without changing =Predicate=. The fourth
-asks for the separately declared semantic inverse of =informed_by=.
+The second query resolves stable identity to physical location, and the third
+returns its current directory classification. The fourth returns only authored
+facts and provenance. The fifth traverses authored direction backwards without
+changing =Predicate=; the sixth asks for the separately declared semantic inverse
+of =informed_by=.
 
 * Verification
 

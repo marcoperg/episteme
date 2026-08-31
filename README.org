@@ -25,7 +25,12 @@ connections to things in another subject.
 - *Authored text is authoritative.* Notes, citations and =:RELATIONS:= drawers
   are the source of truth. Generated indexes may always be deleted and rebuilt.
 - *The tree gives primary context.* Directory placement answers where a note
-  principally belongs; links and relations express connections that cross it.
+  principally belongs; the generated graph represents that placement as
+  =primary_context= and =parent_context= relations. Links and authored relations
+  express connections that cross the tree.
+- *Identity and location are distinct.* A graph-participating note is identified
+  by its file-level Org =:ID:=. Its repository-relative path remains its current
+  location, navigation address, and source of directory classification.
 - *Bibliographic identity comes from Bibliotheca.* Stable Better BibTeX citekeys
   connect notes to the sibling Zotero mirror without creating metadata-only
   source notes in Episteme. Once used, a key should be pinned in Better BibTeX;
@@ -81,10 +86,15 @@ Org IDs and links complement this tree rather than replace it:
   identity or conceptual links.
 
 A file-level =:RELATIONS:= drawer records explicit typed relations whose subject
-is the current note. Place it before the first heading. The first supported
-predicate is =informed-by=:
+is the current note's durable =:ID:=. Place it before the first heading. The
+first supported predicate is =informed-by=:
 
 #+begin_src org
+:PROPERTIES:
+:ID:       01234567-89AB-CDEF-0123-456789ABCDEF
+:END:
+#+title: Example note
+
 :RELATIONS:
 - informed-by :: [cite:@langAlgebra2002]
 :END:
@@ -118,11 +128,13 @@ citation genuinely refers to the whole work. The locator's wording is preserved
 without semantic interpretation, but runs of whitespace are normalized for
 deterministic storage and display.
 
-IDs are required for notes explicitly used as ontology or research nodes, notes
-exported to another system, and targets of durable semantic links. They remain
-optional for course notes, reading extracts, outlines, and other material that
-does not need an independent persistent identity. A note can be promoted later
-by assigning an ID when it first becomes a meaningful link target.
+File-level IDs are required for notes explicitly used as ontology or research
+nodes, notes exported to another system, targets of durable semantic links, and
+any file containing a direct citation or =:RELATIONS:= entry. Those authored
+facts make the file a relation-graph node, so generation refuses to identify it
+by a mutable path. IDs remain optional for course notes, reading extracts,
+outlines, and other material that does not participate in the graph. A note can
+be promoted later by assigning an ID when it first becomes meaningful there.
 
 =:ROAM_ALIASES:= is the canonical alias representation. Obsidian/YAML forms such
 as =aliases: - first name - second name= are migration artifacts and are not
@@ -155,7 +167,9 @@ build it explicitly or invoke a wrapper that builds it first:
 The stable API in =relations/episteme_relations.pl= supports authored facts with
 provenance, individual citation occurrences with locators, incoming and outgoing
 traversal, semantic inverses, subproperties, symmetric predicates, and explicitly
-enabled transitive predicates. Incoming traversal does not change a predicate:
+enabled transitive predicates. It also maps stable =note(ID)= nodes to their
+current paths and derives =primary_context= and =parent_context= from directory
+placement. Incoming traversal does not change a predicate:
 traversing an =informed_by= assertion backwards is distinct from deriving its
 semantic inverse, =informs=.
 
@@ -177,10 +191,12 @@ verification commands.
 
 - =bin/check-integrity.py= --- validates duplicate IDs, unresolved =id:= links,
   relative =file:= links, =SETUPFILE= paths, property and relations drawers,
-  alias syntax, and all citation keys when Bibliotheca is available. Its parser
+  graph-node IDs, alias syntax, and all citation keys when Bibliotheca is
+  available. Its parser
   also exposes direct citation locators and exact positions to the relation
   generator.
-  Missing IDs and deep directory structures are intentionally allowed. Run it
+  Missing IDs outside the relation graph and deep directory structures are
+  intentionally allowed. Run it
   together with its standard-library tests using:
   #+begin_src sh
   PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v

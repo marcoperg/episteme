@@ -79,6 +79,7 @@ class OrgDocument:
     relations: list[LocatedRelation]
     citations: list[LocatedCitation]
     has_file_id: bool
+    file_id: LocatedValue | None
 
 
 def _issue(severity: str, document: OrgDocument, line: int, message: str) -> Issue:
@@ -98,6 +99,7 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         relations=[],
         citations=[],
         has_file_id=False,
+        file_id=None,
     )
     issues: list[Issue] = []
     drawer_start: int | None = None
@@ -106,6 +108,7 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
     relations_drawer_start: int | None = None
     other_drawer_start: int | None = None
     comment_subtree_depth: int | None = None
+    file_level_id_count = 0
     seen_heading = False
     in_literal_block = False
 
@@ -168,7 +171,24 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
                         )
                     )
             if drawer_ids and not seen_heading:
-                document.has_file_id = True
+                file_level_id_count += len(drawer_ids)
+                if file_level_id_count > 1:
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            drawer_ids[0].line,
+                            "file must have exactly one file-level :ID:",
+                        )
+                    )
+                    document.has_file_id = False
+                    document.file_id = None
+                elif drawer_ids[0].value:
+                    document.has_file_id = True
+                    document.file_id = drawer_ids[0]
+                else:
+                    document.has_file_id = False
+                    document.file_id = None
             drawer_start = None
             drawer_ids = []
             drawer_aliases = []
@@ -355,6 +375,19 @@ def check_repository(
 
     ids: dict[str, list[tuple[OrgDocument, LocatedValue]]] = {}
     for document in documents:
+        if (document.relations or document.citations) and document.file_id is None:
+            graph_lines = [
+                located.line
+                for located in (*document.relations, *document.citations)
+            ]
+            issues.append(
+                _issue(
+                    "ERROR",
+                    document,
+                    min(graph_lines),
+                    "notes with relations or citations require a file-level :ID:",
+                )
+            )
         for identifier in document.ids:
             if not identifier.value:
                 issues.append(_issue("ERROR", document, identifier.line, "empty :ID: property"))

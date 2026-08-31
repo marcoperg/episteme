@@ -135,7 +135,10 @@ aliases: - example
     def test_informed_by_relation_resolves_against_bibliography(self) -> None:
         self.write(
             "note.org",
-            """#+title: Note
+            """:PROPERTIES:
+:ID: note-id
+:END:
+#+title: Note
 :RELATIONS:
 - informed-by :: [cite:@sourceKey]
 :END:
@@ -151,7 +154,10 @@ aliases: - example
     def test_informed_by_relation_does_not_require_sibling_bibliography(self) -> None:
         self.write(
             "note.org",
-            """#+title: Note
+            """:PROPERTIES:
+:ID: note-id
+:END:
+#+title: Note
 :RELATIONS:
 - informed-by :: [cite:@sourceKey]
 :END:
@@ -247,7 +253,11 @@ Text [cite:@liveKey p. 3].
         self.assertIn("unclosed Org drawer", messages)
 
     def test_direct_citation_key_resolves_against_bibliography(self) -> None:
-        self.write("note.org", "#+title: Note\nText [cite:@missingKey p. 3].\n")
+        self.write(
+            "note.org",
+            ":PROPERTIES:\n:ID: note-id\n:END:\n"
+            "#+title: Note\nText [cite:@missingKey p. 3].\n",
+        )
         self.write("library.bib", "@book{otherKey,\n  title = {Other}\n}\n")
 
         messages = [
@@ -262,7 +272,10 @@ Text [cite:@liveKey p. 3].
     def test_relation_errors(self) -> None:
         self.write(
             "note.org",
-            """#+title: Note
+            """:PROPERTIES:
+:ID: note-id
+:END:
+#+title: Note
 :RELATIONS:
 - related-to :: [cite:@sourceKey]
 - informed-by :: [cite:@missingKey]
@@ -282,6 +295,68 @@ not a relation
         self.assertIn("unresolved informed-by citation key: missingKey", messages)
         self.assertTrue(any("must be exactly one Org citation" in message for message in messages))
         self.assertTrue(any("malformed relation" in message for message in messages))
+
+    def test_graph_notes_require_a_file_level_id(self) -> None:
+        self.write("note.org", "#+title: Note\nText [cite:@sourceKey].\n")
+
+        messages = [
+            issue.message for issue in check_integrity.check_repository(self.root)
+        ]
+
+        self.assertIn(
+            "notes with relations or citations require a file-level :ID:",
+            messages,
+        )
+
+    def test_file_has_only_one_file_level_id(self) -> None:
+        self.write(
+            "note.org",
+            """:PROPERTIES:
+:ID: first
+:ID: second
+:END:
+#+title: Note
+[cite:@sourceKey]
+""",
+        )
+
+        messages = [
+            issue.message for issue in check_integrity.check_repository(self.root)
+        ]
+
+        self.assertIn("file must have exactly one file-level :ID:", messages)
+
+    def test_separate_file_property_drawers_do_not_select_an_id(self) -> None:
+        self.write(
+            "note.org",
+            """:PROPERTIES:
+:ID: first
+:END:
+#+title: Note
+:PROPERTIES:
+:ID: second
+:END:
+[cite:@sourceKey]
+""",
+        )
+
+        documents, parse_issues = check_integrity.parse_repository(self.root)
+
+        self.assertIn(
+            "file must have exactly one file-level :ID:",
+            [issue.message for issue in parse_issues],
+        )
+        self.assertIsNone(documents[0].file_id)
+
+    def test_empty_file_id_is_not_selected(self) -> None:
+        self.write(
+            "note.org",
+            ":PROPERTIES:\n:ID:\n:END:\n#+title: Note\n[cite:@sourceKey]\n",
+        )
+
+        documents, _ = check_integrity.parse_repository(self.root)
+
+        self.assertIsNone(documents[0].file_id)
 
     def test_unclosed_relations_drawer(self) -> None:
         self.write(

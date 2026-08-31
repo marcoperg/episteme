@@ -36,9 +36,9 @@ class RelationCliTests(unittest.TestCase):
         self.assertEqual(
             set(result.stdout.splitlines()),
             {
-                "informed_by\tarquitectura/Elementos constructivos/Bovedas.org\t4\t1\t",
-                "informed_by\tarquitectura/Elementos constructivos/Escaleras.org\t4\t1\t",
-                "informed_by\tarquitectura/Elementos constructivos/Soportes.org\t4\t1\t",
+                "informed_by\tarquitectura/Elementos constructivos/Bovedas.org\t7\t1\t",
+                "informed_by\tarquitectura/Elementos constructivos/Escaleras.org\t7\t1\t",
+                "informed_by\tarquitectura/Elementos constructivos/Soportes.org\t7\t1\t",
             },
         )
 

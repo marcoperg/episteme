@@ -17,6 +17,8 @@ their semantics are justified by a repeated query or documented use case.").
 
 inverse_relation(informed_by, informs).
 inverse_relation(cites, cited_by).
+inverse_relation(primary_context, contains_note).
+inverse_relation(parent_context, child_context).
 
 :- pred symmetric_relation(Predicate)
    => atm(Predicate)
