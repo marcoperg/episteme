@@ -1,0 +1,85 @@
+
+:PROPERTIES:
+:ID: 3FBF6A9C-60F1-4FDD-8753-E749385C579E
+:END:
+#+title: El método lógico en la China antigua
+
+:RELATIONS:
+- informed-by :: [cite:@hushihDevelopmentLogicalMethod1922]
+:END:
+
+* Trasfondo histórico
+
+Hú Shì delimita el primer período de la filosofía china entre los años 600 y 210 a. e. c. y estudia sus doctrinas morales, políticas y educativas en la medida en que permiten reconstruir el nacimiento y desarrollo del método lógico. Su relato no debe confundirse con una descripción historiográfica neutral: expresiones como «Ilustración», «sofistas», «nihilismo» o «anarquismo» forman parte de una reconstrucción comparativa, elaborada a comienzos del siglo XX con categorías procedentes de la filosofía occidental. [cite:@hushihDevelopmentLogicalMethod1922 p. 1]
+
+** Desintegración del orden Zhōu
+Según la cronología seguida por Hú, la caída del poder Zhōu occidental en 771 a. e. c. y el traslado de la corte hacia el este en 770 inauguraron un período en el que la autoridad central nunca recuperó su antigua fuerza. El monarca había sido la cabeza temporal y espiritual de una jerarquía que ordenaba minuciosamente las relaciones entre la corte, los señores vasallos, los altos funcionarios, los =shì= y el pueblo común. Su debilitamiento permitió que algunos estados ampliaran sus territorios, formaran alianzas y disputaran la hegemonía mediante guerras cada vez más frecuentes. Los centenares de estados vasallos terminaron reducidos a siete grandes potencias, seis de las cuales serían conquistadas por Qín. [cite:@hushihDevelopmentLogicalMethod1922 pp. 1-3]
+
+La guerra y los continuos cambios de lealtad política contribuyeron, en la interpretación de Hú, a descomponer también la jerarquía social. Mientras las casas derrotadas perdían su rango, la necesidad de soldados, diplomáticos y administradores permitió ascender a personas de origen humilde; incluso campesinos, esclavos y comerciantes llegaron a ejercer influencia política. La capacidad práctica comenzó así a competir con el nacimiento como criterio de promoción. [cite:@hushihDevelopmentLogicalMethod1922 p. 3]
+
+** Del malestar social a la agitación intelectual
+Hú utiliza el /Libro de la poesía/ como testimonio de las consecuencias sociales de esta transformación. Las composiciones que selecciona describen el exilio de casas gobernantes, las campañas que separaban a los soldados de sus familias, el abandono de los cultivos, la explotación del trabajo, la pobreza, el hambre y la desigual distribución de las cargas públicas. En ellas encuentra una imagen de sufrimiento colectivo que afecta tanto a los antiguos privilegiados como al pueblo. [cite:@hushihDevelopmentLogicalMethod1922 pp. 3-6]
+
+De esas condiciones no deduce un «nihilismo» propio de todo el pensamiento chino, sino la aparición de determinadas actitudes de crítica, protesta y desesperación. Los poemas denuncian la ociosidad y corrupción de los poderosos, cuestionan la justicia del gobierno y, en algunos casos, expresan resignación fatalista, pesimismo o una invitación a disfrutar del presente. Para Hú, el desorden social se convierte de este modo en agitación intelectual. [cite:@hushihDevelopmentLogicalMethod1922 pp. 6-9]
+
+** De la edad de los poetas a la edad de los sofistas
+Hú denomina «era de la Ilustración» al arco formado por la «edad de los poetas» de los siglos VIII y VII a. e. c. y la «edad de los sofistas» que sitúa desde el siglo VI. Poetas y sofistas serían los precursores de los pensadores sistemáticos posteriores. El propio Hú reconoce que emplea «sofistas» por falta de un término mejor: la palabra reúne bajo una analogía griega tanto la continuidad de la protesta poética como el surgimiento de maestros, polemistas y filósofos más sistemáticos. [cite:@hushihDevelopmentLogicalMethod1922 p. 10]
+
+** Los eremitas y la retirada del mundo
+Una respuesta a la corrupción fue «huir del mundo». Hú agrupa como «cínicos» a quienes se ocultaban como campesinos, obreros, porteros o «locos», y recurre a episodios de las /Analectas/ en los que se reprocha a Confucio su empeño en reformar una sociedad concebida como un torrente imposible de gobernar. Su retiro no sería una simple pasividad: mediante una vida de sencillez, pureza y alejamiento de la lucha política, estos eremitas convertían su conducta en protesta y proponían implícitamente un remedio. [cite:@hushihDevelopmentLogicalMethod1922 pp. 10-11]
+
+** Dèng Xī y la argumentación
+El nombre de «sofistas» se aplica con mayor propiedad, dentro del esquema de Hú, a maestros públicos que difundían ideas radicales sobre la sociedad y el gobierno y enseñaban conducta privada y pública, debate y defensa ante los tribunales. Su aparición respondía a la demanda de capacidades útiles para la política, la diplomacia y la guerra. La discusión dejó así de ser solamente una forma de protesta y se convirtió también en una profesión y una técnica. [cite:@hushihDevelopmentLogicalMethod1922 pp. 11-12]
+
+Dèng Xī representa este tránsito. Hú le atribuye la doctrina de la relatividad de lo correcto y lo incorrecto, una argumentación inagotable, la redacción de un código penal y la enseñanza de técnicas de litigación. También relata sus recursos para eludir sucesivas prohibiciones gubernamentales sobre la difusión de panfletos. Puesto que el propio Hú advierte que las fuentes conservadas son secundarias, hostiles o textualmente problemáticas, estos rasgos describen ante todo la reconstrucción que él hace de Dèng Xī. [cite:@hushihDevelopmentLogicalMethod1922 pp. 12-13]
+
+** Lǎozǐ
+Hú presenta a Lǎozǐ como el mayor de los sofistas, el «Protágoras de la China antigua» y la encarnación del espíritu de su «era de la Ilustración». También califica su crítica de destructiva e iconoclasta y su filosofía de nihilista. Estas denominaciones pertenecen al marco comparativo de Hú, no constituyen por sí solas una clasificación histórica indiscutida. [cite:@hushihDevelopmentLogicalMethod1922 pp. 13-14]
+
+La base metafísica que Hú atribuye a esta filosofía es la derivación del ser a partir del no-ser. El vacío del cubo hace útil la rueda y el hueco del recipiente hace útil la vasija: el no-ser designa aquí la ausencia que posibilita una función. Hú relaciona esta idea con los pasajes en los que aquello que precede al cielo y la tierra es concebido como comienzo y «madre» del mundo. [cite:@hushihDevelopmentLogicalMethod1922 p. 14]
+
+** No-ser, naturaleza y no-acción
+Mediante lo que Hú llama una analogía metafísica, la primacía del no-ser conduce a un «estado de naturaleza» definido por la inocencia, la simplicidad y la no-acción. Su expresión utópica sería un país pequeño y poco poblado, sin necesidad de emplear vehículos ni armas y con comunidades tan autosuficientes que apenas mantendrían contacto con sus vecinas. Desde ese ideal, Lǎozǐ critica el refinamiento artificial de la civilización y las distinciones morales que aparecen cuando se ha perdido la espontaneidad originaria. [cite:@hushihDevelopmentLogicalMethod1922 pp. 14-15]
+
+** Política de la no intervención
+En el plano político, *wúwéi* no significa que toda la población deba permanecer inactiva. Hú lo interpreta principalmente como no intervención del gobernante: cuantas más prohibiciones, armas, habilidades artificiosas y leyes se multiplican, mayor es el desorden; cuando el sabio no interviene, no impone políticas y reduce sus deseos, el pueblo se reforma, prospera y recupera por sí mismo la sencillez. El modelo es un gobierno cuya presencia apenas se percibe. [cite:@hushihDevelopmentLogicalMethod1922 pp. 15-16]
+
+Hú describe esta doctrina con los términos «/laissez-faire/» y «anarquismo» y la compara expresamente con Herbert Spencer. La comparación explica el sentido que él da a la no-acción, pero también muestra el carácter históricamente situado de su interpretación: no se trata de identificar sin más *wúwéi* con una teoría política occidental moderna. [cite:@hushihDevelopmentLogicalMethod1922 pp. 15-16]
+
+** La búsqueda del dào
+La crisis no desemboca únicamente en retirada o crítica destructiva. Hú encuentra ya el anuncio de un pensamiento constructivo en la búsqueda del *dào*, término que interpreta de forma desmitificadora como «camino» o «método»: una vía para la vida individual, las relaciones sociales, la acción pública, el gobierno y, en general, para comprender, ordenar y mejorar el mundo. Esta búsqueda constituiría el problema común de los filósofos chinos; Lǎozǐ habría respondido identificando el *dào* con el no-ser y la no-acción. [cite:@hushihDevelopmentLogicalMethod1922 pp. 16-17]
+
+** Tiempo y cambio
+Pese a su lectura «nihilista» de Lǎozǐ, Hú identifica en ella elementos constructivos que habrían influido en pensadores posteriores, especialmente en Confucio. El primero es una concepción del cambio como proceso continuo: conocer la «madre» permite comprender al «hijo», y comprender los modos del pasado permite dominar las cosas del presente. Hú ve aquí una formulación temprana del método histórico o genético. Puesto que lo difícil comienza siendo fácil y lo grande comienza siendo pequeño, el cambio puede comprenderse y orientarse si se atiende a sus comienzos. [cite:@hushihDevelopmentLogicalMethod1922 pp. 17-18]
+
+Esta concepción no es, sin embargo, una progresión lineal inequívoca. Hú señala una tensión entre el desarrollo continuo de lo simple y pequeño hacia lo complejo y grande, por una parte, y el deseo de abolir la civilización compleja para retornar a la simplicidad y la no-acción originarias, por otra. Esta segunda tendencia convierte el cambio en un proceso cíclico susceptible de inversiones periódicas. [cite:@hushihDevelopmentLogicalMethod1922 p. 18]
+
+** Conocimiento /a priori/
+El segundo elemento constructivo es una teoría fragmentaria del conocimiento. Según la lectura de Hú, Lǎozǐ desconfía del saber adquirido por acumulación cuando se trata de alcanzar el verdadero camino. El conocimiento auténtico aparece al simplificar o disminuir los deseos y necesidades hasta llegar a la naturalidad y la no-afirmación. Solo en ese marco cobra sentido la paradoja de que el mundo pueda conocerse sin salir de casa y de que cuanto más lejos se viaje menos se conozca. Hú interpreta esta doctrina como conocimiento /a priori/ y como una exaltación de la mente individual propia de la época. [cite:@hushihDevelopmentLogicalMethod1922 pp. 18-19]
+
+** Los nombres
+Hú encuentra una posible explicación de ese conocimiento en la función del nombre. Los nombres permiten juzgar los comienzos y conocer las cosas; cuando surgen las instituciones, permiten además que el pueblo sepa dónde detenerse y evite el peligro. Poseen, por tanto, una doble función cognoscitiva y social: hacen reconocible la realidad y sirven para ordenar la convivencia. [cite:@hushihDevelopmentLogicalMethod1922 p. 19]
+
+Esta valoración convive con la preferencia de Lǎozǐ por el *dào* innominado y por un estado natural anterior a las distinciones. Desde esa perspectiva, los nombres que separan belleza y fealdad, bien y mal, o afirmación y negación serían productos artificiales y degradantes. Hú considera que esta preferencia impidió desarrollar plenamente la intuición acerca de los nombres, del mismo modo que el retorno a la simplicidad limitó su concepción del cambio. [cite:@hushihDevelopmentLogicalMethod1922 pp. 19-20]
+
+** De la sofística a la lógica
+Para Hú, el mero hecho de convertir los nombres en objeto de discusión muestra que el pensamiento comenzaba a examinar sus propios instrumentos. La emancipación intelectual de la «Ilustración», la enseñanza pública del debate y la crítica de Dèng Xī y Lǎozǐ habían desestabilizado los criterios tradicionales de verdad y moralidad; precisamente por ello hicieron necesaria una reflexión más disciplinada y constructiva. La edad de la sofística preparó y aceleró así el paso a la edad de la lógica. [cite:@hushihDevelopmentLogicalMethod1922 p. 20]
+
+
+* La lógica confuciana
+
+:AGENT_TODO:
+This is a note for the agent that will organize this info. This note standard that I'm using for the fisrt time in this repo can be useful for quickly note taking that after can be reorganize by the bibliotecary agent that handles this notes (you in this case). Think about how this can be implemented to the system, probably just a note in the proper README will suffy, then the agent can grep or somethinkg. Think about the name of the tag also.
+
+In this case I want you to take a look at the notes I'm writting, some with page number (p. X), and check them against the informed pdf, in order to improve a bit the explanations and thouroughness. Similar to the first section of the org.
+:END:
+
+** La reitifiación de los nombres: el problema de Confucio
+Este es uno de los temas centrales del problema que plantea Confucio según HūShì. La idea central detrás de esta reitificación está en el pedir de que los nombres sigifiquen lo que deberían de significar y no lo que significan en la acutalidad. (p. 26)
+
+
+*Nota*: Hú Shì señala una gran similitud entre el positivismo de Comte y la visión de los nombres que de Confucio.
+
+* Lógica de Mòzǐ y la escuela mohista
+
+* Evolución de la lógica china
