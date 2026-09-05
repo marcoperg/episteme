@@ -6,14 +6,34 @@ import subprocess
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[1]
+INFRA = Path(__file__).resolve().parents[1]
+ROOT = INFRA.parent
 
 
 @unittest.skipUnless(shutil.which("ciao-shell"), "Ciao is not installed")
 class RelationCliTests(unittest.TestCase):
+    def test_reference_query_does_not_rebuild_generated_facts(self) -> None:
+        generated = INFRA / "ciao" / "relations" / "generated" / "relation_facts.pl"
+        before = generated.stat().st_mtime_ns if generated.exists() else None
+
+        subprocess.run(
+            [
+                str(INFRA / "bin" / "query-relations"),
+                "references",
+                "muller&vogelMullerVogelAtlas1995",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+
+        after = generated.stat().st_mtime_ns if generated.exists() else None
+        self.assertEqual(after, before)
+
     def test_runtime_distinguishes_incoming_traversal_from_semantic_inverse(self) -> None:
         subprocess.run(
-            ["ciao-shell", str(ROOT / "tests" / "check_relation_semantics.pl")],
+            ["ciao-shell", str(INFRA / "tests" / "check_relation_semantics.pl")],
             cwd=ROOT,
             capture_output=True,
             text=True,
@@ -23,7 +43,7 @@ class RelationCliTests(unittest.TestCase):
     def test_reference_query_returns_all_informed_architecture_notes(self) -> None:
         result = subprocess.run(
             [
-                str(ROOT / "bin" / "query-relations"),
+                str(INFRA / "bin" / "query-relations"),
                 "references",
                 "muller&vogelMullerVogelAtlas1995",
             ],
@@ -45,7 +65,7 @@ class RelationCliTests(unittest.TestCase):
     def test_reference_query_preserves_individual_citation_locations(self) -> None:
         result = subprocess.run(
             [
-                str(ROOT / "bin" / "query-relations"),
+                str(INFRA / "bin" / "query-relations"),
                 "references",
                 "inestaOptimalEntanglementDistribution2023",
             ],

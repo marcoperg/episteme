@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# Rebuild the disposable fact module, then run the Ciao query CLI.
-set -euo pipefail
-
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-"$ROOT/bin/build-relations.py" --quiet
-exec "$ROOT/relations/query_relations.pl" "$@"

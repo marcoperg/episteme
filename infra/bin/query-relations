@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Query a live in-memory snapshot of the Org repository.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+cd "$ROOT"
+exec "$ROOT/infra/ciao/relations/query_relations.pl" "$@"

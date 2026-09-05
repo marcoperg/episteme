@@ -1,6 +1,8 @@
 ;;; episteme-citations-test.el --- tests for Episteme citation UI  -*- lexical-binding: t; -*-
 
 (require 'ert)
+(add-to-list 'load-path
+             (expand-file-name "../emacs" (file-name-directory load-file-name)))
 (require 'episteme-citations)
 
 (ert-deftest episteme-parse-reference-row-with-locator ()

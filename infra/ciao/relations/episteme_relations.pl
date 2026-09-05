@@ -28,10 +28,10 @@ Authored assertions are stored once, while citation occurrences retain locators
 and exact positions. Notes use durable Org IDs; current paths and directory
 contexts remain queryable structural facts. Incoming navigation, declared
 inverses, symmetric relations, subproperties, and transitive closure are derived
-views. Generated facts remain disposable; Org is the authoritative
+views. Snapshot facts remain disposable; Org is the authoritative
 representation.").
 
-:- use_module('generated/relation_facts', [
+:- use_module('../org/org_snapshot', [
     asserted/5,
     from_index/5,
     to_index/5,
@@ -41,14 +41,14 @@ representation.").
     note_index/3,
     context_parent_index/2
 ]).
-:- use_module(relation_schema, [
+:- use_module('./relation_schema', [
     inverse_relation/2,
     symmetric_relation/1,
     transitive_relation/1,
     subproperty_relation/2
 ]).
 
-% The generated module is validated before it is atomically replaced.
+% The snapshot provider validates a complete replacement before installation.
 :- trust pred asserted(Id, Subject, Predicate, Object, Origin)
    => (atm(Id), relation_node(Subject), atm(Predicate),
        relation_node(Object), relation_origin(Origin)).

@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
 """Check structural integrity of the Episteme Org repository."""
 
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import hashlib
 from pathlib import Path
 import re
 import sys
@@ -37,6 +37,7 @@ ORG_CITATION_REFERENCE_RE = re.compile(
 )
 BIBTEX_ENTRY_RE = re.compile(r"^@[A-Za-z]+\s*\{\s*([^,\s]+)\s*,", re.MULTILINE)
 RELATION_PREDICATES = {"informed-by"}
+ROOT = Path(__file__).resolve().parents[3]
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,17 @@ class LocatedCitation:
 
 
 @dataclass(frozen=True)
+class AgentTodo:
+    fingerprint: str
+    path: Path
+    heading_path: tuple[str, ...]
+    body: str
+    start_line: int
+    end_line: int
+    citation_hints: tuple[LocatedCitation, ...]
+
+
+@dataclass(frozen=True)
 class Issue:
     severity: str
     path: Path
@@ -72,6 +84,7 @@ class Issue:
 class OrgDocument:
     path: Path
     relative_path: Path
+    source_digest: str
     ids: list[LocatedValue]
     id_links: list[LocatedValue]
     file_links: list[LocatedValue]
@@ -80,18 +93,44 @@ class OrgDocument:
     citations: list[LocatedCitation]
     has_file_id: bool
     file_id: LocatedValue | None
+    todos: list[AgentTodo] = field(default_factory=list)
 
 
 def _issue(severity: str, document: OrgDocument, line: int, message: str) -> Issue:
     return Issue(severity, document.relative_path, line, message)
 
 
+def _citations_in_line(line: str, line_number: int) -> list[LocatedCitation]:
+    citations = []
+    for citation_match in ORG_CITATION_RE.finditer(line):
+        citation = citation_match.group(0)
+        for reference_match in ORG_CITATION_REFERENCE_RE.finditer(citation):
+            locator = " ".join(reference_match.group("locator").split()) or None
+            citations.append(
+                LocatedCitation(
+                    reference_match.group("key"),
+                    locator,
+                    line_number,
+                    citation_match.start() + reference_match.start() + 1,
+                )
+            )
+    return citations
+
+
+def todo_fingerprint(path: Path, heading_path: tuple[str, ...], body: str) -> str:
+    """Return a line-number-independent fingerprint for an AGENT_TODO drawer."""
+    value = "\0".join((path.as_posix(), *heading_path, body))
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
 def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
-    text = path.read_text(encoding="utf-8")
+    source_bytes = path.read_bytes()
+    text = source_bytes.decode("utf-8")
     lines = text.splitlines()
     document = OrgDocument(
         path=path,
         relative_path=path.relative_to(root),
+        source_digest=hashlib.sha256(source_bytes).hexdigest(),
         ids=[],
         id_links=[],
         file_links=[],
@@ -100,6 +139,7 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         citations=[],
         has_file_id=False,
         file_id=None,
+        todos=[],
     )
     issues: list[Issue] = []
     drawer_start: int | None = None
@@ -107,13 +147,75 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
     drawer_aliases: list[LocatedValue] = []
     relations_drawer_start: int | None = None
     other_drawer_start: int | None = None
+    agent_todo_body: list[str] | None = None
+    agent_todo_heading_path: tuple[str, ...] = ()
+    agent_todo_citation_hints: list[LocatedCitation] = []
     comment_subtree_depth: int | None = None
+    heading_path: list[str] = []
     file_level_id_count = 0
     seen_heading = False
     in_literal_block = False
 
     for line_number, line in enumerate(lines, 1):
         stripped = line.strip()
+        if agent_todo_body is not None:
+            if stripped == ":END:":
+                assert other_drawer_start is not None
+                body = "\n".join(agent_todo_body)
+                if not body.strip():
+                    issues.append(
+                        _issue("ERROR", document, other_drawer_start, "empty AGENT_TODO drawer")
+                    )
+                document.todos.append(
+                    AgentTodo(
+                        todo_fingerprint(
+                            document.relative_path, agent_todo_heading_path, body
+                        ),
+                        document.relative_path,
+                        agent_todo_heading_path,
+                        body,
+                        other_drawer_start,
+                        line_number,
+                        tuple(agent_todo_citation_hints),
+                    )
+                )
+                other_drawer_start = None
+                agent_todo_body = None
+                agent_todo_heading_path = ()
+                agent_todo_citation_hints = []
+            else:
+                if HEADING_CONTENT_RE.match(line):
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            line_number,
+                            "AGENT_TODO drawer must not contain Org headings",
+                        )
+                    )
+                if DRAWER_RE.match(stripped):
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            line_number,
+                            "AGENT_TODO drawer must not contain nested drawers",
+                        )
+                    )
+                if BEGIN_LITERAL_BLOCK_RE.match(stripped) or END_LITERAL_BLOCK_RE.match(stripped):
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            line_number,
+                            "AGENT_TODO drawer must not contain literal blocks",
+                        )
+                    )
+                agent_todo_body.append(line)
+                agent_todo_citation_hints.extend(
+                    _citations_in_line(line, line_number)
+                )
+            continue
         if BEGIN_LITERAL_BLOCK_RE.match(stripped):
             in_literal_block = True
             continue
@@ -132,6 +234,8 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
                 comment_subtree_depth = heading_depth
             if comment_subtree_depth is not None:
                 continue
+            heading_path = heading_path[: heading_depth - 1]
+            heading_path.append(heading_match.group("title").strip())
         elif comment_subtree_depth is not None:
             continue
 
@@ -144,6 +248,19 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
             and other_drawer_start is None
         ):
             other_drawer_start = line_number
+            if stripped == ":AGENT_TODO:":
+                agent_todo_body = []
+                agent_todo_heading_path = tuple(heading_path)
+                agent_todo_citation_hints = []
+            elif drawer_match.group(1).upper() == "AGENT_TODO":
+                issues.append(
+                    _issue(
+                        "ERROR",
+                        document,
+                        line_number,
+                        "agent task drawer must use exact uppercase :AGENT_TODO:",
+                    )
+                )
         elif stripped == ":END:" and other_drawer_start is not None:
             other_drawer_start = None
 
@@ -281,18 +398,7 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
             and other_drawer_start is None
             and not FIXED_WIDTH_RE.match(content_line)
         ):
-            for citation_match in ORG_CITATION_RE.finditer(content_line):
-                citation = citation_match.group(0)
-                for reference_match in ORG_CITATION_REFERENCE_RE.finditer(citation):
-                    locator = " ".join(reference_match.group("locator").split()) or None
-                    document.citations.append(
-                        LocatedCitation(
-                            reference_match.group("key"),
-                            locator,
-                            line_number,
-                            citation_match.start() + reference_match.start() + 1,
-                        )
-                    )
+            document.citations.extend(_citations_in_line(content_line, line_number))
 
     if drawer_start is not None:
         issues.append(_issue("ERROR", document, drawer_start, "unclosed property drawer"))
@@ -300,6 +406,20 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         issues.append(_issue("ERROR", document, relations_drawer_start, "unclosed relations drawer"))
     if other_drawer_start is not None:
         issues.append(_issue("ERROR", document, other_drawer_start, "unclosed Org drawer"))
+    todo_scopes: dict[tuple[str, ...], AgentTodo] = {}
+    for todo in document.todos:
+        previous = todo_scopes.get(todo.heading_path)
+        if previous is not None:
+            issues.append(
+                _issue(
+                    "ERROR",
+                    document,
+                    todo.start_line,
+                    f"duplicate AGENT_TODO drawer for section (first at line {previous.start_line})",
+                )
+            )
+        else:
+            todo_scopes[todo.heading_path] = todo
     return document, issues
 
 
@@ -350,7 +470,8 @@ def parse_repository(root: Path) -> tuple[list[OrgDocument], list[Issue]]:
     documents: list[OrgDocument] = []
     issues: list[Issue] = []
     for path in sorted(root.rglob("*.org")):
-        if ".git" in path.parts:
+        relative_path = path.relative_to(root)
+        if relative_path.parts[0] == "infra" or ".git" in relative_path.parts:
             continue
         document, parse_issues = _parse_document(path, root)
         documents.append(document)
@@ -483,7 +604,7 @@ def main(argv: list[str] | None = None) -> int:
         "root",
         nargs="?",
         type=Path,
-        default=Path(__file__).resolve().parent.parent,
+        default=ROOT,
         help="Episteme repository root (defaults to the parent of this script's bin directory)",
     )
     parser.add_argument("--quiet-info", action="store_true", help="do not print informational findings")

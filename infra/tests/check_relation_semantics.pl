@@ -1,7 +1,7 @@
 #!/usr/bin/env ciao-shell
 % -*- mode: ciao; -*-
 
-:- use_module('../relations/episteme_relations', [
+:- use_module('../ciao/relations/episteme_relations', [
     asserted_relation/5,
     citation_occurrence/5,
     citations_to/4,
@@ -12,8 +12,20 @@
     outgoing/3,
     incoming/3
 ]).
+:- use_module('../ciao/org/org_snapshot', [
+    refresh_snapshot/1,
+    snapshot_valid/0,
+    snapshot_version/1
+]).
+:- use_module('../ciao/workflow/agent_todos', [
+    agent_action_authority/2,
+    completion_precondition/1
+]).
 
 main(_) :-
+    refresh_snapshot('.'),
+    snapshot_version(1),
+    snapshot_valid,
     Path = 'arquitectura/Elementos constructivos/Bovedas.org',
     NoteId = 'DACCAFEB-EE88-4020-8575-53DDA65C7D92',
     Note = note(NoteId),
@@ -38,4 +50,14 @@ main(_) :-
     citation_occurrence(_, CitationNote, source(CitationKey), no_locator,
                          org(CitationPath, 7, 17)),
     citations_to(source(CitationKey), CitationNote, no_locator,
-                  org(CitationPath, 7, 17)).
+                  org(CitationPath, 7, 17)),
+    agent_action_authority(edit_note, autonomous),
+    agent_action_authority(import_source, human_approval),
+    completion_precondition(repository_validation_passes),
+    catch((refresh_snapshot('/definitely/missing/episteme-root'),
+           RefreshFailed = no),
+          error(_, _),
+          RefreshFailed = yes),
+    RefreshFailed == yes,
+    snapshot_valid,
+    note_path(Note, Path).

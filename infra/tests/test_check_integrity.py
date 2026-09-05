@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-import importlib.util
 from pathlib import Path
 import sys
 import tempfile
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("check_integrity", ROOT / "bin" / "check-integrity.py")
-assert SPEC is not None and SPEC.loader is not None
-check_integrity = importlib.util.module_from_spec(SPEC)
-sys.modules[SPEC.name] = check_integrity
-SPEC.loader.exec_module(check_integrity)
+INFRA = Path(__file__).resolve().parents[1]
+ROOT = INFRA.parent
+sys.path.insert(0, str(INFRA / "python"))
+
+from episteme_org import integrity as check_integrity
 
 
 class IntegrityCheckTests(unittest.TestCase):
@@ -241,6 +239,129 @@ Text [cite:@liveKey p. 3].
         self.assertEqual(
             [citation.key for citation in documents[0].citations],
             ["liveKey"],
+        )
+
+    def test_agent_todo_preserves_body_scope_and_provisional_citations(self) -> None:
+        content = """:PROPERTIES:
+:ID: note-id
+:END:
+#+title: Note
+* Parent
+** Niño
+:AGENT_TODO:
+Keep  spacing and café [cite:@draftKey pp. 2-3].
+:END:
+Durable [cite:@liveKey p. 9].
+:LOGBOOK:
+[cite:@hiddenKey]
+:END:
+"""
+        self.write("inbox/note.org", content)
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(issues, [])
+        todo = documents[0].todos[0]
+        self.assertEqual(todo.path, Path("inbox/note.org"))
+        self.assertEqual(todo.heading_path, ("Parent", "Niño"))
+        self.assertEqual(todo.start_line, 7)
+        self.assertEqual(todo.end_line, 9)
+        self.assertEqual(
+            todo.body,
+            "Keep  spacing and café [cite:@draftKey pp. 2-3].",
+        )
+        self.assertEqual(
+            [(citation.key, citation.locator) for citation in todo.citation_hints],
+            [("draftKey", "pp. 2-3")],
+        )
+        self.assertEqual(
+            [citation.key for citation in documents[0].citations], ["liveKey"]
+        )
+
+        fingerprint = todo.fingerprint
+        self.write("inbox/note.org", "\n\n" + content)
+        shifted_documents, _ = check_integrity.parse_repository(self.root)
+        self.assertEqual(shifted_documents[0].todos[0].fingerprint, fingerprint)
+        self.assertEqual(shifted_documents[0].todos[0].start_line, 9)
+
+    def test_only_exact_live_agent_todo_drawers_are_exposed(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:AGENT_TODO_ARCHIVE:
+[cite:@archiveKey]
+:END:
+* COMMENT Hidden
+:AGENT_TODO:
+[cite:@commentKey]
+:END:
+* Live
+:agent_todo:
+task
+:END:
+""",
+        )
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(
+            [issue.message for issue in issues],
+            ["agent task drawer must use exact uppercase :AGENT_TODO:"],
+        )
+        self.assertEqual(documents[0].todos, [])
+        self.assertEqual(documents[0].citations, [])
+
+    def test_agent_todo_structure_is_validated(self) -> None:
+        self.write(
+            "note.org",
+            """#+title: Note
+:AGENT_TODO:
+:END:
+* Scope
+:AGENT_TODO:
+** Nested heading
+#+begin_src org
+example
+#+end_src
+:LOGBOOK:
+:END:
+:AGENT_TODO:
+duplicate
+:END:
+""",
+        )
+
+        _, issues = check_integrity.parse_repository(self.root)
+        messages = [issue.message for issue in issues]
+
+        self.assertIn("empty AGENT_TODO drawer", messages)
+        self.assertIn("AGENT_TODO drawer must not contain Org headings", messages)
+        self.assertIn("AGENT_TODO drawer must not contain literal blocks", messages)
+        self.assertIn("AGENT_TODO drawer must not contain nested drawers", messages)
+        self.assertTrue(any(message.startswith("duplicate AGENT_TODO") for message in messages))
+
+    def test_parse_repository_includes_filesystem_todos(self) -> None:
+        self.write("new/untracked.org", ":AGENT_TODO:\nnew task\n:END:\n")
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(issues, [])
+        self.assertEqual(
+            [(document.relative_path.as_posix(), len(document.todos)) for document in documents],
+            [("new/untracked.org", 1)],
+        )
+
+    def test_parse_repository_excludes_infra_and_git_but_scans_hidden_paths(self) -> None:
+        self.write("infra/ignored.org", "[[file:missing.org]]\n")
+        self.write(".git/ignored.org", "[[file:missing.org]]\n")
+        self.write(".hidden/included.org", "#+title: Hidden\n")
+
+        documents, issues = check_integrity.parse_repository(self.root)
+
+        self.assertEqual(issues, [])
+        self.assertEqual(
+            [document.relative_path.as_posix() for document in documents],
+            [".hidden/included.org"],
         )
 
     def test_unclosed_generic_drawer_is_an_error(self) -> None:

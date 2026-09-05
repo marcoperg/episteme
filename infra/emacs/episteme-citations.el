@@ -5,9 +5,9 @@
 ;;; Commentary:
 
 ;; This library connects Org/Citar citations, Bibliotheca's generated catalogue,
-;; and Episteme's rebuildable Ciao relation index.  Org remains authoritative:
-;; reverse navigation invokes bin/query-relations, which rebuilds the disposable
-;; facts before returning exact citation or relation occurrences.
+;; and Episteme's live Ciao relation snapshot.  Org remains authoritative:
+;; reverse navigation invokes infra/bin/query-relations, which refreshes the
+;; in-memory facts before returning exact citation or relation occurrences.
 ;;
 ;; Add this directory to `load-path', require `episteme-citations', configure
 ;; Citar to use `episteme-open-bibliotheca-entry', and bind
@@ -39,7 +39,7 @@
   :group 'episteme-citations)
 
 (defcustom episteme-relation-query
-  (expand-file-name "bin/query-relations" episteme-directory)
+  (expand-file-name "infra/bin/query-relations" episteme-directory)
   "Executable used to query Episteme relation occurrences."
   :type 'file
   :group 'episteme-citations)

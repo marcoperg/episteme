@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Load the live Org snapshot, then open the stable Ciao query API.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+exec ciao toplevel -i \
+  -u "$ROOT/infra/ciao/relations/episteme_relations.pl" \
+  -u "$ROOT/infra/ciao/org/org_snapshot.pl" \
+  -e "org_snapshot:refresh_snapshot('$ROOT'), org_snapshot:snapshot_valid" \
+  "$@"

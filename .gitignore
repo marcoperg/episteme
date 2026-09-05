@@ -1,7 +1,7 @@
 .DS_Store
 __pycache__/
 *.py[cod]
-/relations/generated/
+/infra/ciao/relations/generated/
 *.itf
 *.po
 *.ast
@@ -348,8 +348,8 @@ TSWLatexianTemp*
 # auto folder when using emacs and auctex
 ./auto/*
 *.el
-!lisp/episteme-citations.el
-!tests/episteme-citations-test.el
+!infra/emacs/episteme-citations.el
+!infra/tests/episteme-citations-test.el
 
 # expex forward references with \gathertags
 *-tags.tex

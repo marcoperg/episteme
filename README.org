@@ -42,6 +42,9 @@ connections to things in another subject.
 - *Semantics are explicit.* Ciao derives only declared inverses, symmetry,
   subproperties and transitivity. Reverse navigation alone never changes the
   meaning of a predicate.
+- *Workflow is provisional.* An =:AGENT_TODO:= drawer is a local instruction to
+  the librarian agent, not durable knowledge. Its result must be materialized
+  as ordinary prose, citations, IDs or relations before the drawer is removed.
 
 * Requirements and layout
 
@@ -49,12 +52,16 @@ Episteme is normally checked out as =~/knowledge/episteme= beside
 =~/knowledge/bibliotheca=. The sibling bibliography is optional for parsing but
 required to validate citekeys and use the full citation workflow.
 
-- Python 3 is required for integrity checks and fact generation; no third-party
+- Python 3 is required for integrity checks and snapshot export; no third-party
   Python packages are used.
-- Ciao is required for semantic queries and =bin/relation-toplevel=.
+- Ciao is required for semantic queries and =infra/bin/relation-toplevel=.
 - Emacs with Org and Citar is optional, but provides citation insertion and
   bidirectional navigation.
 - Org-roam is optional and supplies note discovery and durable ID links.
+
+All implementation support lives below =infra/=. The shared Org parser excludes
+that subtree from note discovery; configure Org-roam to exclude =infra/= as well
+so infrastructure files can never become knowledge notes.
 
 * Structure
 
@@ -131,7 +138,7 @@ deterministic storage and display.
 File-level IDs are required for notes explicitly used as ontology or research
 nodes, notes exported to another system, targets of durable semantic links, and
 any file containing a direct citation or =:RELATIONS:= entry. Those authored
-facts make the file a relation-graph node, so generation refuses to identify it
+facts make the file a relation-graph node, so validation refuses to identify it
 by a mutable path. IDs remain optional for course notes, reading extracts,
 outlines, and other material that does not participate in the graph. A note can
 be promoted later by assigning an ID when it first becomes meaningful there.
@@ -145,68 +152,138 @@ and links express relationships that cannot be represented by a single parent
 directory. Notes should not be duplicated across directories merely to express
 multiple classifications.
 
+* Librarian requests
+
+An exact uppercase =:AGENT_TODO:= drawer records pending work for the librarian
+agent. Its scope is the enclosing heading; a file-level drawer applies to the
+whole note. Keep at most one drawer per section and use one drawer for one
+independently completable request. A checklist may describe subtasks that must
+all be completed before removing the drawer.
+
+#+begin_src org
+* Section being developed
+:AGENT_TODO:
+- [ ] Verify this account against [cite:@sourceKey p. 26] and replace the rough
+      notes with supported prose and claim-level citations.
+:END:
+#+end_src
+
+Everything inside the drawer is provisional. Citation syntax there is exposed
+as a source hint but is not validated as a durable citation and does not produce
+a =cites= relation. Do not put headings, nested drawers or literal blocks in an
+=:AGENT_TODO:= drawer. Internal workflow drawers must be excluded from any
+publication export.
+
+The agent may autonomously edit prose, add an already verified citation, assign
+an ID required by graph participation, and prepare source or relation proposals.
+Approving or importing a source, accepting a proposed relation, moving or
+merging notes, deleting durable knowledge and other external actions require
+human approval. A request is complete only when its intended durable result
+exists, all required approvals are complete, repository validation passes and
+the task body has not changed since processing began. Completion removes the
+item, or the drawer when empty; Git retains its history.
+
+List and inspect live requests with:
+
+#+begin_src sh
+infra/bin/agent-todos list
+infra/bin/agent-todos show FINGERPRINT
+infra/bin/agent-todos complete FINGERPRINT
+infra/bin/agent-todos policy
+infra/bin/agent-todos validate
+#+end_src
+
+The Ciao API in =infra/ciao/workflow/agent_todos.pl= exposes
+=pending_agent_todo/5=, =agent_todo_source_hint/4=,
+=agent_action_authority/2=, =completion_precondition/1= and
+=complete_agent_todo/2=. These predicates are intended to become the stable
+surface consumed by the Ciao MCP server. Discovery scans the working tree, so
+untracked Org notes are included.
+
 * Relation queries
 
-The =relations/= Ciao package provides a rebuildable query layer over explicit
-=:RELATIONS:= entries and direct Org citations. Org files remain authoritative;
-=bin/build-relations.py= parses them through the integrity checker's shared
-parser and writes an ignored =relations/generated/relation_facts.pl= module.
+The =infra/ciao/relations/= Ciao package provides a live query layer over
+explicit =:RELATIONS:= entries and direct Org citations. Org files remain
+authoritative.
+=infra/bin/export-org-snapshot= uses the integrity checker's shared parser in
+=infra/python/episteme_org=, and Ciao
+loads its versioned JSON into a complete in-memory snapshot. A multithreaded MCP
+server must serialize refreshes with queries because table invalidation is
+process-wide.
 
 #+begin_example
 Org notes
-   -> bin/check-integrity.py shared parser
-   -> bin/build-relations.py
-   -> relations/generated/relation_facts.pl
-   -> relations/episteme_relations.pl
-   -> Ciao top level, CLI and Emacs
+   -> infra/bin/check-integrity shared parser
+   -> infra/bin/export-org-snapshot
+   -> infra/ciao/org/org_snapshot.pl
+   -> infra/ciao/relations/episteme_relations.pl
+   -> Ciao MCP, top level, CLI and Emacs
 #+end_example
 
-The generated Ciao module is deliberately not committed. After a fresh clone,
-build it explicitly or invoke a wrapper that builds it first:
+No relation database or generated fact module is required after a fresh clone.
+The CLI refreshes its snapshot before every query; a persistent MCP process can
+refresh after changes and reuse the resulting in-memory view:
 
-The stable API in =relations/episteme_relations.pl= supports authored facts with
-provenance, individual citation occurrences with locators, incoming and outgoing
-traversal, semantic inverses, subproperties, symmetric predicates, and explicitly
-enabled transitive predicates. It also maps stable =note(ID)= nodes to their
-current paths and derives =primary_context= and =parent_context= from directory
-placement. Incoming traversal does not change a predicate:
+The stable API in =infra/ciao/relations/episteme_relations.pl= supports authored
+facts with provenance, individual citation occurrences with locators, incoming
+and outgoing traversal, semantic inverses, subproperties, symmetric predicates,
+and explicitly enabled transitive predicates. It also maps stable =note(ID)=
+nodes to their current paths and derives =primary_context= and =parent_context=
+from directory placement. Incoming traversal does not change a predicate:
 traversing an =informed_by= assertion backwards is distinct from deriving its
 semantic inverse, =informs=.
 
 #+begin_src sh
-bin/build-relations.py
-bin/query-relations references muller\&vogelMullerVogelAtlas1995
-bin/relation-toplevel
+infra/bin/query-relations references muller\&vogelMullerVogelAtlas1995
+infra/bin/relation-toplevel
+infra/bin/agent-todos list
 #+end_src
 
-=bin/query-relations= and =bin/relation-toplevel= always rebuild before loading
-the Ciao API, so they cannot silently query a stale snapshot. Generation runs
-the full repository integrity checker first and refuses malformed relations,
-broken links, or unresolved citekeys.
+=infra/bin/query-relations= refreshes before loading the Ciao API and refuses an
+invalid snapshot. =infra/bin/relation-toplevel= refreshes before opening an
+interactive session. The Python frontend performs the full repository integrity
+check and serializes its issues alongside the document records; Ciao validates
+the entire protocol response before replacing the current snapshot.
 
-See [[file:relations/README.org][=relations/README.org=]] for the data model, API, schema policy, and
-verification commands.
+See [[file:infra/README.md][=infra/README.md=]] for the infrastructure layout, data model, live
+snapshot and librarian APIs, schema policy, and verification commands.
 
 * Support files
 
-- =bin/check-integrity.py= --- validates duplicate IDs, unresolved =id:= links,
+- =infra/bin/check-integrity= --- validates duplicate IDs, unresolved =id:= links,
   relative =file:= links, =SETUPFILE= paths, property and relations drawers,
   graph-node IDs, alias syntax, and all citation keys when Bibliotheca is
   available. Its parser
   also exposes direct citation locators and exact positions to the relation
-  generator.
+  live snapshot.
   Missing IDs outside the relation graph and deep directory structures are
   intentionally allowed. Run it
   together with its standard-library tests using:
   #+begin_src sh
-  PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
-  emacs --batch -Q -L lisp -l tests/episteme-citations-test.el \
+  PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s infra/tests -v
+  emacs --batch -Q -L infra/emacs -l infra/tests/episteme-citations-test.el \
     -f ert-run-tests-batch-and-exit
-  bin/check-integrity.py
-  bin/build-relations.py
-  ciaopp -V relations/relation_schema.pl
-  ciaopp -V relations/episteme_relations.pl
+  infra/bin/check-integrity
+  infra/bin/export-org-snapshot >/dev/null
+  infra/bin/agent-todos validate
+  ciaopp -V infra/ciao/org/org_snapshot.pl
+  ciaopp -V infra/ciao/workflow/agent_todos.pl
+  ciaopp -V infra/ciao/relations/relation_schema.pl
+  ciaopp -V infra/ciao/relations/episteme_relations.pl
   #+end_src
+- =infra/python/episteme_org= --- shared Org parser, integrity checker, snapshot
+  exporter, task completion logic, and legacy relation parity implementation.
+- =infra/bin/export-org-snapshot= --- emits the deterministic, versioned JSON
+  protocol consumed by Ciao. It reuses the checker parser rather than maintaining
+  a second Org implementation.
+- =infra/bin/complete-agent-todo= --- removes exactly one unchanged task drawer
+  after validation, using an atomic same-directory replacement and preserving
+  ordinary file metadata.
+- =infra/ciao/org/org_snapshot.pl= --- validates and atomically installs a live
+  in-memory view of graph facts, exact citation occurrences, integrity issues and
+  librarian requests.
+- =infra/bin/build-relations= --- retained temporarily as a parity oracle for the
+  previous generated-facts representation; normal queries do not invoke it.
 - =setup.org= --- shared LaTeX preamble (theorem environments, packages),
   pulled into math/physics notes via =#+SETUPFILE: ../setup.org=.
 - =../bibliotheca/zotero-library.bib= --- full Better BibTeX bibliography used
@@ -216,18 +293,19 @@ verification commands.
 
 * Emacs
 
-=lisp/episteme-citations.el= owns the knowledge-system behavior because it
+=infra/emacs/episteme-citations.el= owns the knowledge-system behavior because it
 consumes Episteme's CLI contract. Personal package choices and keybindings remain
 in dotfiles. A minimal setup is:
 
 #+begin_src emacs-lisp
 (setq org-roam-directory (file-truename "~/knowledge/episteme")
+      org-roam-file-exclude-regexp "/infra/"
       org-cite-global-bibliography
       (list (expand-file-name
              "~/knowledge/bibliotheca/zotero-library.bib")))
 
 (add-to-list 'load-path
-             (expand-file-name "~/knowledge/episteme/lisp"))
+             (expand-file-name "~/knowledge/episteme/infra/emacs"))
 (require 'citar)
 (require 'episteme-citations)
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import contextlib
 from concurrent.futures import ThreadPoolExecutor
-import importlib.util
 import io
 import os
 from pathlib import Path
@@ -11,14 +10,11 @@ import tempfile
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location(
-    "build_relations", ROOT / "bin" / "build-relations.py"
-)
-assert SPEC is not None and SPEC.loader is not None
-build_relations = importlib.util.module_from_spec(SPEC)
-sys.modules[SPEC.name] = build_relations
-SPEC.loader.exec_module(build_relations)
+INFRA = Path(__file__).resolve().parents[1]
+ROOT = INFRA.parent
+sys.path.insert(0, str(INFRA / "python"))
+
+from episteme_org import legacy_relations as build_relations
 
 
 class RelationBuildTests(unittest.TestCase):

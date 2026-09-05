@@ -7,18 +7,47 @@
 :- doc(author, "Marco Pérez").
 :- doc(module, "Command-line adapter used by Emacs and repository tools.").
 
-:- use_module(episteme_relations, [asserted_relation/5, citations_to/4]).
+:- use_module('./episteme_relations', [asserted_relation/5, citations_to/4]).
+:- use_module('../org/org_snapshot', [refresh_snapshot/1, snapshot_issue/4,
+    snapshot_valid/0]).
 :- use_module(library(aggregates), [setof/3]).
 :- use_module(library(format), [format/2]).
 
 :- pred main(Args) : list(Args)
    # "Runs a relation query described by @var{Args}.".
 
-main([references, Key]) :- !,
+main(Args) :-
+    refresh_snapshot('.'),
+    require_valid_snapshot,
+    run_query(Args).
+
+:- pred run_query(Args) : list(Args)
+   # "Runs a relation query against the current snapshot.".
+
+run_query([references, Key]) :- !,
     print_reference_notes(Key).
-main(_) :-
+run_query(_) :-
     format("usage: query-relations references CITEKEY~n", []),
     halt(2).
+
+:- pred require_valid_snapshot
+   # "Stops with diagnostics when repository integrity errors are present.".
+
+require_valid_snapshot :-
+    (   snapshot_valid ->
+        true
+    ;   print_snapshot_errors,
+        halt(1)
+    ).
+
+:- pred print_snapshot_errors
+   # "Prints every error retained by the current snapshot.".
+
+print_snapshot_errors :-
+    snapshot_issue('ERROR', Path, Line, Message),
+    format("ERROR: ~w:~d: ~w~n", [Path, Line, Message]),
+    fail.
+print_snapshot_errors.
 
 :- pred print_reference_notes(Key) : atm(Key)
    # "Prints predicate/path rows for notes referring to a citation key.".
