@@ -1,0 +1,154 @@
+
+:PROPERTIES:
+:ID:       9D707F0A-91FA-4533-B09F-C14EE95C389C
+:END:
+#+title: Logic Program Semantics
+#+setupfile: ../../../setup.org
+
+* Normal programs
+
+Rules:
+
+$$
+a \leftarrow b_1,\ldots,b_m,\operatorname{not}c_1,\ldots,\operatorname{not}c_n.
+$$
+
+* Supported semantics
+
+$M$ is supported iff $M\models P$ and
+
+$$
+\forall a\in M\;\exists(a\leftarrow B)\in P:\ M\models B.
+$$
+
+Equivalent (propositional case) to models of Clark completion.
+
+Allows circular support:
+#+begin_src prolog
+p :- q.
+q :- p.
+#+end_src
+
+Supported models: $\emptyset,{p,q}$.
+
+* Stable semantics
+
+For $M$, the GL reduct $P^M$ is obtained by:
+
+1. deleting rules containing $\operatorname{not}a$ with $a\in M$;
+2. deleting remaining negative literals.
+
+Then
+
+$$
+M\text{ stable}\iff M=LM(P^M).
+$$
+
+Hence every stable model is supported, but not conversely.
+
+Example:
+#+begin_src prolog
+p :- not q.
+q :- not p.
+#+end_src
+
+Stable models:
+
+$$
+\{p\},\qquad\{q\}.
+$$
+
+Positive self-support is rejected:
+#+begin_src prolog
+p :- p.
+#+end_src
+
+Unique stable model: $\emptyset$.
+
+* Well-founded semantics
+
+Unique three-valued interpretation
+
+$$
+WFM(P):Atoms\to\{\mathbf t,\mathbf f,\mathbf u\}.
+$$
+
+It combines consequence propagation with *unfounded-set* reasoning.
+
+If $U$ has no support independent of $U$, atoms in $U$ are assigned $\mathbf f$.
+
+Thus:
+#+begin_src prolog
+p :- p.
+#+end_src
+
+gives
+
+$$
+p=\mathbf f.
+$$
+
+For
+#+begin_src prolog
+p :- not q.
+q :- not p.
+#+end_src
+
+$$
+p=q=\mathbf u.
+$$
+
+For every stable model $M$,
+
+$$
+WFM(P)\leq_k M.
+$$
+
+Thus:
+
+* $WFM(P)(a)=\mathbf t \Rightarrow a$ belongs to every stable model;
+* $WFM(P)(a)=\mathbf f \Rightarrow a$ belongs to none;
+* $\mathbf u$ means WFS does not decide.
+
+If $WFM(P)$ is total, it is the unique stable model.
+
+* Kripke--Kleene semantics
+
+Least fixpoint of the three-valued immediate-consequence operator:
+
+$$
+KK(P)=\operatorname{lfp}_{\leq_k}(\Phi_P).
+$$
+
+It performs three-valued propagation but no unfounded-set inference.
+
+Hence:
+#+begin_src prolog
+p :- p.
+#+end_src
+
+gives
+
+$$
+KK(P)(p)=\mathbf u,\qquad WFM(P)(p)=\mathbf f.
+$$
+
+* Summary
+
+| Semantics | Characterization                                      |
+|-----------+-------------------------------------------------------|
+| Supported | Every true atom has a satisfied supporting rule       |
+| Stable    | $M=LM(P^M)$; rejects unfounded/self-support           |
+| WFS       | Canonical 3-valued approximation using unfounded sets |
+| KK        | Least 3-valued propagation fixpoint                   |
+
+Relations:
+
+$$
+Stable(P)\subseteq Supported(P),
+\qquad
+KK(P)\leq_k WFM(P)\leq_k M
+$$
+
+for every stable model $M$.
+

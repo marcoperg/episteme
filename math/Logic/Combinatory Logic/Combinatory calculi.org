@@ -2,6 +2,7 @@
 :ID: 97B2918F-C7D1-4646-BDCF-941E59DC30E1
 :END:
 #+title: Combinatory calculi
+#+setupfile: ../../../setup.org
 
 Combinatory calculus provides a limited set of primitive functions out of which other functions may be built.
 
