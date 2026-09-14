@@ -1,0 +1,94 @@
+:PROPERTIES:
+:ID:       7775E106-E0C5-4B19-B6D3-CECF1E4ACFDB
+:END:
+#+title: Quine: Identity and Propositions
+#+setupfile: ../../../../setup.org
+
+* Identity and ontology
+
+Quine's principle:
+
+$$
+\text{No entity without identity.}
+$$
+
+To admit a kind of entity into one's ontology, there must be a clear criterion for when two such entities are identical.
+
+For sets this is straightforward:
+
+$$
+A=B \iff \forall x\,(x\in A \leftrightarrow x\in B).
+$$
+
+Thus sets possess a precise extensional identity criterion.
+
+* The problem for propositions
+
+If propositions are first-class entities, variables may range over them:
+
+$$
+\exists P\,\varphi(P).
+$$
+
+Quine then asks: when are two propositions \(P,Q\) identical?
+
+Possible criteria fail:
+
+* Same truth value:
+
+  $$
+  P=Q \iff (P\leftrightarrow Q)
+  $$
+
+  collapses all true propositions and all false propositions.
+
+* Necessary equivalence:
+
+  $$
+  P=Q \iff \Box(P\leftrightarrow Q)
+  $$
+
+  identifies all necessarily equivalent propositions, although a subject may believe one without believing the other.
+
+* Same linguistic expression:
+  gives clear identity, but then the objects are sentences/formulas rather than language-independent propositions.
+
+Hence propositions lack, for Quine, a satisfactory principle of individuation.
+
+* Quine's criticism
+
+Objectual quantification carries ontological commitment:
+
+$$
+\exists P\,\varphi(P)
+$$
+
+means that there are entities which can be values of \(P\).
+
+Therefore, if \(P\) ranges over propositions, the theory is committed to propositions as objects. But if propositions lack determinate identity conditions, this ontology is suspect.
+
+Thus:
+
+$$
+\boxed{
+\text{quantification over propositions}
+\Rightarrow
+\text{ontological commitment to propositions}
+\Rightarrow
+\text{need for identity criteria}
+}
+$$
+
+and Quine's objection is that the final requirement is not satisfactorily met.
+
+* Consequence
+
+Quine therefore prefers, where possible, to speak about identifiable syntactic objects such as sentences or formulas rather than postulate propositions as independent first-class entities:
+
+$$
+\text{proposition } P
+\quad\leadsto\quad
+\ulcorner \varphi\urcorner
+$$
+
+where \(\ulcorner\varphi\urcorner\) is a reified linguistic expression with clear identity conditions.
