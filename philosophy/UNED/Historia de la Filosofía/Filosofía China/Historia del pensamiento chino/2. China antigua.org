@@ -1,0 +1,27 @@
+:PROPERTIES:
+:ID: B9BBA797-394D-4BC2-8D6A-3CD95C7C91DA
+:END:
+#+title: China antigua
+
+:RELATIONS:
+- informed-by :: [cite:@chengHistoriaPensamientoChino]
+:END:
+
+* Las tres dinastías
+La china en la antigüedad suele presentarse como distribuida en tres dinastías:
+- *La dinastía Xai*, de carácter probablemente mítico y que la tradición hace remontar al tercer milenio a.C.
+- *La dinastía Shang*, con la que da comienzo la época histórica y que comienza h. siglo XVII.
+- *La dinastía Zhou*, que comienza en el siglo XI a.C. y supone una edad de oro de la virtud política, usándose como modelo de la ética confuciana.
+
+
+* La racionalidad adivinatoria
+La práctica adivinatoria tiene un carácter central en el entramado del pensamiento chino en la antigüedad. La escritura oracular ---de la que debería el sistema de escritura chino moderno--- permite el desarrollo de una relación con la divinidad bastante particular. La que la realización de preguntas concretas y con respuestas, en muchas ocasiones, binarias permiten al hombre tomar la iniciativa: el hombre propone y la divinidad dispone.
+
+* El culto a los antepasados
+Aunque también aparece el culto a divinidades naturales, el culto a los antepasados y su relación orgánica con sus descendientes ocupa un valor privilegiado en el rita chino. La relación de respeto y orden entre antepasados y descendientes se usa como modelo de las relaciones políticas ideales, sirviendo de medida para la virtud y el buen hacer.
+
+* El proceso ritual y religioso
+El proceso del sacrificio a los antepasados tenía un carácter burocrático, estableciendo una suerte de jurisdicciones a los espíritus los cuales requerían de un proceso meticuloso y delicado para recibir las peticiones. En este contexto, el proceso adivinatorio recibía un importante carácter ritual, al ser usado para advertir a los antepasados de que un sacrificio o ritual iba a ocurrir. Así, se podía usar la adivinación par pedir permiso u, quizás, opinión a los antepasados, más que para obtener información acerca del futuro. Esto acercaba el pensamiento oracular a la religión alejándolo de la magia.
+
+* La continuidad del mundo divino en lo humano
+De la continuidad existente en la tradición china entre el mundo de los antepasados y el de los humanos se acaba construyendo una continuidad entre el mundo divino y el humano.

@@ -1,0 +1,8 @@
+:PROPERTIES:
+:ID: 80186A5B-9C16-48F5-94A8-96779F22B29C
+:END:
+#+title: Introducción
+
+:RELATIONS:
+- informed-by :: [cite:@chengHistoriaPensamientoChino]
+:END:
