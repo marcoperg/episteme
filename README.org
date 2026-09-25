@@ -22,8 +22,9 @@ connections to things in another subject.
 
 * Design principles
 
-- *Authored text is authoritative.* Notes, citations and =:RELATIONS:= drawers
-  are the source of truth. Generated indexes may always be deleted and rebuilt.
+- *Authored text is authoritative.* Notes, citations, =:RELATIONS:= drawers and
+  =:CONTEXT_RELATIONS:= drawers are the source of truth. Generated indexes may
+  always be deleted and rebuilt.
 - *The tree gives primary context.* Directory placement answers where a note
   principally belongs; the generated graph represents that placement as
   =primary_context= and =parent_context= relations. Links and authored relations
@@ -40,8 +41,8 @@ connections to things in another subject.
   influence on a note. A direct citation records evidence for a particular
   claim or quotation and may carry a passage locator.
 - *Semantics are explicit.* Ciao derives only declared inverses, symmetry,
-  subproperties and transitivity. Reverse navigation alone never changes the
-  meaning of a predicate.
+  subproperties, transitivity and context inheritance. Reverse navigation alone
+  never changes the meaning of a predicate.
 - *Workflow is provisional.* An =:AGENT_TODO:= drawer is a local instruction to
   the librarian agent, not durable knowledge. Its result must be materialized
   as ordinary prose, citations, IDs or relations before the drawer is removed.
@@ -115,6 +116,30 @@ claims and quotations should still receive direct citations. No date is stored
 in the relation; Git records when it is introduced, changed, or removed. Use
 =C-c b= after the =::= to select its citation with Citar.
 
+An exact =README.org= may instead declare relations for its directory context
+with a file-level =:CONTEXT_RELATIONS:= drawer before the first heading:
+
+#+begin_src org
+#+title: Cryptographic Protocols
+
+:CONTEXT_RELATIONS:
+- informed-by :: [cite:@sharedCourseSource]
+:END:
+#+end_src
+
+The assertion is authored once on the directory context and is inherited by
+identified ordinary Org notes in that directory and all descendant directories.
+Nested context drawers are additive; they do not override ancestor relations.
+The context README itself does not inherit, and it needs no =:ID:= merely to
+declare a context relation. An ordinary descendant without a file-level =:ID:=
+remains outside the relation graph and produces an integrity warning that
+inheritance was skipped. Assigning an ID promotes it without copying the drawer.
+
+Only =informed-by= is currently allowed in a context drawer. Direct citations,
+=cites= relations and librarian requests never inherit. An ordinary
+=:RELATIONS:= drawer in a README still describes that README note alone and
+requires its own file-level ID.
+
 Passage-level citations support particular claims and quotations. Put the
 citation immediately after the material it supports and include the most stable
 available locator:
@@ -140,8 +165,10 @@ nodes, notes exported to another system, targets of durable semantic links, and
 any file containing a direct citation or =:RELATIONS:= entry. Those authored
 facts make the file a relation-graph node, so validation refuses to identify it
 by a mutable path. IDs remain optional for course notes, reading extracts,
-outlines, and other material that does not participate in the graph. A note can
-be promoted later by assigning an ID when it first becomes meaningful there.
+outlines, and other material that does not participate in the graph. Context
+inheritance applies only after such a note has an ID; otherwise validation emits
+a warning and skips it. A note can be promoted later by assigning an ID when it
+first becomes meaningful there.
 
 =:ROAM_ALIASES:= is the canonical alias representation. Obsidian/YAML forms such
 as =aliases: - first name - second name= are migration artifacts and are not
@@ -227,9 +254,10 @@ refresh after changes and reuse the resulting in-memory view:
 The stable API in =infra/ciao/relations/episteme_relations.pl= supports authored
 facts with provenance, individual citation occurrences with locators, incoming
 and outgoing traversal, semantic inverses, subproperties, symmetric predicates,
-and explicitly enabled transitive predicates. It also maps stable =note(ID)=
-nodes to their current paths and derives =primary_context= and =parent_context=
-from directory placement. Incoming traversal does not change a predicate:
+explicitly enabled transitive predicates, and inherited context assertions with
+their declaring README provenance. It also maps stable =note(ID)= nodes to their
+current paths and derives =primary_context= and =parent_context= from directory
+placement. Incoming traversal does not change a predicate:
 traversing an =informed_by= assertion backwards is distinct from deriving its
 semantic inverse, =informs=.
 
@@ -252,8 +280,8 @@ snapshot and librarian APIs, schema policy, and verification commands.
 
 - =infra/bin/check-integrity= --- validates duplicate IDs, unresolved =id:= links,
   relative =file:= links, =SETUPFILE= paths, property and relations drawers,
-  graph-node IDs, alias syntax, and all citation keys when Bibliotheca is
-  available. Its parser
+  context relation scopes, graph-node IDs, alias syntax, and all citation keys
+  when Bibliotheca is available. Its parser
   also exposes direct citation locators and exact positions to the relation
   live snapshot.
   Missing IDs outside the relation graph and deep directory structures are

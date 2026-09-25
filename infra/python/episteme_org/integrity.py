@@ -37,6 +37,8 @@ ORG_CITATION_REFERENCE_RE = re.compile(
 )
 BIBTEX_ENTRY_RE = re.compile(r"^@[A-Za-z]+\s*\{\s*([^,\s]+)\s*,", re.MULTILINE)
 RELATION_PREDICATES = {"informed-by"}
+CONTEXT_RELATION_PREDICATES = {"informed-by"}
+CONTEXT_README = "README.org"
 ROOT = Path(__file__).resolve().parents[3]
 
 
@@ -90,6 +92,7 @@ class OrgDocument:
     file_links: list[LocatedValue]
     setupfiles: list[LocatedValue]
     relations: list[LocatedRelation]
+    context_relations: list[LocatedRelation]
     citations: list[LocatedCitation]
     has_file_id: bool
     file_id: LocatedValue | None
@@ -136,6 +139,7 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         file_links=[],
         setupfiles=[],
         relations=[],
+        context_relations=[],
         citations=[],
         has_file_id=False,
         file_id=None,
@@ -146,6 +150,8 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
     drawer_ids: list[LocatedValue] = []
     drawer_aliases: list[LocatedValue] = []
     relations_drawer_start: int | None = None
+    context_relations_drawer_start: int | None = None
+    context_relations_drawer_valid = False
     other_drawer_start: int | None = None
     agent_todo_body: list[str] | None = None
     agent_todo_heading_path: tuple[str, ...] = ()
@@ -242,9 +248,29 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         drawer_match = DRAWER_RE.match(stripped)
         if (
             drawer_match
-            and drawer_match.group(1).upper() not in {"PROPERTIES", "RELATIONS", "END"}
+            and drawer_match.group(1).upper() == "CONTEXT_RELATIONS"
+            and stripped != ":CONTEXT_RELATIONS:"
             and drawer_start is None
             and relations_drawer_start is None
+            and context_relations_drawer_start is None
+            and other_drawer_start is None
+        ):
+            other_drawer_start = line_number
+            issues.append(
+                _issue(
+                    "ERROR",
+                    document,
+                    line_number,
+                    "context relations drawer must use exact uppercase :CONTEXT_RELATIONS:",
+                )
+            )
+        elif (
+            drawer_match
+            and drawer_match.group(1).upper()
+            not in {"PROPERTIES", "RELATIONS", "CONTEXT_RELATIONS", "END"}
+            and drawer_start is None
+            and relations_drawer_start is None
+            and context_relations_drawer_start is None
             and other_drawer_start is None
         ):
             other_drawer_start = line_number
@@ -265,17 +291,56 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
             other_drawer_start = None
 
         if stripped == ":PROPERTIES:":
-            if drawer_start is not None or relations_drawer_start is not None:
+            if (
+                drawer_start is not None
+                or relations_drawer_start is not None
+                or context_relations_drawer_start is not None
+            ):
                 issues.append(_issue("ERROR", document, line_number, "nested property drawer"))
             drawer_start = line_number
             drawer_ids = []
             drawer_aliases = []
         elif stripped == ":RELATIONS:":
-            if drawer_start is not None or relations_drawer_start is not None:
+            if (
+                drawer_start is not None
+                or relations_drawer_start is not None
+                or context_relations_drawer_start is not None
+            ):
                 issues.append(_issue("ERROR", document, line_number, "nested relations drawer"))
             if seen_heading:
                 issues.append(_issue("ERROR", document, line_number, "relations drawer must be file-level"))
             relations_drawer_start = line_number
+        elif stripped == ":CONTEXT_RELATIONS:":
+            if (
+                drawer_start is not None
+                or relations_drawer_start is not None
+                or context_relations_drawer_start is not None
+            ):
+                issues.append(
+                    _issue("ERROR", document, line_number, "nested context relations drawer")
+                )
+            context_relations_drawer_valid = True
+            if seen_heading:
+                issues.append(
+                    _issue(
+                        "ERROR",
+                        document,
+                        line_number,
+                        "context relations drawer must be file-level",
+                    )
+                )
+                context_relations_drawer_valid = False
+            if document.relative_path.name != CONTEXT_README:
+                issues.append(
+                    _issue(
+                        "ERROR",
+                        document,
+                        line_number,
+                        "context relations drawer is allowed only in exact README.org files",
+                    )
+                )
+                context_relations_drawer_valid = False
+            context_relations_drawer_start = line_number
         elif stripped == ":END:" and drawer_start is not None:
             if drawer_aliases and not drawer_ids:
                 for alias in drawer_aliases:
@@ -311,6 +376,9 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
             drawer_aliases = []
         elif stripped == ":END:" and relations_drawer_start is not None:
             relations_drawer_start = None
+        elif stripped == ":END:" and context_relations_drawer_start is not None:
+            context_relations_drawer_start = None
+            context_relations_drawer_valid = False
         else:
             if relations_drawer_start is not None and stripped and not stripped.startswith("#"):
                 relation_match = RELATION_ITEM_RE.match(line)
@@ -344,6 +412,51 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
                         else:
                             document.relations.append(
                                 LocatedRelation(predicate, citation_match.group(1), line_number)
+                            )
+
+            if (
+                context_relations_drawer_start is not None
+                and stripped
+                and not stripped.startswith("#")
+            ):
+                relation_match = RELATION_ITEM_RE.match(line)
+                if not relation_match:
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            line_number,
+                            "malformed context relation; expected '- predicate :: target'",
+                        )
+                    )
+                else:
+                    predicate = relation_match.group(1)
+                    target = relation_match.group(2)
+                    if predicate not in CONTEXT_RELATION_PREDICATES:
+                        issues.append(
+                            _issue(
+                                "ERROR",
+                                document,
+                                line_number,
+                                f"unknown context relation predicate: {predicate}",
+                            )
+                        )
+                    elif predicate == "informed-by":
+                        citation_match = CITATION_TARGET_RE.match(target)
+                        if not citation_match:
+                            issues.append(
+                                _issue(
+                                    "ERROR",
+                                    document,
+                                    line_number,
+                                    "context informed-by target must be exactly one Org citation: [cite:@key]",
+                                )
+                            )
+                        elif context_relations_drawer_valid:
+                            document.context_relations.append(
+                                LocatedRelation(
+                                    predicate, citation_match.group(1), line_number
+                                )
                             )
 
             property_match = PROPERTY_RE.match(line)
@@ -395,6 +508,7 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         if (
             drawer_start is None
             and relations_drawer_start is None
+            and context_relations_drawer_start is None
             and other_drawer_start is None
             and not FIXED_WIDTH_RE.match(content_line)
         ):
@@ -404,6 +518,15 @@ def _parse_document(path: Path, root: Path) -> tuple[OrgDocument, list[Issue]]:
         issues.append(_issue("ERROR", document, drawer_start, "unclosed property drawer"))
     if relations_drawer_start is not None:
         issues.append(_issue("ERROR", document, relations_drawer_start, "unclosed relations drawer"))
+    if context_relations_drawer_start is not None:
+        issues.append(
+            _issue(
+                "ERROR",
+                document,
+                context_relations_drawer_start,
+                "unclosed context relations drawer",
+            )
+        )
     if other_drawer_start is not None:
         issues.append(_issue("ERROR", document, other_drawer_start, "unclosed Org drawer"))
     todo_scopes: dict[tuple[str, ...], AgentTodo] = {}
@@ -479,6 +602,23 @@ def parse_repository(root: Path) -> tuple[list[OrgDocument], list[Issue]]:
     return documents, issues
 
 
+def context_relation_scopes(documents: list[OrgDocument]) -> set[Path]:
+    """Return repository-relative directories declaring context relations."""
+    return {
+        document.relative_path.parent
+        for document in documents
+        if document.context_relations
+    }
+
+
+def inherits_context_relations(document: OrgDocument, scopes: set[Path]) -> bool:
+    """Return whether DOCUMENT is an ordinary note covered by any scope."""
+    if document.relative_path.name == CONTEXT_README:
+        return False
+    context = document.relative_path.parent
+    return any(scope == context or scope in context.parents for scope in scopes)
+
+
 def check_repository(
     root: Path,
     bibliography: Path | None = None,
@@ -514,6 +654,22 @@ def check_repository(
                 issues.append(_issue("ERROR", document, identifier.line, "empty :ID: property"))
                 continue
             ids.setdefault(identifier.value, []).append((document, identifier))
+
+    scopes = context_relation_scopes(documents)
+    for document in documents:
+        if (
+            inherits_context_relations(document, scopes)
+            and document.file_id is None
+            and not document.ids
+        ):
+            issues.append(
+                _issue(
+                    "WARNING",
+                    document,
+                    1,
+                    "note is covered by context relations but has no file-level :ID:; inheritance is skipped",
+                )
+            )
     for identifier, definitions in ids.items():
         if len(definitions) > 1:
             locations = ", ".join(
@@ -566,6 +722,16 @@ def check_repository(
                             document,
                             relation.line,
                             f"unresolved informed-by citation key: {relation.target}",
+                        )
+                    )
+            for relation in document.context_relations:
+                if relation.target not in citation_keys:
+                    issues.append(
+                        _issue(
+                            "ERROR",
+                            document,
+                            relation.line,
+                            f"unresolved context informed-by citation key: {relation.target}",
                         )
                     )
             for citation in document.citations:

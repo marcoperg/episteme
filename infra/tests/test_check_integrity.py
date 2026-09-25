@@ -390,6 +390,116 @@ duplicate
 
         self.assertIn("unresolved citation key: missingKey", messages)
 
+    def test_context_relations_cover_identified_descendants_and_warn_once(self) -> None:
+        self.write(
+            "course/README.org",
+            """#+title: Course
+:CONTEXT_RELATIONS:
+- informed-by :: [cite:@courseSource]
+:END:
+""",
+        )
+        self.write(
+            "course/topic.org",
+            ":PROPERTIES:\n:ID: topic-id\n:END:\n#+title: Topic\n",
+        )
+        self.write("course/deep/draft.org", "#+title: Draft\n")
+        self.write(
+            "course/deep/README.org",
+            """#+title: Deep
+:CONTEXT_RELATIONS:
+- informed-by :: [cite:@deepSource]
+:END:
+""",
+        )
+        self.write("coursework/outside.org", "#+title: Outside\n")
+        self.write(
+            "library.bib",
+            "@book{courseSource,\n title={Course}\n}\n"
+            "@book{deepSource,\n title={Deep}\n}\n",
+        )
+
+        documents, parse_issues = check_integrity.parse_repository(self.root)
+        issues = check_integrity.check_repository(
+            self.root, self.root / "library.bib", (documents, parse_issues)
+        )
+
+        by_path = {document.relative_path.as_posix(): document for document in documents}
+        self.assertEqual(
+            [(relation.predicate, relation.target)
+             for relation in by_path["course/README.org"].context_relations],
+            [("informed-by", "courseSource")],
+        )
+        self.assertEqual(by_path["course/README.org"].citations, [])
+        self.assertEqual(
+            [issue.path.as_posix() for issue in issues],
+            ["course/deep/draft.org"],
+        )
+        self.assertEqual(issues[0].severity, "WARNING")
+        self.assertIn("inheritance is skipped", issues[0].message)
+
+    def test_context_relation_drawer_location_and_spelling_are_validated(self) -> None:
+        self.write(
+            "course/topic.org",
+            ":CONTEXT_RELATIONS:\n- informed-by :: [cite:@sourceKey]\n:END:\n",
+        )
+        self.write(
+            "course/README.org",
+            "* Heading\n:CONTEXT_RELATIONS:\n"
+            "- informed-by :: [cite:@sourceKey]\n:END:\n",
+        )
+        self.write(
+            "other/README.org",
+            ":context_relations:\n- informed-by :: [cite:@sourceKey]\n:END:\n",
+        )
+
+        documents, issues = check_integrity.parse_repository(self.root)
+        messages = [issue.message for issue in issues]
+
+        self.assertIn(
+            "context relations drawer is allowed only in exact README.org files",
+            messages,
+        )
+        self.assertIn("context relations drawer must be file-level", messages)
+        self.assertIn(
+            "context relations drawer must use exact uppercase :CONTEXT_RELATIONS:",
+            messages,
+        )
+        self.assertTrue(all(not document.context_relations for document in documents))
+
+    def test_context_relation_errors_and_bibliography_resolution(self) -> None:
+        self.write(
+            "course/README.org",
+            """#+title: Course
+:CONTEXT_RELATIONS:
+- related-to :: [cite:@sourceKey]
+- informed-by :: [cite:@sourceKey; @secondKey]
+- informed-by :: [cite:@missingKey]
+not a relation
+:END:
+""",
+        )
+        self.write("library.bib", "@book{sourceKey,\n title={Source}\n}\n")
+
+        messages = [
+            issue.message
+            for issue in check_integrity.check_repository(
+                self.root, self.root / "library.bib"
+            )
+        ]
+
+        self.assertIn("unknown context relation predicate: related-to", messages)
+        self.assertTrue(
+            any("context informed-by target must be exactly one" in message
+                for message in messages)
+        )
+        self.assertIn(
+            "unresolved context informed-by citation key: missingKey", messages
+        )
+        self.assertTrue(
+            any("malformed context relation" in message for message in messages)
+        )
+
     def test_relation_errors(self) -> None:
         self.write(
             "note.org",

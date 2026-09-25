@@ -14,9 +14,9 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 def _relation_identifier(
-    note_id: str, line: int, predicate: str, target_kind: str, target: str
+    subject: str, line: int, predicate: str, target_kind: str, target: str
 ) -> str:
-    value = f"{note_id}\0{line}\0{predicate}\0{target_kind}\0{target}"
+    value = f"{subject}\0{line}\0{predicate}\0{target_kind}\0{target}"
     return "relation_" + hashlib.sha256(value.encode()).hexdigest()[:16]
 
 
@@ -28,14 +28,27 @@ def _citation_identifier(
 
 
 def build_snapshot(root: Path, bibliography: Path | None = None) -> dict[str, object]:
-    """Return schema version 1 using the integrity checker's single Org parser."""
+    """Return schema version 2 using the integrity checker's single Org parser."""
     root = root.expanduser().resolve()
     parsed = integrity.parse_repository(root)
     documents, _ = parsed
     issues = integrity.check_repository(root, bibliography, parsed)
+    context_scopes = integrity.context_relation_scopes(documents)
     exported_documents = []
     for document in documents:
-        if not document.relations and not document.citations and not document.todos:
+        inherits_context = integrity.inherits_context_relations(
+            document, context_scopes
+        )
+        graph_participating = document.file_id is not None and bool(
+            document.relations or document.citations or inherits_context
+        )
+        if (
+            not document.relations
+            and not document.context_relations
+            and not document.citations
+            and not document.todos
+            and not graph_participating
+        ):
             continue
         note_id = document.file_id.value if document.file_id is not None else None
         relations = []
@@ -49,6 +62,25 @@ def build_snapshot(root: Path, bibliography: Path | None = None) -> dict[str, ob
                         )
                         if note_id is not None
                         else None
+                    ),
+                    "line": relation.line,
+                    "predicate": predicate,
+                    "target": relation.target,
+                    "target_kind": "source",
+                }
+            )
+        context_relations = []
+        context = document.relative_path.parent.as_posix()
+        for relation in document.context_relations:
+            predicate = relation.predicate.replace("-", "_")
+            context_relations.append(
+                {
+                    "id": _relation_identifier(
+                        f"context:{context}",
+                        relation.line,
+                        predicate,
+                        "source",
+                        relation.target,
                     ),
                     "line": relation.line,
                     "predicate": predicate,
@@ -107,8 +139,10 @@ def build_snapshot(root: Path, bibliography: Path | None = None) -> dict[str, ob
         exported_documents.append(
             {
                 "citations": citations,
-                "context": document.relative_path.parent.as_posix(),
+                "context": context,
+                "context_relations": context_relations,
                 "file_id": note_id,
+                "graph_participating": graph_participating,
                 "path": document.relative_path.as_posix(),
                 "relations": relations,
                 "todos": todos,
@@ -125,7 +159,7 @@ def build_snapshot(root: Path, bibliography: Path | None = None) -> dict[str, ob
             }
             for issue in issues
         ],
-        "schema_version": 1,
+        "schema_version": 2,
     }
 
 

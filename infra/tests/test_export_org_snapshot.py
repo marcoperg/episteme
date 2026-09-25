@@ -60,7 +60,7 @@ Revisar [cite:@borradorClave p. 8].
         self.assertIn("gráfica.org", rendered)
         self.assertIn("Añadir vídeo", rendered)
         self.assertNotIn("\\u", rendered)
-        self.assertEqual(first["schema_version"], 1)
+        self.assertEqual(first["schema_version"], 2)
         self.assertEqual(
             [document["path"] for document in first["documents"]],
             ["alpha/new.org", "zeta/gráfica.org"],
@@ -82,6 +82,8 @@ Revisar [cite:@borradorClave p. 8].
         self.assertEqual(citation["id"], expected_citation)
         self.assertEqual(citation["relation_id"], expected_citation_relation)
         self.assertEqual(graph["context"], "zeta")
+        self.assertTrue(graph["graph_participating"])
+        self.assertEqual(graph["context_relations"], [])
         self.assertEqual(graph["todos"][0]["heading_path"], ["Acción"])
         self.assertEqual(
             [hint["key"] for hint in graph["todos"][0]["citation_hints"]],
@@ -117,8 +119,51 @@ Revisar [cite:@borradorClave p. 8].
         self.assertEqual(result.returncode, 1)
         self.assertEqual(result.stderr, "")
         snapshot = json.loads(result.stdout)
-        self.assertEqual(snapshot["schema_version"], 1)
+        self.assertEqual(snapshot["schema_version"], 2)
         self.assertEqual(snapshot["issues"][0]["severity"], "ERROR")
+
+    def test_context_relations_are_stored_once_and_index_scoped_notes(self) -> None:
+        self.write(
+            "course/README.org",
+            """#+title: Course
+:CONTEXT_RELATIONS:
+- informed-by :: [cite:@courseSource]
+:END:
+""",
+        )
+        self.write(
+            "course/topic.org",
+            ":PROPERTIES:\n:ID: topic-id\n:END:\n#+title: Topic\n",
+        )
+        self.write(
+            "course/deep/topic.org",
+            ":PROPERTIES:\n:ID: deep-id\n:END:\n#+title: Deep\n",
+        )
+        self.write("course/draft.org", "#+title: Draft\n")
+
+        snapshot = export_snapshot.build_snapshot(self.root)
+
+        self.assertEqual(snapshot["schema_version"], 2)
+        self.assertEqual(
+            [document["path"] for document in snapshot["documents"]],
+            ["course/README.org", "course/deep/topic.org", "course/topic.org"],
+        )
+        readme, deep, topic = snapshot["documents"]
+        self.assertFalse(readme["graph_participating"])
+        self.assertIsNone(readme["file_id"])
+        self.assertEqual(len(readme["context_relations"]), 1)
+        self.assertEqual(readme["context_relations"][0]["predicate"], "informed_by")
+        self.assertEqual(readme["context_relations"][0]["target"], "courseSource")
+        self.assertEqual(readme["citations"], [])
+        self.assertTrue(deep["graph_participating"])
+        self.assertTrue(topic["graph_participating"])
+        self.assertEqual(deep["relations"], [])
+        self.assertEqual(topic["relations"], [])
+        self.assertEqual(
+            [issue["path"] for issue in snapshot["issues"]],
+            ["course/draft.org"],
+        )
+        self.assertEqual(snapshot["issues"][0]["severity"], "WARNING")
 
 
 if __name__ == "__main__":

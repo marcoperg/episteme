@@ -44,11 +44,14 @@ implementation documentation and fixtures are never indexed as knowledge notes.
 ## Snapshot Lifecycle
 
 `infra/bin/export-org-snapshot` uses the same parser as
-`infra/bin/check-integrity`. The resulting JSON contains integrity issues,
-relations, citation occurrences, note paths, directory contexts, and pending
-librarian requests. `infra/ciao/org/org_snapshot.pl` validates the complete
-protocol document before replacing the current snapshot. A parser, process, or
-schema failure therefore leaves any previously installed state available.
+`infra/bin/check-integrity`. The resulting schema-version-2 JSON contains
+integrity issues, note and context relations, citation occurrences,
+graph-participating note paths, directory contexts, and pending librarian
+requests. Version 1 is not accepted because the snapshot is disposable and the
+exporter and loader are deployed together. `infra/ciao/org/org_snapshot.pl`
+validates the complete protocol document before replacing the current snapshot.
+A parser, process, or schema failure therefore leaves any previously installed
+state available.
 
 ```text
 Episteme Org notes
@@ -85,6 +88,14 @@ Current node forms are `note(Id)`, `source(CiteKey)`, and `context(Path)`.
 `:AGENT_TODO:` drawers remain provisional source hints and do not enter the
 relation graph.
 
+An exact `README.org` can contain a file-level `:CONTEXT_RELATIONS:` drawer.
+Each entry is stored once as an authored assertion whose subject is the
+README's `context(Path)`. Ciao derives effective relations for identified
+ordinary notes in that context or a descendant context. Nested declarations are
+additive, and only predicates explicitly declared context-inheritable in the
+relation schema participate; currently this is only `informed_by`. Direct
+citations and `cites` are never inherited.
+
 For every graph-participating note, the snapshot records current location and
 the directory branch needed to classify it:
 
@@ -94,8 +105,10 @@ context_parent_index(context(Directory), context(Parent)).
 ```
 
 ID-bearing files without authored relations or citations remain outside this
-projected graph, as do unrelated directory branches. A file move changes its
-path and structural relations without changing its `note(Id)` identity.
+projected graph unless they inherit a context relation. ID-less descendants are
+skipped with an integrity warning. Unrelated directory branches remain outside
+the graph. A file move changes its path, structural relations and inherited
+context relations without changing its `note(Id)` identity.
 
 Each direct citation also produces an occurrence:
 
@@ -119,15 +132,18 @@ The stable API in `infra/ciao/relations/episteme_relations.pl` provides:
   citation lookup.
 - `note_path/2`, `primary_context/2`, and `parent_context/2` for identity,
   location, and projected directory structure.
+- `inherited_relation/5` for an effective note relation together with its
+  declaring context and exact README origin.
 - `immediate_relation/3` for direct and non-transitive schema consequences.
 - `relation/3` for immediate and explicitly enabled transitive consequences.
 - `outgoing/3` and `incoming/3` for directional traversal.
 
 Incoming navigation does not change a predicate. Traversing an `informed_by`
 edge backwards retains `informed_by`; the separately declared inverse derives
-an `informs` edge. The schema supports inverse, symmetric, transitive, and
-subproperty declarations. Unknown predicates remain ordinary directed
-relations and should not be given stronger semantics merely for convenience.
+an `informs` edge. This also applies to inherited `informed_by` relations. The
+schema supports inverse, symmetric, transitive, subproperty, and context-
+inheritance declarations. Unknown predicates remain ordinary directed relations
+and should not be given stronger semantics merely for convenience.
 
 Query references to a Bibliotheca source:
 
@@ -137,8 +153,9 @@ infra/bin/query-relations references muller\&vogelMullerVogelAtlas1995
 
 The tab-separated rows contain predicate, repository-relative path, line,
 column, and locator. Relation-drawer assertions use the synthetic column `1`.
-The Emacs `C-c B` command consumes these rows to open or select an exact
-Episteme occurrence.
+A context assertion appears once at its authored README line rather than once
+per inheriting note. The Emacs `C-c B` command consumes these rows to open or
+select an exact Episteme occurrence.
 
 For exploratory queries:
 
@@ -152,6 +169,8 @@ infra/bin/relation-toplevel
 ?- primary_context(note(NoteId), Context).
 ?- asserted_relation(Id, note(NoteId), informed_by,
                      source('sourceKey'), Origin).
+?- inherited_relation(note(NoteId), informed_by, source('sourceKey'),
+                      Context, Origin).
 ?- incoming(source('sourceKey'), Predicate, note(NoteId)).
 ?- outgoing(source('sourceKey'), informs, note(NoteId)).
 ```

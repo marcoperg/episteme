@@ -14,6 +14,7 @@
     note_path/2,
     primary_context/2,
     parent_context/2,
+    inherited_relation/5,
     immediate_relation/3,
     relation/3,
     outgoing/3,
@@ -34,7 +35,6 @@ representation.").
 :- use_module('../org/org_snapshot', [
     asserted/5,
     from_index/5,
-    to_index/5,
     asserted_citation/5,
     citation_from_index/5,
     citation_to_index/5,
@@ -45,8 +45,10 @@ representation.").
     inverse_relation/2,
     symmetric_relation/1,
     transitive_relation/1,
-    subproperty_relation/2
+    subproperty_relation/2,
+    context_inheritable_relation/1
 ]).
+:- use_module(library(pathnames), [path_basename/2]).
 
 % The snapshot provider validates a complete replacement before installation.
 :- trust pred asserted(Id, Subject, Predicate, Object, Origin)
@@ -54,9 +56,6 @@ representation.").
        relation_node(Object), relation_origin(Origin)).
 :- trust pred from_index(Subject, Predicate, Object, Id, Origin)
    => (relation_node(Subject), atm(Predicate), relation_node(Object),
-       atm(Id), relation_origin(Origin)).
-:- trust pred to_index(Object, Predicate, Subject, Id, Origin)
-   => (relation_node(Object), atm(Predicate), relation_node(Subject),
        atm(Id), relation_origin(Origin)).
 :- trust pred asserted_citation(Id, Note, Source, Locator, Origin)
    => (atm(Id), note_node(Note), source_node(Source),
@@ -74,6 +73,7 @@ representation.").
 
 :- table immediate_relation/3.
 :- table relation/3.
+:- table context_within/2.
 
 :- regtype relation_node/1 # "An addressable node in the relation graph.".
 
@@ -168,6 +168,30 @@ primary_context(Note, Context) :-
 parent_context(Context, Parent) :-
     context_parent_index(Context, Parent).
 
+:- pred inherited_relation(Note, Predicate, Object, Scope, Origin)
+   => (note_node(Note), atm(Predicate), relation_node(Object),
+       context_node(Scope), relation_origin(Origin))
+   # "Returns a context assertion inherited by an identified descendant note,
+      retaining its declaring @var{Scope} and authored @var{Origin}.".
+
+inherited_relation(Note, Predicate, Object, Scope, Origin) :-
+    note_index(Note, Path, Context),
+    path_basename(Path, Base),
+    Base \== 'README.org',
+    context_inheritable_relation(Predicate),
+    from_index(Scope, Predicate, Object, _, Origin),
+    Scope = context(_),
+    context_within(Context, Scope).
+
+:- pred context_within(Context, Ancestor)
+   => (context_node(Context), context_node(Ancestor))
+   # "Holds when a context equals or descends from @var{Ancestor}.".
+
+context_within(Context, Context).
+context_within(Context, Ancestor) :-
+    parent_context(Context, Parent),
+    context_within(Parent, Ancestor).
+
 :- pred structural_relation(Subject, Predicate, Object)
    => (relation_node(Subject), atm(Predicate), relation_node(Object))
    # "Returns a relation derived from the current repository path tree.".
@@ -177,23 +201,29 @@ structural_relation(Note, primary_context, Context) :-
 structural_relation(Context, parent_context, Parent) :-
     parent_context(Context, Parent).
 
+:- pred base_relation(Subject, Predicate, Object)
+   => (relation_node(Subject), atm(Predicate), relation_node(Object))
+   # "Returns an authored, structural, or context-inherited relation.".
+
+base_relation(Subject, Predicate, Object) :-
+    from_index(Subject, Predicate, Object, _, _).
+base_relation(Subject, Predicate, Object) :-
+    structural_relation(Subject, Predicate, Object).
+base_relation(Note, Predicate, Object) :-
+    inherited_relation(Note, Predicate, Object, _, _).
+
 :- pred immediate_relation(Subject, Predicate, Object)
    => (relation_node(Subject), atm(Predicate), relation_node(Object))
    # "Returns a direct or schema-derived non-transitive relation.".
 
 immediate_relation(Subject, Predicate, Object) :-
-    from_index(Subject, Predicate, Object, _, _).
-immediate_relation(Subject, Predicate, Object) :-
-    structural_relation(Subject, Predicate, Object).
+    base_relation(Subject, Predicate, Object).
 immediate_relation(Subject, Inverse, Object) :-
-    to_index(Subject, Predicate, Object, _, _),
-    inverse_pair(Predicate, Inverse).
-immediate_relation(Subject, Inverse, Object) :-
-    structural_relation(Object, Predicate, Subject),
+    base_relation(Object, Predicate, Subject),
     inverse_pair(Predicate, Inverse).
 immediate_relation(Subject, Predicate, Object) :-
     symmetric_relation(Predicate),
-    to_index(Subject, Predicate, Object, _, _).
+    base_relation(Object, Predicate, Subject).
 immediate_relation(Subject, SuperPredicate, Object) :-
     immediate_relation(Subject, Predicate, Object),
     subproperty_relation(Predicate, SuperPredicate).

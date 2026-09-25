@@ -2,7 +2,8 @@
     inverse_relation/2,
     symmetric_relation/1,
     transitive_relation/1,
-    subproperty_relation/2
+    subproperty_relation/2,
+    context_inheritable_relation/1
 ], [assertions, nativeprops, doccomments]).
 
 :- doc(title, "Episteme Relation Schema").
@@ -37,3 +38,9 @@ transitive_relation(_) :- fail.
    # "@var{Predicate} entails the more general @var{SuperPredicate}.".
 
 subproperty_relation(_, _) :- fail.
+
+:- pred context_inheritable_relation(Predicate)
+   => atm(Predicate)
+   # "Declares a predicate that directory contexts pass to descendant notes.".
+
+context_inheritable_relation(informed_by).

@@ -24,7 +24,7 @@
 
 main(_) :-
     refresh_snapshot('.'),
-    snapshot_version(1),
+    snapshot_version(2),
     snapshot_valid,
     Path = 'arquitectura/Elementos constructivos/Bovedas.org',
     NoteId = 'DACCAFEB-EE88-4020-8575-53DDA65C7D92',
