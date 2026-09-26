@@ -3,10 +3,6 @@
 :END:
 #+title: China antigua
 
-:RELATIONS:
-- informed-by :: [cite:@chengHistoriaPensamientoChino]
-:END:
-
 * Las tres dinastías
 La china en la antigüedad suele presentarse como distribuida en tres dinastías:
 - *La dinastía Xai*, de carácter probablemente mítico y que la tradición hace remontar al tercer milenio a.C.
