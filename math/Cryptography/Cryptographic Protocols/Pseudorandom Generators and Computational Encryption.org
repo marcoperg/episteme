@@ -1,0 +1,114 @@
+:PROPERTIES:
+:ID: 22E49935-1278-487C-AB40-7F33726C5C6B
+:END:
+#+title: Pseudorandom Generators and Computational Encryption
+#+setupfile: ../../../setup.org
+
+A pseudorandom generator expands a short, uniformly random seed into a longer
+string that no efficient algorithm can distinguish from uniform. This permits
+an OTP-like cipher with a key shorter than the message, at the cost of replacing
+perfect security with computational security
+[cite:@fioreCryptographicProtocolosApplicatons].
+
+* Pseudorandom generators
+
+For the usual bitstring spaces, a PRG is an efficiently computable function
+
+\[
+G:\{0,1\}^n\to\{0,1\}^{\ell},
+\qquad \ell>n,
+\]
+
+such that every PPT distinguisher \(\mathcal A\) has negligible advantage
+
+\[
+\operatorname{PRGAdv}[\mathcal A,G]
+=\left|
+\Pr_s[\mathcal A(G(s))=1]
+-\Pr_r[\mathcal A(r)=1]
+\right|,
+\]
+
+where \(s\) and \(r\) are uniform in \(\{0,1\}^n\) and
+\(\{0,1\}^{\ell}\), respectively. Expansion implies that most
+\(\ell\)-bit strings are not outputs of \(G\); pseudorandomness says that this
+structural fact cannot be detected efficiently.
+
+* The computational one-time pad
+
+Define
+
+\[
+E(k,m)=G(k)\oplus m,
+\qquad
+D(k,c)=G(k)\oplus c.
+\]
+
+Correctness follows as for the OTP. To establish security, compare two games:
+
+1. The *real game* masks \(m_b\) with \(G(k)\).
+2. The *ideal game* replaces \(G(k)\) by a uniform \(r\in\{0,1\}^{\ell}\).
+
+The ideal game is an OTP game, so its output distribution is independent of
+\(b\). If an adversary distinguishes either real game from its ideal version,
+then a reduction can use its challenge string as the pad and distinguish PRG
+output from uniform. Thus
+
+\[
+\operatorname{SSAdv}[\mathcal A,(E,D)]
+\leq
+\operatorname{PRGAdv}[\mathcal B_0,G]
++\operatorname{PRGAdv}[\mathcal B_1,G],
+\]
+
+which is negligible. This is a standard game-hopping pattern: replace a
+computational object by an ideal random object, prove the ideal property, and
+reduce any observable gap to the underlying assumption.
+
+* Sources of pseudorandomness
+
+The lectures sketch three concrete candidates without giving complete security
+proofs:
+
+- *Blum-Micali:* \(G^{(1)}(x)=(g^x\bmod p,\operatorname{MSB}(x))\).
+- *Blum-Blum-Shub:* use \(f(x)=x^2\bmod N\), for
+  \(N=pq\) with \(p\equiv q\equiv3\pmod4\), together with
+  \(\operatorname{LSB}(x)\).
+- *A group-based candidate:* \(G(a,b)=(g^a,g^b,g^{ab})\) under an appropriate
+  Diffie-Hellman indistinguishability assumption.
+
+The exact domains, encodings, permutation restrictions, and assumptions matter.
+The sketches alone are not complete constructions. The general route through
+one-way permutations is developed in
+[[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way Functions and Hard-core Predicates]], and polynomial output length in
+[[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG Stretch Amplification and Hybrid Arguments]].
+
+* Stateful stream ciphers
+
+To process blocks without fixing the stream length in advance, let
+
+\[
+G:\{0,1\}^n\to\{0,1\}^{n+B}.
+\]
+
+On state \(\mathsf{sk}_i\), split
+
+\[
+G(\mathsf{sk}_i)=\mathsf{sk}_{i+1}\mathbin\Vert r_i,
+\]
+
+where \(r_i\in\{0,1\}^B\). Encrypt and decrypt a block by
+
+\[
+c_i=m_i\oplus r_i,
+\qquad
+m_i=c_i\oplus r_i.
+\]
+
+Both parties update to the same next state. The construction has no predefined
+final block, but sender and receiver must remain synchronized. This operational
+description is not yet a proof for literally unbounded interaction: the
+security framework still quantifies over PPT adversaries.
+
+Another application of PRGs is developed in
+[[id:45474AD9-A163-4CC9-983A-78EFD52E93C9][Bit Commitments and Coin Flipping]].

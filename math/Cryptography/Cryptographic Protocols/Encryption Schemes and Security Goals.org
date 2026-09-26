@@ -1,0 +1,77 @@
+:PROPERTIES:
+:ID: C4E605D8-8C61-4069-ACEA-93F81165C05F
+:END:
+#+title: Encryption Schemes and Security Goals
+#+setupfile: ../../../setup.org
+
+Encryption begins with a communication problem: Alice sends a message to Bob
+over a channel observed by Eve. Three different guarantees can be required:
+
+- *Confidentiality:* Eve does not learn the message.
+- *Integrity:* Bob receives the same message that Alice sent.
+- *Authenticity:* Bob can establish that Alice sent the message.
+
+The first three lectures focus on confidentiality. Integrity and authenticity
+are separate goals and are not consequences of confidentiality alone
+[cite:@fioreCryptographicProtocolosApplicatons].
+
+* Secret-key and public-key encryption
+
+Let \(S_A\) and \(S_B\) denote secret information available to Alice and Bob,
+and let \(\mathsf{PUB}\) denote public information.
+
+- In *secret-key encryption* (SKE), Alice and Bob share secret information:
+  \(S_A=S_B\). Encryption and decryption use the same secret key.
+- In *public-key encryption* (PKE), Alice encrypts using public information,
+  while Bob decrypts using secret information unavailable to Eve.
+
+The lectures begin with SKE, also called a Shannon cipher.
+
+* Ciphers and correctness
+
+A cipher is a pair of algorithms \((E,D)\) over a key space \(\mathcal K\),
+message space \(\mathcal M\), and ciphertext space \(\mathcal C\):
+
+\[
+E:\mathcal K\times\mathcal M\to\mathcal C,
+\qquad
+D:\mathcal K\times\mathcal C\to\mathcal M.
+\]
+
+It must satisfy *correctness*:
+
+\[
+\forall k\in\mathcal K\;\forall m\in\mathcal M,
+\qquad D(k,E(k,m))=m.
+\]
+
+Correctness only says that honest decryption recovers the message. It says
+nothing about what an adversary can infer from the ciphertext.
+
+* Introductory examples
+
+The shift cipher encrypts each letter by moving it a fixed number of positions.
+It illustrates correctness, but its tiny key space and visible language
+structure make it insecure.
+
+For messages of length \(L\), the one-time pad (OTP) takes
+
+\[
+\mathcal K=\mathcal M=\mathcal C=\{0,1\}^L
+\]
+
+and defines
+
+\[
+E(k,m)=k\oplus m,
+\qquad
+D(k,c)=k\oplus c.
+\]
+
+Correctness follows from \(k\oplus k=0^L\). Its security and unavoidable key
+length are developed in [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information Theoretic Security]]. Replacing its long random pad
+with efficiently generated pseudorandomness leads to
+[[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom Generators and Computational Encryption]].
+
+The computational security goal used for practical ciphers is defined in
+[[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational Security and Indistinguishability]].

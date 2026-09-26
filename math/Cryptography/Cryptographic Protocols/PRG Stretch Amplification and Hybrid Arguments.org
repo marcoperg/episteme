@@ -1,0 +1,103 @@
+:PROPERTIES:
+:ID: A0997AA0-C919-44A4-BF11-86385CB65969
+:END:
+#+title: PRG Stretch Amplification and Hybrid Arguments
+#+setupfile: ../../../setup.org
+
+A PRG that expands its seed by only one bit can be iterated to obtain any
+polynomial amount of stretch. The proof is also an important example of a
+hybrid argument and its reduction loss
+[cite:@fioreCryptographicProtocolosApplicatons].
+
+* Iterated construction
+
+Let
+
+\[
+G^{(1)}:\{0,1\}^n\to\{0,1\}^{n+1}
+\]
+
+be a PRG, and let the desired output length be
+\(\ell=\operatorname{poly}(n)>n\). Set \(t=\ell-n\). At each step, interpret
+one output bit as released output and the remaining \(n\) bits as the next
+state:
+
+\[
+(r_i,s_i)=G^{(1)}(s_{i-1}),
+\qquad r_i\in\{0,1\},\quad s_i\in\{0,1\}^n.
+\]
+
+Then define
+
+\[
+G^{(\ell)}(s_0)=r_1\mathbin\Vert\cdots\mathbin\Vert r_t
+\mathbin\Vert s_t.
+\]
+
+The output has \(t+n=\ell\) bits. If a one-step construction is written with
+the state before the released bit, its coordinates are merely reordered for
+this iteration.
+
+* Hybrid distributions
+
+For \(j\in\{0,\ldots,t\}\), define hybrid \(H_j\) by sampling the first \(j\)
+released bits and the state \(s_j\) uniformly, then continuing the generator
+from that state for the remaining steps.
+
+- \(H_0\) is the real distribution \(G^{(\ell)}(s_0)\).
+- \(H_t\) is uniform over \(\{0,1\}^{\ell}\).
+- Adjacent hybrids differ in exactly one invocation of \(G^{(1)}\): its output
+  is generated in \(H_{j-1}\) and uniform in \(H_j\).
+
+For a distinguisher \(\mathcal A\), let
+
+\[
+p_j=\Pr[\mathcal A(H_j)=1].
+\]
+
+The endpoint gap telescopes:
+
+\[
+|p_0-p_t|
+=\left|\sum_{j=1}^{t}(p_{j-1}-p_j)\right|
+\leq\sum_{j=1}^{t}|p_{j-1}-p_j|.
+\]
+
+* Random-position reduction
+
+A reduction \(\mathcal B\) against \(G^{(1)}\) receives an \((n+1)\)-bit
+challenge, parses it as one output bit and one state, and inserts it at a
+uniformly selected position \(\omega\in\{1,\ldots,t\}\). It samples the earlier
+released bits uniformly, continues the chain after position \(\omega\), and
+runs \(\mathcal A\) on the resulting output.
+
+Conditioned on \(\omega=j\):
+
+- a generated challenge simulates \(H_{j-1}\);
+- a uniform challenge simulates \(H_j\).
+
+Averaging over the position yields the exact relation
+
+\[
+\operatorname{PRGAdv}[\mathcal B,G^{(1)}]
+=\frac{1}{t}|p_0-p_t|
+=\frac{1}{t}\operatorname{PRGAdv}[\mathcal A,G^{(\ell)}].
+\]
+
+Because \(t\) is polynomial, a non-negligible endpoint gap would remain
+non-negligible after division by \(t\), contradicting one-step PRG security.
+
+* Reusable proof pattern
+
+The argument illustrates a common method:
+
+1. Connect the real and ideal distributions by local changes.
+2. Express the endpoint advantage as a sum of adjacent gaps.
+3. Embed one challenge at a random transition.
+4. Account explicitly for the polynomial reduction loss.
+
+Here the pattern proves only stretch amplification. Applying it elsewhere
+requires defining hybrids appropriate to the new construction.
+
+The one-step generator used as the premise is developed in
+[[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way Functions and Hard-core Predicates]].

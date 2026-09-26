@@ -3,12 +3,91 @@
 :END:
 #+title: Information Theoretic Security
 
-A cryptosystem is considered to have information theoretic security (ITS) if it is secure against adversaries with unlimited compute power and time.
+:RELATIONS:
+- informed-by :: [cite:@fioreCryptographicProtocolosApplicatons]
+:END:
 
-In contrast, a system which depends on the computational cost of cryptanalysis to be secure (and thus can be broken by an attack with unlimited computation) is called computationally, or conditionally, secure.
+A cryptographic construction has *information-theoretic security* when its
+guarantee does not depend on limiting the adversary's time or computational
+power. By contrast, computational security relies on the assumed difficulty of
+some computation.
 
-There are a variety of cryptographic tasks for which information-theoretic security is a meaningful and useful requirement. A few of these are:
+* Perfect secrecy
 
-1. Secret sharing schemes such as [[id:F5AF9B91-7D2B-4C13-93CC-71B4E9C3E035][Shamir's]] information-theoretically secure (and also perfectly secure) in that having less than the requisite number of shares of the secret provides no information about the secret.
-2. More generally, secure multiparty computation protocols often have information-theoretic security.
-3. Information-theoretic cryptography is quantum-safe.
+Let \(\mathbf K\) be uniform over the key space, let \(\mathbf M\) have an
+arbitrary distribution independent of \(\mathbf K\), and let
+\(\mathbf C=E(\mathbf K,\mathbf M)\). Perfect secrecy can be expressed as
+
+\[
+\Pr[\mathbf M=m\mid\mathbf C=c]=\Pr[\mathbf M=m]
+\]
+
+for ciphertexts with \(\Pr[\mathbf C=c]>0\). Thus \(\mathbf M\) and
+\(\mathbf C\) are independent: observing the ciphertext does not update the
+message distribution.
+
+An equivalent ciphertext-distribution formulation is
+
+\[
+\forall m_0,m_1\in\mathcal M\;\forall c\in\mathcal C,
+\qquad
+\Pr_k[E(k,m_0)=c]=\Pr_k[E(k,m_1)=c].
+\]
+
+Perfect secrecy means zero advantage from observing the ciphertext. It does not
+mean that an adversary has zero probability of guessing a message from prior
+knowledge.
+
+* The one-time pad
+
+For \(\mathcal K=\mathcal M=\mathcal C=\{0,1\}^L\), define
+
+\[
+E(k,m)=k\oplus m,
+\qquad
+D(k,c)=k\oplus c.
+\]
+
+For every fixed \(m,c\), exactly one key produces \(c\) from \(m\), namely
+\(k=m\oplus c\). Hence
+
+\[
+\Pr_k[E(k,m)=c]=2^{-L},
+\]
+
+independently of \(m\), proving perfect secrecy.
+
+The key must be uniformly random, as long as the message, and used only once.
+Reusing a pad relates the ciphertexts through their XOR and destroys the
+one-time security argument.
+
+* Shannon's key-space lower bound
+
+Every perfectly secure cipher satisfies
+
+\[
+|\mathcal K|\geq|\mathcal M|.
+\]
+
+Suppose instead that \(|\mathcal K|<|\mathcal M|\). Choose
+\(c=E(k_0,m_0)\), and consider all possible decryptions
+
+\[
+S=\{D(k,c):k\in\mathcal K\}.
+\]
+
+Because \(|S|\leq|\mathcal K|<|\mathcal M|\), some message \(m_1\) is not in
+\(S\). The ciphertext \(c\) occurs with positive probability for \(m_0\), but
+with probability zero for \(m_1\): if \(E(k,m_1)=c\), correctness would imply
+\(D(k,c)=m_1\in S\). This contradicts perfect secrecy.
+
+The OTP's long key is therefore not merely an implementation defect. Short keys
+for long messages require the computational relaxation developed in
+[[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational Security and Indistinguishability]].
+
+* Other uses
+
+Information-theoretic guarantees also arise in tasks such as secret sharing and
+some secure multiparty computation protocols. For example,
+[[id:F5AF9B91-7D2B-4C13-93CC-71B4E9C3E035][Shamir's secret sharing]] reveals no information about the secret to a set of
+participants below its reconstruction threshold.
