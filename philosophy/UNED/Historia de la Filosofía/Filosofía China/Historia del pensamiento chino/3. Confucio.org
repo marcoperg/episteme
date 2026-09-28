@@ -40,3 +40,11 @@ gida a interiorizar ritualmente la humanidad de las relaciones de uno mismo con 
 Confucio da al término /jūnzǐ/ ---que tradiconalmente significaba hidalgo, o hombre noble--- un sentido moral, el hombre de bien, que actúa rectamente. En este sentido, el /jūnzǐ/ será el hombre que sea capaz de incorporar los tres pilares de la ética confuziana, el aprendizaje, la humanidad y el espíritu ritual.
 
 Todo este entramado ético no tiene solo el carácter indivual que parece a primera vistas, deber de extenderse a las relaciones supraindividuales. En la concepción china la familia se concibe como la extensión del individuo, y el Estado como una extensión de la familia; es, pues, el príncipe para sus súbditos lo que un padre para sus hijos. No hay división entre los saberes éticos y los políticos, ya que son siempre una extensión unos de otros.
+
+
+* La rectificación de los nombres
+Pese a que esta doctrina es atribuida a Confucio de manera algo dudosa está claramente presenta en la tradición confuciana desde la célebre de Confucio al Duque de Qi, que le pregunta acerca del arte de gobernar:
+#+begin_src
+Que el soberano actúe como un soberano y el ministro como un ministro; que el padre actúe como un padre y el hijo como un hijo.
+#+end_src
+
