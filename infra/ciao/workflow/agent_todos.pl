@@ -24,6 +24,8 @@ the requested durable outcome exists and repository validation succeeds.").
     agent_todo/5,
     agent_todo_citation/4
 ]).
+:- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
+:- use_module(library(pathnames), [path_concat/3]).
 :- use_module(library(process), [process_call/3]).
 
 :- regtype agent_note_ref/1 # "A durable note or an ID-less file reference.".
@@ -83,13 +85,15 @@ refresh_agent_todos(Root) :-
       precondition.".
 
 complete_agent_todo(Root, Fingerprint) :-
-    refresh_snapshot(Root),
+    fixed_absolute_file_name(Root, '.', AbsoluteRoot),
+    path_concat(AbsoluteRoot, 'infra/bin/complete-agent-todo', CompletionHelper),
+    refresh_snapshot(AbsoluteRoot),
     require_valid_snapshot,
     pending_agent_todo(Fingerprint, _, _, _, _),
-    process_call('infra/bin/complete-agent-todo',
+    process_call(CompletionHelper,
                  ['--root', '.', Fingerprint],
-                 [cwd(Root), stdout(null)]),
-    refresh_snapshot(Root),
+                 [cwd(AbsoluteRoot), stdout(null)]),
+    refresh_snapshot(AbsoluteRoot),
     \+ pending_agent_todo(Fingerprint, _, _, _, _).
 
 require_valid_snapshot :-

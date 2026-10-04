@@ -15,15 +15,22 @@
 :- use_module('../ciao/org/org_snapshot', [
     refresh_snapshot/1,
     snapshot_valid/0,
-    snapshot_version/1
+    snapshot_version/1,
+    snapshot_provenance/2
 ]).
 :- use_module('../ciao/workflow/agent_todos', [
     agent_action_authority/2,
     completion_precondition/1
 ]).
+:- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
+:- use_module(library(pathnames), [path_concat/3]).
 
-main(_) :-
-    refresh_snapshot('.'),
+main(Args) :-
+    query_root(Args, Root),
+    refresh_snapshot(Root),
+    fixed_absolute_file_name(Root, '.', AbsoluteRoot),
+    path_concat(AbsoluteRoot, 'infra/bin/export-org-snapshot', Exporter),
+    snapshot_provenance(AbsoluteRoot, Exporter),
     snapshot_version(1),
     snapshot_valid,
     Path = 'arquitectura/Elementos constructivos/Bovedas.org',
@@ -61,3 +68,6 @@ main(_) :-
     RefreshFailed == yes,
     snapshot_valid,
     note_path(Note, Path).
+
+query_root([], '.').
+query_root([Root], Root).

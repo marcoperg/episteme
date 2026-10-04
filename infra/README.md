@@ -61,8 +61,9 @@ Episteme Org notes
 
 The provider API in `infra/ciao/org/org_snapshot.pl` includes:
 
-- `refresh_snapshot/1`, `snapshot_valid/0`, `snapshot_issue/4`, and
-  `snapshot_version/1` for lifecycle and validation.
+- `refresh_snapshot/1`, `snapshot_valid/0`, `snapshot_issue/4`,
+  `snapshot_version/1`, and `snapshot_provenance/2` for lifecycle,
+  validation, and the canonical root and exporter behind the installed view.
 - `asserted/5`, `from_index/5`, and `to_index/5` for authored graph facts.
 - `asserted_citation/5`, `citation_from_index/5`, and
   `citation_to_index/5` for exact citation occurrences.
@@ -155,6 +156,32 @@ infra/bin/relation-toplevel
 ?- incoming(source('sourceKey'), Predicate, note(NoteId)).
 ?- outgoing(source('sourceKey'), informs, note(NoteId)).
 ```
+
+### Ciao MCP queries
+
+Select the Episteme repository as the Ciao project root, load
+`infra/ciao/org/org_snapshot.pl` and
+`infra/ciao/relations/episteme_relations.pl`, and refresh before querying:
+
+```prolog
+?- refresh_snapshot('.'), snapshot_valid.
+?- snapshot_provenance(Root, Exporter).
+?- citations_to(source('sourceKey'), Note, Locator, Origin).
+?- incoming(source('sourceKey'), Predicate, Note).
+```
+
+When a client exposes only the containing `knowledge` workspace, the API also
+accepts that repository-relative root without depending on the worker's current
+directory:
+
+```prolog
+?- refresh_snapshot('episteme'), snapshot_valid.
+```
+
+A persistent consumer should refresh once, reuse the installed snapshot for
+related queries, and refresh again after Org edits. It must serialize refreshes
+with queries in that Ciao process because refresh atomically replaces the state
+and invalidates process-wide tables. The Org files remain authoritative.
 
 ## AGENT_TODO API
 
