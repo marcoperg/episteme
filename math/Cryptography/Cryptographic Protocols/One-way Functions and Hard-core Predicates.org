@@ -1,0 +1,97 @@
+:PROPERTIES:
+:ID: 91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8
+:END:
+#+title: One-way Functions and Hard-core Predicates
+#+setupfile: ../../../setup.org
+
+Computational cryptography replaces unconditional guarantees with assumptions
+that certain efficiently computable functions are hard to invert. One-way
+functions are a general form of this assumption; hard-core predicates isolate a
+bit that remains hidden even when the function value is known
+[cite:@fioreCryptographicProtocolosApplicatons].
+
+* One-way functions and permutations
+
+An efficiently computable function \(f:\{0,1\}^{*}\to\{0,1\}^{*}\) is a
+*one-way function* (OWF) if every PPT adversary succeeds in finding a preimage
+only with negligible probability:
+
+\[
+\Pr_{x\leftarrow\{0,1\}^n}
+\left[f(x')=f(x):x'\leftarrow\mathcal A(f(x))\right]
+=\operatorname{negl}(n).
+\]
+
+The adversary need not recover the sampled \(x\); any \(x'\) with the same image
+counts as an inversion. A *one-way permutation* (OWP) is an OWF that permutes
+\(\{0,1\}^n\).
+
+The lectures give two assumption-based examples:
+
+- \(f(x)=g^x\bmod p\), whose inversion is discrete logarithm.
+- \(f(x_1,x_2)=x_1x_2\) on pairs of primes, whose inversion is factoring.
+
+These examples require careful domains and encodings. In particular, the
+discrete-log map is naturally presented between two sets of size \(p-1\), not
+literally as a bitstring endomorphism.
+
+* Why one-wayness alone does not identify a hidden bit
+
+To obtain one bit of PRG expansion from an OWP \(f\), consider three attempts:
+
+1. \(G(s)=(f(s),s)\) fails because anyone can test whether the first component
+   equals \(f\) of the second.
+2. \(G(s)=(f(s),s_i)\) may fail because an OWF can reveal the coordinate
+   \(s_i\) while still hiding enough information to resist inversion.
+3. \(G(s)=(f(s),h(s))\) can work when \(h(s)\) remains pseudorandom given
+   \(f(s)\).
+
+Thus one-wayness means that enough information is hidden to prevent inversion;
+it does not mean that every property of the input is hidden.
+
+* Hard-core predicates
+
+An efficiently computable predicate \(h:\{0,1\}^n\to\{0,1\}\) is hard-core
+for \(f\) if every PPT \(\mathcal A\) has negligible advantage in distinguishing
+the real bit \(h(x)\) from an independent random bit \(r\), even when given
+\(f(x)\):
+
+\[
+\left|
+\Pr_{x}[\mathcal A(f(x),h(x))=1]
+-\Pr_{x,r}[\mathcal A(f(x),r)=1]
+\right|
+=\operatorname{negl}(n).
+\]
+
+The quantifiers are important:
+
+- A concrete function can have a concrete hard-core predicate. The lecture's
+  discrete-log example uses the most significant bit of the exponent.
+- An arbitrary input coordinate need not be hard-core for every OWF.
+- No one fixed predicate works for every unmodified OWF.
+- Goldreich-Levin permits transforming a given OWF into one with a common
+  hard-core predicate: schematically,
+  \(\exists h\;\forall f\;\exists g_f\).
+
+* One bit of pseudorandom expansion
+
+Let \(f:\{0,1\}^n\to\{0,1\}^n\) be an OWP and let \(h\) be hard-core for
+\(f\). Then
+
+\[
+G(s)=(f(s),h(s))
+\]
+
+is a PRG from \(n\) bits to \(n+1\) bits. If a distinguisher separated this
+output from uniform, use it unchanged to distinguish
+\((f(s),h(s))\) from \((f(s),r)\). Because \(f\) is a permutation, uniform
+\(s\) makes \(f(s)\) uniform; appending uniform \(r\) therefore gives a uniform
+\((n+1)\)-bit string. The resulting advantage is exactly the alleged PRG
+advantage, contradicting the hard-core property.
+
+The permutation premise is essential to this proof. An arbitrary OWF plus a
+hard-core predicate does not by itself make the first \(n\) output bits uniform.
+
+The one-bit generator is amplified in
+[[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG Stretch Amplification and Hybrid Arguments]].

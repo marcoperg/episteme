@@ -28,16 +28,22 @@ class NoteRecord:
 
 @dataclass(frozen=True, order=True)
 class RelationFact:
-    note_id: str
+    subject: str
     path: str
     line: int
     predicate: str
     target_kind: str
     target: str
+    subject_kind: str = "note"
 
     @property
     def identifier(self) -> str:
-        value = f"{self.note_id}\0{self.line}\0{self.predicate}\0{self.target_kind}\0{self.target}"
+        subject = (
+            self.subject
+            if self.subject_kind == "note"
+            else f"{self.subject_kind}:{self.subject}"
+        )
+        value = f"{subject}\0{self.line}\0{self.predicate}\0{self.target_kind}\0{self.target}"
         return "relation_" + hashlib.sha256(value.encode()).hexdigest()[:16]
 
 
@@ -71,42 +77,57 @@ def relation_facts(
     notes: set[NoteRecord] = set()
     facts: set[RelationFact] = set()
     citations: set[CitationOccurrence] = set()
+    context_scopes = integrity.context_relation_scopes(documents)
     for document in documents:
-        if not document.relations and not document.citations:
-            continue
-        if document.file_id is None:
-            continue
         path = document.relative_path.as_posix()
-        note_id = document.file_id.value
         context = document.relative_path.parent.as_posix()
-        notes.add(NoteRecord(note_id, path, context))
+        inherits_context = integrity.inherits_context_relations(
+            document, context_scopes
+        )
+        if document.file_id is not None and (
+            document.relations or document.citations or inherits_context
+        ):
+            note_id = document.file_id.value
+            notes.add(NoteRecord(note_id, path, context))
+            facts.update(
+                RelationFact(
+                    note_id,
+                    path,
+                    relation.line,
+                    relation.predicate.replace("-", "_"),
+                    "source",
+                    relation.target,
+                )
+                for relation in document.relations
+            )
+            facts.update(
+                RelationFact(
+                    note_id, path, citation.line, "cites", "source", citation.key
+                )
+                for citation in document.citations
+            )
+            citations.update(
+                CitationOccurrence(
+                    note_id,
+                    path,
+                    citation.line,
+                    citation.column,
+                    citation.key,
+                    citation.locator,
+                )
+                for citation in document.citations
+            )
         facts.update(
             RelationFact(
-                note_id,
+                context,
                 path,
                 relation.line,
                 relation.predicate.replace("-", "_"),
                 "source",
                 relation.target,
+                "context",
             )
-            for relation in document.relations
-        )
-        facts.update(
-            RelationFact(
-                note_id, path, citation.line, "cites", "source", citation.key
-            )
-            for citation in document.citations
-        )
-        citations.update(
-            CitationOccurrence(
-                note_id,
-                path,
-                citation.line,
-                citation.column,
-                citation.key,
-                citation.locator,
-            )
-            for citation in document.citations
+            for relation in document.context_relations
         )
     return (
         sorted(notes),
@@ -155,7 +176,7 @@ def render_module(
     rendered_facts = []
     for fact in facts:
         identifier = prolog_atom(fact.identifier)
-        subject = f"note({prolog_atom(fact.note_id)})"
+        subject = f"{fact.subject_kind}({prolog_atom(fact.subject)})"
         predicate = fact.predicate
         target = f"{fact.target_kind}({prolog_atom(fact.target)})"
         origin = f"org({prolog_atom(fact.path)}, {fact.line})"

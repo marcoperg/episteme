@@ -1,0 +1,85 @@
+:PROPERTIES:
+:ID: AE9054EE-2979-4C79-9B85-B247C6C12C1F
+:END:
+#+title: Computational Security and Indistinguishability
+#+setupfile: ../../../setup.org
+
+Perfect security quantifies over adversaries with unbounded resources and
+requires the ciphertext to provide exactly zero information. Computational
+security weakens both requirements: the adversary is efficient, and any
+advantage it obtains need only be negligible
+[cite:@fioreCryptographicProtocolosApplicatons].
+
+* Efficient adversaries
+
+An algorithm is *polynomial time* (PT) when its running time on inputs of length
+\(n\) is \(O(n^c)\) for some constant \(c\). A *probabilistic polynomial-time*
+(PPT) algorithm also makes random choices.
+
+A function \(\varepsilon(n)\) is *negligible* when
+
+\[
+\forall c>0\;\exists n_c\;\forall n>n_c,
+\qquad \varepsilon(n)<\frac{1}{n^c}.
+\]
+
+For example, \(2^{-n}\) is negligible. Polynomially many opportunities do not
+make a negligible event non-negligible: for polynomial \(p\), the union bound
+gives
+
+\[
+\Pr[\text{some attempt succeeds}]
+\leq p(n)\varepsilon(n)=\operatorname{negl}(n).
+\]
+
+This is an asymptotic guarantee in a security parameter. It should not be
+confused with the concrete bounds discussed in
+[[id:2C95A77B-191B-4D39-80EE-F4084193B550][Finite-key vs Asymptotic Security Analysis]].
+
+* The bit-guessing experiment
+
+An adversary chooses two messages \(m_0,m_1\). The challenger samples
+\(b\leftarrow\{0,1\}\) and \(k\leftarrow\mathcal K\), returns
+\(c=E(k,m_b)\), and receives a guess \(\widehat b\). If \(W\) is the event
+\(\widehat b=b\), define
+
+\[
+\operatorname{SSAdv}^{*}[\mathcal A,(E,D)]
+=\left|\Pr[W]-\frac12\right|.
+\]
+
+The subtraction of \(1/2\) is essential: security concerns advantage over
+random guessing, not the raw probability of a correct guess.
+
+* The distinguishing experiments
+
+For a fixed \(b\in\{0,1\}\), experiment \(\mathsf{Exp}_b\) encrypts \(m_b\).
+Let \(W_b\) be the event that the adversary outputs \(1\). The distinguishing
+advantage is
+
+\[
+\operatorname{SSAdv}[\mathcal A,(E,D)]
+=|\Pr[W_0]-\Pr[W_1]|.
+\]
+
+A cipher is secure in this experiment if the advantage is negligible for every
+PPT adversary. The two formulations satisfy
+
+\[
+\operatorname{SSAdv}[\mathcal A,(E,D)]
+=2\operatorname{SSAdv}^{*}[\mathcal A,(E,D)].
+\]
+
+Indeed, if \(p_b=\Pr[W_b]\), then the guessing experiment succeeds with
+probability \(\tfrac12(1-p_0+p_1)\), up to exchanging the output labels. Its
+distance from \(1/2\) is therefore half the distinguishing gap.
+
+* Scope of the definition
+
+These are single-challenge experiments. The adversary receives one challenge
+ciphertext, and the lectures do not yet provide encryption or decryption
+oracles. Consequently, this definition must not be silently interpreted as a
+stronger multi-query security notion.
+
+The first construction proved secure under this definition appears in
+[[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom Generators and Computational Encryption]].

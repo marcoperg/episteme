@@ -20,7 +20,7 @@
 :- doc(author, "Episteme contributors").
 :- doc(module, "Loads a validated, in-memory view of Episteme Org data.
 
-The external Org parser emits schema-version-1 JSON. A refresh validates the
+The external Org parser emits schema-version-2 JSON. A refresh validates the
 complete document before replacing the current @concept{snapshot}, so parser,
 process, and schema failures leave the previous state available. Graph facts
 are indexed in both directions; agent todos are retained even for files that
@@ -38,6 +38,7 @@ serialize refreshes with queries because table invalidation is process-wide.").
 :- regtype snapshot_node/1.
 snapshot_node(note(Id)) :- atm(Id).
 snapshot_node(source(Key)) :- atm(Key).
+snapshot_node(context(Path)) :- atm(Path).
 
 :- regtype snapshot_note/1.
 snapshot_note(note(Id)) :- atm(Id).
@@ -272,7 +273,7 @@ json_snapshot(Json, Snapshot) :-
     deduplicate_relations(Relations0, Relations),
     deduplicate_citations(Citations0, Citations),
     sort(Notes0, Notes),
-    context_edges(Notes, Contexts0),
+    context_edges(Notes, Relations, Contexts0),
     sort(Contexts0, Contexts),
     sort(Todos0, Todos),
     sort(TodoCitations0, TodoCitations),
@@ -282,7 +283,7 @@ json_snapshot(Json, Snapshot) :-
 
 expect_schema_version(Value, Version) :-
     expect_integer(Value, Version, schema_version),
-    (   Version == 1 ->
+    (   Version == 2 ->
         true
     ;   invalid_snapshot(unknown_schema_version(Version))
     ).
@@ -296,17 +297,25 @@ parse_documents(Value, _) :-
 
 parse_document(Json, Document) :-
     object_values(Json,
-                  [citations, context, file_id, path, relations, todos],
-                  [CitationsJson, ContextJson, FileIdJson, PathJson,
+                  [citations, context, context_relations, file_id,
+                   graph_participating, path, relations, todos],
+                  [CitationsJson, ContextJson, ContextRelationsJson,
+                   FileIdJson, GraphParticipatingJson, PathJson,
                    RelationsJson, TodosJson], document),
     expect_atom(ContextJson, Context, field(document, context)),
     expect_nullable_atom(FileIdJson, FileId, field(document, file_id)),
+    expect_boolean(GraphParticipatingJson, GraphParticipating,
+                   field(document, graph_participating)),
     expect_atom(PathJson, Path, field(document, path)),
     parse_relations(RelationsJson, Relations),
+    parse_relations(ContextRelationsJson, ContextRelations),
     parse_citations(CitationsJson, Citations),
     parse_todos(TodosJson, Path, Todos),
-    validate_graph_ids(Path, FileId, Relations, Citations),
-    Document = document(FileId, Path, Context, Relations, Citations, Todos).
+    validate_graph_document(Path, FileId, GraphParticipating,
+                            Relations, Citations),
+    require_relation_ids(Path, context(Context), ContextRelations),
+    Document = document(FileId, GraphParticipating, Path, Context,
+                         Relations, ContextRelations, Citations, Todos).
 
 parse_relations([], []) :- !.
 parse_relations([Json|Jsons], [Relation|Relations]) :- !,
@@ -447,6 +456,11 @@ expect_integer(Value, Value, _) :- integer(Value), !.
 expect_integer(Value, _, Field) :-
     invalid_snapshot(expected_integer(Field, Value)).
 
+expect_boolean(true, true, _) :- !.
+expect_boolean(false, false, _) :- !.
+expect_boolean(Value, _, Field) :-
+    invalid_snapshot(expected_boolean(Field, Value)).
+
 expect_locator(null, no_locator, _) :- !.
 expect_locator(string(Codes), locator(Locator), _) :- !,
     atom_codes(Locator, Codes).
@@ -459,10 +473,15 @@ expect_severity('INFO') :- !.
 expect_severity(Severity) :-
     invalid_snapshot(unknown_issue_severity(Severity)).
 
-validate_graph_ids(Path, none, Relations, Citations) :- !,
+validate_graph_document(Path, none, false, Relations, Citations) :- !,
     require_absent_relation_ids(Path, Relations),
     require_absent_citation_ids(Path, Citations).
-validate_graph_ids(Path, some(NoteId), Relations, Citations) :-
+validate_graph_document(Path, none, true, _, _) :- !,
+    invalid_snapshot(graph_participant_without_file_id(Path)).
+validate_graph_document(_, some(_), false, [], []) :- !.
+validate_graph_document(Path, some(NoteId), false, _, _) :- !,
+    invalid_snapshot(graph_data_for_nonparticipant(Path, NoteId)).
+validate_graph_document(Path, some(NoteId), true, Relations, Citations) :-
     require_relation_ids(Path, NoteId, Relations),
     require_citation_ids(Path, NoteId, Citations).
 
@@ -518,23 +537,35 @@ collect_documents([Document|Documents], Relations, Citations, Notes,
     append(Todos0, Todos1, Todos),
     append(TodoCitations0, TodoCitations1, TodoCitations).
 
-collect_document(document(FileId, Path, Context, RelationRecords,
-                          CitationRecords, TodoRecords),
-                 Relations, Citations, Notes, Todos, TodoCitations) :-
-    collect_graph(FileId, Path, Context, RelationRecords, CitationRecords,
-                  Relations, Citations, Notes),
+collect_document(document(FileId, GraphParticipating, Path, Context,
+                           RelationRecords, ContextRelationRecords,
+                           CitationRecords, TodoRecords),
+                  Relations, Citations, Notes, Todos, TodoCitations) :-
+    collect_graph(FileId, GraphParticipating, Path, Context,
+                  RelationRecords, CitationRecords,
+                  NoteRelations, Citations, Notes),
+    context_relation_facts(ContextRelationRecords, Context, Path,
+                           ContextRelations),
+    append(NoteRelations, ContextRelations, Relations),
     note_reference(FileId, Path, NoteRef),
     collect_todos(TodoRecords, NoteRef, Path, Todos, TodoCitations).
 
-collect_graph(none, _, _, _, _, [], [], []) :- !.
-collect_graph(some(_), _, _, [], [], [], [], []) :- !.
-collect_graph(some(NoteId), Path, Context, RelationRecords, CitationRecords,
-              Relations, Citations,
-              [note_entry(note(NoteId), Path, context(Context))]) :-
+collect_graph(none, false, _, _, _, _, [], [], []) :- !.
+collect_graph(some(_), false, _, _, [], [], [], [], []) :- !.
+collect_graph(some(NoteId), true, Path, Context, RelationRecords, CitationRecords,
+               Relations, Citations,
+               [note_entry(note(NoteId), Path, context(Context))]) :-
     relation_facts(RelationRecords, NoteId, Path, AuthoredRelations),
     citation_facts(CitationRecords, NoteId, Path, CitationRelations,
                    Citations),
     append(AuthoredRelations, CitationRelations, Relations).
+
+context_relation_facts([], _, _, []).
+context_relation_facts([relation(some(Id), Line, Predicate, Target)|Records],
+                       Context, Path,
+                       [relation(Id, context(Context), Predicate,
+                                 source(Target), org(Path, Line))|Relations]) :-
+    context_relation_facts(Records, Context, Path, Relations).
 
 relation_facts([], _, _, []).
 relation_facts([relation(some(Id), Line, Predicate, Target)|Records],
@@ -632,11 +663,25 @@ same_citation_id(citation(Id, _, _, _, _), citation(Id0, _, _, _, _)) :-
     ;   invalid_snapshot(conflicting_citation_ids(Id, Id0))
     ).
 
-context_edges([], []).
-context_edges([note_entry(_, _, context(Context))|Notes], Edges) :-
+context_edges(Notes, Relations, Edges) :-
+    note_context_edges(Notes, NoteEdges),
+    relation_context_edges(Relations, RelationEdges),
+    append(NoteEdges, RelationEdges, Edges).
+
+note_context_edges([], []).
+note_context_edges([note_entry(_, _, context(Context))|Notes], Edges) :-
     context_chain(Context, ContextEdges),
-    context_edges(Notes, RestEdges),
+    note_context_edges(Notes, RestEdges),
     append(ContextEdges, RestEdges, Edges).
+
+relation_context_edges([], []).
+relation_context_edges([relation(_, context(Context), _, _, _)|Relations],
+                       Edges) :- !,
+    context_chain(Context, ContextEdges),
+    relation_context_edges(Relations, RestEdges),
+    append(ContextEdges, RestEdges, Edges).
+relation_context_edges([_|Relations], Edges) :-
+    relation_context_edges(Relations, Edges).
 
 context_chain('.', []) :- !.
 context_chain(Context, [context_edge(context(Context), context(Parent))|Edges]) :-

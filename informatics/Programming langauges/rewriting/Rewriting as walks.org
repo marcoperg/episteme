@@ -1,0 +1,89 @@
+:PROPERTIES:
+:ID:       33AAD9D3-FEF3-4873-A1CD-603A5928A080
+:END:
+#+title: Rewriting as walks
+#+setupfile: ../../../setup.org
+
+* Rewrite histories as higher paths
+
+A rewrite system can be regarded as a presentation of a homotopical object:
+
+| Rewriting                                    | Homotopy           |
+|----------------------------------------------+--------------------|
+| term                                         | point              |
+| rewrite sequence                             | path               |
+| transformation between rewrite sequences     | path between paths |
+| transformation between those transformations | higher path        |
+
+More literally, one can form an untruncated quotient whose points are terms and
+whose generating paths are labelled one-step rewrites.  A sequence
+
+\[
+s=s_0 \to s_1 \to \cdots \to s_n=t
+\]
+
+then gives a composite path between the images of =s= and =t=.  Keeping the
+quotient untruncated preserves distinctions between parallel paths; set
+truncation forgets them [cite:@krausCoherenceWellFoundednessTaming2020 secs. 2.3-2.4].
+
+This interpretation does not erase directionality.  A reduction is directed,
+whereas an identity path has a formal inverse.  The inverse path permits
+equational zig-zags, but it does not supply an executable inverse rewrite.
+
+* Confluence is not coherence
+
+Confluence says that competing reductions can be joined.  It does not by itself
+identify the resulting parallel derivations.  For a diamond
+
+\[
+a \xrightarrow{r} b \xrightarrow{u} d,
+\qquad
+a \xrightarrow{s} c \xrightarrow{v} d,
+\]
+
+the paths =r.u= and =s.v= have the same endpoints, but coherence requires a
+higher cell witnessing =r.u = s.v=.  Without that filler, their composite with
+one path reversed can remain a non-trivial loop.
+
+Squier-style coherence results explain when local fillers suffice globally: for
+a convergent presentation, chosen fillers for critical branchings can generate
+a homotopy basis.  Kraus and von Raumer formulate this bridge between
+higher-dimensional rewriting and HoTT [cite:@krausRewritingCoherenceTheorem2022],
+while Mimram extends the rewriting account to genuine term languages with
+variables, contexts, substitution, duplication, and erasure
+[cite:@mimramCategoricalCoherenceTerm2023].
+
+* HoTT boundary
+
+The precise claim is that a rewrite system can /present/ a type and some of its
+path structure.  It is not that every equality proof in ordinary HoTT is a
+record of definitional reductions.  Judgmental equality is used silently by
+type checking, whereas propositional equality is inhabited by explicit paths;
+conversely, higher inductive types may contain non-trivial paths that are not
+reduction histories.
+
+One concrete payoff is quotient elimination.  To map a rewriting presentation
+into a 1-type, interpretations of individual steps must also agree on the
+chosen local confluence diagrams.  Under well-foundedness and local confluence,
+these local obligations control coherence on all cycles
+[cite:@krausRewritingCoherenceTheorem2022 thm. 40].
+
+* Reading roadmap
+
+1. Begin with Kraus and von Raumer for the direct rewriting--HoTT connection,
+   homotopy bases, and the quotient-elimination application
+   [cite:@krausRewritingCoherenceTheorem2022].
+2. Continue with Mimram for the extra structure of first-order term rewriting
+   and categorical coherence [cite:@mimramCategoricalCoherenceTerm2023].
+3. Then study the general higher-dimensional machinery, beginning with the
+   chapter on coherence by convergence
+   [cite:@araPolygraphsRewritingHigher2025 chap. 7].
+4. Follow the branch matching the intended use:
+   - for coherent presentations and computable homological invariants, read
+     [cite:@malbosHomologicalComputationsTerm2016];
+   - for transferring coherence between presentations internal to HoTT, read
+     [cite:@mimramCoherentTietzeTransformations2025].
+5. As a parallel, more syntactic route, study equality witnesses represented
+   explicitly by rewrite histories and rewriting on those histories
+   [cite:@ramosExplicitComputationalPaths2018].  This is a specific explicit-path
+   calculus, not the ordinary identity-type presentation of HoTT.

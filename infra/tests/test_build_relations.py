@@ -210,6 +210,42 @@ not a relation
             before_citations[0].identifier, after_citations[0].identifier
         )
 
+    def test_context_assertion_is_stored_once_and_indexes_descendants(self) -> None:
+        self.write(
+            "course/README.org",
+            """#+title: Course
+:CONTEXT_RELATIONS:
+- informed-by :: [cite:@courseSource]
+:END:
+""",
+        )
+        self.write(
+            "course/topic.org",
+            self.graph_note("#+title: Topic\n", "topic-id"),
+        )
+        self.write(
+            "course/deep/topic.org",
+            self.graph_note("#+title: Deep topic\n", "deep-id"),
+        )
+
+        notes, facts, citations, issues = build_relations.relation_facts(self.root)
+        rendered = build_relations.render_module(notes, facts, citations)
+
+        self.assertEqual(issues, [])
+        self.assertEqual(
+            [(note.identifier, note.context) for note in notes],
+            [("deep-id", "course/deep"), ("topic-id", "course")],
+        )
+        self.assertEqual(len(facts), 1)
+        self.assertEqual(facts[0].subject_kind, "context")
+        self.assertEqual(facts[0].subject, "course")
+        self.assertEqual(citations, [])
+        self.assertIn(
+            "context('course'), informed_by, source('courseSource')", rendered
+        )
+        self.assertEqual(rendered.count("asserted("), 1)
+        self.assertEqual(rendered.count("note_index("), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

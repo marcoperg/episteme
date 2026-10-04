@@ -1,6 +1,0 @@
-:PROPERTIES:
-:ID: E2A07443-3280-42C4-82AA-5A87FDE69195
-:END:
-#+title: Notes on QSNP Deriverable 6.1
-
-

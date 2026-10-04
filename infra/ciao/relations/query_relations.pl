@@ -50,7 +50,7 @@ print_snapshot_errors :-
 print_snapshot_errors.
 
 :- pred print_reference_notes(Key) : atm(Key)
-   # "Prints predicate/path rows for notes referring to a citation key.".
+   # "Prints authored occurrence rows referring to a citation key.".
 
 print_reference_notes(Key) :-
     (   setof(Row,
@@ -66,7 +66,7 @@ print_reference_notes(Key) :-
 reference_row(Key, row(Path, Line, Column, cites, Locator)) :-
     citations_to(source(Key), note(_Id), Locator, org(Path, Line, Column)).
 reference_row(Key, row(Path, Line, 1, Predicate, no_locator)) :-
-    asserted_relation(_, note(_Id), Predicate, source(Key), org(Path, Line)),
+    asserted_relation(_, _, Predicate, source(Key), org(Path, Line)),
     Predicate \== cites.
 
 :- pred print_rows(Rows) : list(Rows)

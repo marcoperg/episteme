@@ -1,0 +1,16 @@
+#+title: Historia del pensamiento chino
+
+:CONTEXT_RELATIONS:
+- informed-by :: [cite:@chengHistoriaPensamientoChino]
+:END:
+
+* Acerca de estas notas
+
+Estas notas estudian la historia del pensamiento chino y siguen principalmente
+la exposición de Anne Cheng en /Historia del pensamiento chino/.
+
+* Notas
+
+- [[id:80186A5B-9C16-48F5-94A8-96779F22B29C][Introducción]]
+- [[id:B9BBA797-394D-4BC2-8D6A-3CD95C7C91DA][China antigua]]
+- [[id:0D19D1C2-D015-470E-BC35-5B4F1C6EFA5D][Confucio]]

@@ -1,0 +1,100 @@
+:PROPERTIES:
+:ID: 45474AD9-A163-4CC9-983A-78EFD52E93C9
+:END:
+#+title: Bit Commitments and Coin Flipping
+#+setupfile: ../../../setup.org
+
+Bit commitment lets one party choose a bit while delaying its disclosure. The
+lectures use it to prevent either participant in a telephone coin flip from
+choosing their bit after learning the other participant's choice
+[cite:@fioreCryptographicProtocolosApplicatons].
+
+* Commitment requirements
+
+A commitment has two phases:
+
+1. In the *commit* phase, Alice sends a value that fixes a bit \(b_1\) without
+   revealing it.
+2. In the *open* phase, Alice reveals \(b_1\) and opening information that Bob
+   verifies.
+
+The security goals are:
+
+- *Hiding:* before opening, Bob cannot determine the committed bit.
+- *Binding:* after committing, Alice cannot successfully open the commitment as
+  both \(0\) and \(1\).
+
+These properties protect opposite parties and may rely on different kinds of
+security.
+
+* Coin flipping from commitment
+
+Alice and Bob want a shared random bit \(b=b_1\oplus b_2\). If either party
+announces a bit first, the other can choose the outcome. Commitment changes the
+order:
+
+1. Alice samples \(b_1\) and commits to it.
+2. Bob samples and sends \(b_2\).
+3. Alice opens the commitment.
+4. Both output \(b_1\oplus b_2\).
+
+Hiding prevents Bob from adapting \(b_2\) to \(b_1\); binding prevents Alice
+from changing \(b_1\) after receiving \(b_2\).
+
+* A PRG-based commitment
+
+Let
+
+\[
+G:\{0,1\}^n\to\{0,1\}^{\ell},
+\qquad \ell>3n.
+\]
+
+Bob samples \(r\leftarrow\{0,1\}^{\ell}\) and sends it to Alice. Alice samples
+\(s\leftarrow\{0,1\}^n\) and commits to \(b\) with
+
+\[
+c=G(s)\oplus(b\cdot r),
+\]
+
+where \(0\cdot r=0^{\ell}\) and \(1\cdot r=r\). To open, she sends \((b,s)\),
+and Bob verifies the same equation.
+
+* Hiding intuition
+
+For \(b=0\), the commitment is \(G(s)\); for \(b=1\), it is \(G(s)\oplus r\).
+Pseudorandomness makes \(G(s)\) computationally indistinguishable from uniform.
+Replacing it by a uniform string makes the two commitment distributions
+identical, giving the ideal no-information argument. Thus hiding is
+computational and reduces to PRG security.
+
+* Statistical binding
+
+Alice can open one commitment both ways only if there are seeds \(s_0,s_1\)
+such that
+
+\[
+G(s_0)=G(s_1)\oplus r,
+\]
+
+or equivalently \(r=G(s_0)\oplus G(s_1)\). There are \(2^{2n}\) ordered seed
+pairs, so there are at most \(2^{2n}\) bad values of \(r\). Therefore
+
+\[
+\Pr[r\text{ is bad}]
+\leq\frac{2^{2n}}{2^{\ell}}
+=2^{2n-\ell}
+<2^{-n}.
+\]
+
+The count is an upper bound because different seed pairs can produce the same
+bad value. Binding is therefore statistical over Bob's random choice of \(r\).
+
+* Scope
+
+This construction gives the hiding and binding ideas needed for the coin-flip
+exchange. The lectures do not yet provide a complete malicious-party analysis,
+including abort behavior or fairness guarantees.
+
+The required pseudorandomness is defined in
+[[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom Generators and Computational Encryption]].
