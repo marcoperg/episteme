@@ -3,6 +3,7 @@
     snapshot_valid/0,
     snapshot_issue/4,
     snapshot_version/1,
+    snapshot_provenance/2,
     asserted/5,
     from_index/5,
     to_index/5,
@@ -27,7 +28,8 @@ do not participate in the relation graph. Persistent multithreaded callers must
 serialize refreshes with queries because table invalidation is process-wide.").
 
 :- use_module(library(lists), [append/3, member/2, select/3]).
-:- use_module(library(pathnames), [path_dirname/2]).
+:- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
+:- use_module(library(pathnames), [path_concat/3, path_dirname/2]).
 :- use_module(library(pillow/json), [string_to_json/2]).
 :- use_module(library(process), [process_call/3]).
 :- use_module(library(sort), [sort/2]).
@@ -84,16 +86,18 @@ snapshot_severity('INFO').
       atomically replaces the current in-memory snapshot.".
 
 refresh_snapshot(Root) :-
-    run_exporter(Root, JsonCodes),
-    parse_snapshot(JsonCodes, Snapshot),
-    set_fact(snapshot_state(Snapshot)),
+    snapshot_paths(Root, AbsoluteRoot, Exporter),
+    run_exporter(AbsoluteRoot, Exporter, JsonCodes),
+    parse_snapshot_with_provenance(AbsoluteRoot, Exporter, JsonCodes, Snapshot),
+    set_fact(snapshot_state(installed(AbsoluteRoot, Exporter, Snapshot))),
     abolish_all_tables.
 
 :- pred snapshot_valid
    # "Succeeds when the current snapshot contains no error issue.".
 
 snapshot_valid :-
-    snapshot_state(snapshot(_, valid, _, _, _, _, _, _, _)).
+    snapshot_state(installed(_, _,
+        snapshot(_, valid, _, _, _, _, _, _, _))).
 
 :- trust pred snapshot_issue(Severity, Path, Line, Message)
    => (snapshot_severity(Severity), atm(Path), int(Line), atm(Message))
@@ -101,14 +105,23 @@ snapshot_valid :-
       @var{Line}, and @var{Message}.".
 
 snapshot_issue(Severity, Path, Line, Message) :-
-    snapshot_state(snapshot(_, _, Issues, _, _, _, _, _, _)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, Issues, _, _, _, _, _, _))),
     member(issue(Severity, Path, Line, Message), Issues).
 
 :- trust pred snapshot_version(Version) => int(Version)
    # "Returns the installed JSON schema @var{Version}.".
 
 snapshot_version(Version) :-
-    snapshot_state(snapshot(Version, _, _, _, _, _, _, _, _)).
+    snapshot_state(installed(_, _,
+        snapshot(Version, _, _, _, _, _, _, _, _))).
+
+:- trust pred snapshot_provenance(Root, Exporter) => (atm(Root), atm(Exporter))
+   # "Returns the canonical repository @var{Root} and absolute exporter path
+      used to install the current snapshot.".
+
+snapshot_provenance(Root, Exporter) :-
+    snapshot_state(installed(Root, Exporter, _)).
 
 :- trust pred asserted(Id, Subject, Predicate, Object, Origin)
    => (atm(Id), snapshot_node(Subject), atm(Predicate),
@@ -117,7 +130,8 @@ snapshot_version(Version) :-
       @var{Predicate} to @var{Object} at @var{Origin}.".
 
 asserted(Id, Subject, Predicate, Object, Origin) :-
-    snapshot_state(snapshot(_, _, _, Relations, _, _, _, _, _)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, _, Relations, _, _, _, _, _))),
     member(relation(Id, Subject, Predicate, Object, Origin), Relations).
 
 :- trust pred from_index(Subject, Predicate, Object, Id, Origin)
@@ -146,7 +160,8 @@ to_index(Object, Predicate, Subject, Id, Origin) :-
       @var{Locator} and exact @var{Origin}.".
 
 asserted_citation(Id, Note, Source, Locator, Origin) :-
-    snapshot_state(snapshot(_, _, _, _, Citations, _, _, _, _)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, _, _, Citations, _, _, _, _))),
     member(citation(Id, Note, Source, Locator, Origin), Citations).
 
 :- trust pred citation_from_index(Note, Source, Locator, Id, Origin)
@@ -175,7 +190,8 @@ citation_to_index(Source, Note, Locator, Id, Origin) :-
       and primary @var{Context}.".
 
 note_index(Note, Path, Context) :-
-    snapshot_state(snapshot(_, _, _, _, _, Notes, _, _, _)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, _, _, _, Notes, _, _, _))),
     member(note_entry(Note, Path, Context), Notes).
 
 :- trust pred context_parent_index(Context, Parent)
@@ -184,7 +200,8 @@ note_index(Note, Path, Context) :-
       indexed note contexts.".
 
 context_parent_index(Context, Parent) :-
-    snapshot_state(snapshot(_, _, _, _, _, _, Contexts, _, _)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, _, _, _, _, Contexts, _, _))),
     member(context_edge(Context, Parent), Contexts).
 
 :- trust pred agent_todo(Fingerprint, NoteRef, HeadingPath, Body, Origin)
@@ -194,7 +211,8 @@ context_parent_index(Context, Parent) :-
       @var{NoteRef}, @var{HeadingPath}, @var{Body}, and @var{Origin}.".
 
 agent_todo(Fingerprint, NoteRef, HeadingPath, Body, Origin) :-
-    snapshot_state(snapshot(_, _, _, _, _, _, _, Todos, _)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, _, _, _, _, _, Todos, _))),
     member(todo_entry(Fingerprint, NoteRef, HeadingPath, Body, Origin), Todos).
 
 :- trust pred agent_todo_citation(Fingerprint, Source, Locator, Origin)
@@ -205,25 +223,38 @@ agent_todo(Fingerprint, NoteRef, HeadingPath, Body, Origin) :-
       hint contained in todo @var{Fingerprint}.".
 
 agent_todo_citation(Fingerprint, Source, Locator, Origin) :-
-    snapshot_state(snapshot(_, _, _, _, _, _, _, _, TodoCitations)),
+    snapshot_state(installed(_, _,
+        snapshot(_, _, _, _, _, _, _, _, TodoCitations))),
     member(todo_citation(Fingerprint, Source, Locator, Origin),
            TodoCitations).
 
 % ---------------------------------------------------------------------------
 
-run_exporter(Root, JsonCodes) :-
-    process_call('infra/bin/export-org-snapshot',
-                 ['--root', '.'],
-                 [cwd(Root), stdout(string(JsonCodes)),
-                  stderr(string(ErrorCodes)), status(Status)]),
-    accept_exporter_status(Status, ErrorCodes).
+snapshot_paths(Root, AbsoluteRoot, Exporter) :-
+    fixed_absolute_file_name(Root, '.', AbsoluteRoot),
+    path_concat(AbsoluteRoot, 'infra/bin/export-org-snapshot', Exporter).
 
-accept_exporter_status(0, _) :- !.
-accept_exporter_status(1, _) :- !.
-accept_exporter_status(Status, ErrorCodes) :-
+run_exporter(Root, Exporter, JsonCodes) :-
+    process_call(Exporter,
+                  ['--root', '.'],
+                  [cwd(Root), stdout(string(JsonCodes)),
+                   stderr(string(ErrorCodes)), status(Status)]),
+    accept_exporter_status(Status, Root, Exporter, ErrorCodes).
+
+accept_exporter_status(0, _, _, _) :- !.
+accept_exporter_status(1, _, _, _) :- !.
+accept_exporter_status(Status, Root, Exporter, ErrorCodes) :-
     atom_codes(Error, ErrorCodes),
-    throw(error(org_snapshot_exporter_failed(Status, Error),
+    throw(error(org_snapshot_exporter_failed(
+                    snapshot_source(Root, Exporter), Status, Error),
                 refresh_snapshot/1)).
+
+parse_snapshot_with_provenance(Root, Exporter, JsonCodes, Snapshot) :-
+    catch(parse_snapshot(JsonCodes, Snapshot),
+          error(invalid_org_snapshot(Reason), refresh_snapshot/1),
+          throw(error(invalid_org_snapshot(
+                          snapshot_source(Root, Exporter), Reason),
+                      refresh_snapshot/1))).
 
 parse_snapshot(JsonCodes, Snapshot) :-
     (   string_to_json(JsonCodes, Json) ->
@@ -280,11 +311,11 @@ parse_document(Json, Document) :-
     parse_relations(ContextRelationsJson, ContextRelations),
     parse_citations(CitationsJson, Citations),
     parse_todos(TodosJson, Path, Todos),
-    validate_graph_document(FileId, GraphParticipating,
+    validate_graph_document(Path, FileId, GraphParticipating,
                             Relations, Citations),
-    require_relation_ids(ContextRelations),
+    require_relation_ids(Path, context(Context), ContextRelations),
     Document = document(FileId, GraphParticipating, Path, Context,
-                        Relations, ContextRelations, Citations, Todos).
+                         Relations, ContextRelations, Citations, Todos).
 
 parse_relations([], []) :- !.
 parse_relations([Json|Jsons], [Relation|Relations]) :- !,
@@ -442,43 +473,54 @@ expect_severity('INFO') :- !.
 expect_severity(Severity) :-
     invalid_snapshot(unknown_issue_severity(Severity)).
 
-validate_graph_document(none, false, Relations, Citations) :- !,
-    require_absent_relation_ids(Relations),
-    require_absent_citation_ids(Citations).
-validate_graph_document(none, true, _, _) :- !,
-    invalid_snapshot(graph_participant_without_file_id).
-validate_graph_document(some(_), false, [], []) :- !.
-validate_graph_document(some(_), false, _, _) :- !,
-    invalid_snapshot(graph_data_for_nonparticipant).
-validate_graph_document(some(_), true, Relations, Citations) :-
-    require_relation_ids(Relations),
-    require_citation_ids(Citations).
+validate_graph_document(Path, none, false, Relations, Citations) :- !,
+    require_absent_relation_ids(Path, Relations),
+    require_absent_citation_ids(Path, Citations).
+validate_graph_document(Path, none, true, _, _) :- !,
+    invalid_snapshot(graph_participant_without_file_id(Path)).
+validate_graph_document(_, some(_), false, [], []) :- !.
+validate_graph_document(Path, some(NoteId), false, _, _) :- !,
+    invalid_snapshot(graph_data_for_nonparticipant(Path, NoteId)).
+validate_graph_document(Path, some(NoteId), true, Relations, Citations) :-
+    require_relation_ids(Path, NoteId, Relations),
+    require_citation_ids(Path, NoteId, Citations).
 
-require_absent_relation_ids([]).
-require_absent_relation_ids([relation(none, _, _, _)|Relations]) :-
-    require_absent_relation_ids(Relations).
-require_absent_relation_ids([relation(Id, _, _, _)|_]) :-
-    invalid_snapshot(unexpected_relation_id(Id)).
+require_absent_relation_ids(_, []).
+require_absent_relation_ids(Path, [Relation|Relations]) :-
+    require_absent_relation_id(Path, Relation),
+    require_absent_relation_ids(Path, Relations).
 
-require_relation_ids([]).
-require_relation_ids([relation(some(_), _, _, _)|Relations]) :-
-    require_relation_ids(Relations).
-require_relation_ids([relation(none, _, _, _)|_]) :-
-    invalid_snapshot(missing_graph_relation_id).
+require_absent_relation_id(_, relation(none, _, _, _)) :- !.
+require_absent_relation_id(Path, Relation) :-
+    invalid_snapshot(unexpected_relation_id(Path, Relation)).
 
-require_absent_citation_ids([]).
-require_absent_citation_ids([
-        citation_record(none, none, _, _, _, _)|Citations]) :-
-    require_absent_citation_ids(Citations).
-require_absent_citation_ids([Citation|_]) :-
-    invalid_snapshot(unexpected_citation_id(Citation)).
+require_relation_ids(_, _, []).
+require_relation_ids(Path, NoteId, [Relation|Relations]) :-
+    Relation = relation(Id, _, _, _),
+    (   present_identifier(Id) ->
+        require_relation_ids(Path, NoteId, Relations)
+    ;   invalid_snapshot(missing_graph_relation_id(Path, NoteId, Relation))
+    ).
 
-require_citation_ids([]).
-require_citation_ids([
-        citation_record(some(_), some(_), _, _, _, _)|Citations]) :-
-    require_citation_ids(Citations).
-require_citation_ids([Citation|_]) :-
-    invalid_snapshot(missing_graph_citation_id(Citation)).
+require_absent_citation_ids(_, []).
+require_absent_citation_ids(Path, [Citation|Citations]) :-
+    require_absent_citation_ids_for_record(Path, Citation),
+    require_absent_citation_ids(Path, Citations).
+
+require_absent_citation_ids_for_record(_,
+        citation_record(none, none, _, _, _, _)) :- !.
+require_absent_citation_ids_for_record(Path, Citation) :-
+    invalid_snapshot(unexpected_citation_id(Path, Citation)).
+
+require_citation_ids(_, _, []).
+require_citation_ids(Path, NoteId, [Citation|Citations]) :-
+    Citation = citation_record(Id, RelationId, _, _, _, _),
+    (   present_identifier(Id), present_identifier(RelationId) ->
+        require_citation_ids(Path, NoteId, Citations)
+    ;   invalid_snapshot(missing_graph_citation_id(Path, NoteId, Citation))
+    ).
+
+present_identifier(some(_)).
 
 % ---------------------------------------------------------------------------
 

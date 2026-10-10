@@ -101,6 +101,20 @@ Revisar [cite:@borradorClave p. 8].
         self.assertEqual(snapshot["issues"][0]["severity"], "ERROR")
         self.assertIn("missing file target", snapshot["issues"][0]["message"])
 
+    def test_graph_identifiers_follow_file_identity(self) -> None:
+        self.write("identified.org", ":PROPERTIES:\n:ID: note-id\n:END:\n[cite:@sourceKey]\n")
+        self.write("idless.org", "[cite:@draftKey]\n")
+
+        snapshot = export_snapshot.build_snapshot(self.root)
+        identified, idless = snapshot["documents"]
+
+        self.assertEqual(identified["file_id"], "note-id")
+        self.assertIsNotNone(identified["citations"][0]["id"])
+        self.assertIsNotNone(identified["citations"][0]["relation_id"])
+        self.assertIsNone(idless["file_id"])
+        self.assertIsNone(idless["citations"][0]["id"])
+        self.assertIsNone(idless["citations"][0]["relation_id"])
+
     def test_cli_emits_snapshot_and_fails_on_integrity_error(self) -> None:
         self.write("broken.org", "[[file:missing.org][Missing]]\n")
 

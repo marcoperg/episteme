@@ -238,6 +238,11 @@ loads its versioned JSON into a complete in-memory snapshot. A multithreaded MCP
 server must serialize refreshes with queries because table invalidation is
 process-wide.
 
+Snapshot refresh and task completion canonicalize their supplied repository root
+before invoking helper programs, so MCP and other callers may run from a parent
+workspace rather than changing into Episteme first. =snapshot_provenance/2=
+reports the canonical root and exporter used by the installed view.
+
 #+begin_example
 Org notes
    -> infra/bin/check-integrity shared parser

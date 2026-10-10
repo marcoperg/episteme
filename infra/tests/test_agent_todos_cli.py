@@ -65,6 +65,37 @@ class AgentTodoCliTests(unittest.TestCase):
                 "#+title: Test\nDurable result.\n",
             )
 
+    def test_complete_api_runs_from_the_umbrella_directory(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="agent-todo-parent-", dir=ROOT) as name:
+            directory = Path(name)
+            path = directory / "note.org"
+            relative_path = path.relative_to(ROOT)
+            body = "Completed from parent directory."
+            path.write_text(
+                f"#+title: Test\n:AGENT_TODO:\n{body}\n:END:\nDurable result.\n",
+                encoding="utf-8",
+            )
+            value = "\0".join((relative_path.as_posix(), body))
+            fingerprint = hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+            subprocess.run(
+                [
+                    "ciao-shell",
+                    str(INFRA / "tests" / "complete_agent_todo_from_root.pl"),
+                    ROOT.name,
+                    fingerprint,
+                ],
+                cwd=ROOT.parent,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+
+            self.assertEqual(
+                path.read_text(encoding="utf-8"),
+                "#+title: Test\nDurable result.\n",
+            )
+
     def test_policy_exposes_risk_and_completion_boundaries(self) -> None:
         result = subprocess.run(
             [str(INFRA / "bin" / "agent-todos"), "policy"],

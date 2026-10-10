@@ -46,6 +46,19 @@ class RelationCliTests(unittest.TestCase):
             check=True,
         )
 
+    def test_runtime_refreshes_from_the_umbrella_directory(self) -> None:
+        subprocess.run(
+            [
+                "ciao-shell",
+                str(INFRA / "tests" / "check_relation_semantics.pl"),
+                ROOT.name,
+            ],
+            cwd=ROOT.parent,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+
     def test_reference_query_returns_all_informed_architecture_notes(self) -> None:
         result = subprocess.run(
             [
