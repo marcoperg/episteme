@@ -1,0 +1,51 @@
+:PROPERTIES:
+:ID:       0837BBE4-20E9-43B5-8EC5-1BB29DB6A1B2
+:END:
+#+title: Mozi
+
+* Maestro Mo
+Mozi vivió durante el periodo de los Reinos Combatientes, inmediatamente posterior a las Primeras y los Otoños de Confucio. Es en este momento cuando al decadencia creciente de la que advertía Confucio llega a su climax desentabilizando por completo el sistema política heredado de la dinastía Zhou.
+
+A partir de lo poco que se sabe de él se entiende que ---a diferencia de su noble maestro Confucio--- tiene un trasfondo más humilde. Hay motivos para pensar que venía de una familia de artesanos y que se dedicó, entre otras cosas, al desarrollo de técnicas defensivas de carácter antimilitar.
+
+En su doctrina general, y siguiendo quizás la influencia de su pasado humilde, se aleja un poco de los ritualismos de su maestro tan presentes en el gobierno de los Zhou para establecer una doctrina que le da más importancia a las aptitudes individuales.
+
+
+* La argumentación de Mozi
+Mozi mantiene desde su maestro el foco en las cuestiones éticas y políticas, pero realiza un cambio metodológico de gran importancia: deja atrás los argumentos de autoridad ---como son todos aquellos establecidos desde la tradición--- y funda un forma de argumentación basada en principios racionales y más rigurosos. Es en este momento en donde vemos el nacimiento de la tradición argumentativa china, con la aparción de la palabra /biàn/ (argumentar, discutir) que pasará a identificarse con el concepto de argumentación racional y dando origen al término /biànzhe/ que denota a los sofistas o argumentadores de las épocas posteriores.
+
+Así, mientras en el confucianismo las tesis se probaban mediante alusiones al maestro, en la argumentación moísta no era necesaria ninguna alusión al autor, el método era argumentativo y racional.
+
+El sueño moísta, en este sentido, no sería otro que el de fundamentar sus conclusiones en principios concretos y establecer un discurso riguroso desde ellos. Sin embargo, este sistema no supone todavía un entramado epistemológico riguroso, encontrando la principal limitación en el carácter de sus criterios regidores:
+
+** Los tres criterios de Mozi
+Mozi afirma que todo discurso debe de tener:
+
+1. *Un fundamento*: que reside en los hechos y gestas de los santos reyes antiguos.
+2. *Un origen*: que reside en los testimonios de los ojos y oídos del pueblo.
+3. *Una utilidad*: que reside en la práctica penal y política.
+
+*** Fundamento
+Esta tiene resonancias confucianas, pero utiliza una tradición más amplia sin mostrar la preferencia confuciana por los Zhou. Además, este criterio se mide por el tercero, que es claramente el más relevante, porque la bondad de los actos de los reyes del pasado se mide en base a la utilidad para sus siervos.
+
+*** Origen
+Este se usa solamente para dos de las diez tesis moístas: la existencia de demonios y espíritus y la no existencia del destino.
+
+*** Utilidad
+Encontramos aquí el principal y más central criterio moísta. Bajo esta vara se revisan muchas de las tradiciones defendidas por Confucio. Un ejemplo claro lo encontramos en los ritos funerarios, que Mozi ve excesivos en longitud y dañinos para la economía.
+
+En esta búsqueda por la utilidad se puede encontrar una obsesión por la misma, que impide encontrar el gusto por el placer, véase la oposición de Mozi a la música.
+
+
+* Amor universal contra el sentido de lo humano
+Otra gran diferencia entre las doctrinas moístas y confucianas la encontramos en la importancia de los conceptos de /ren/, central en Confucio, frente a la visión moísta que favorece la asimilación. Confucio establece un principio de humanidad que formula círculos concéntricos ---yo, familia, país, mundo---, mientras Mozi postula una solicitud por asimilación, una suerte de amor universal que puede fundamentarse en la regla de oro de la moral.
+
+El gran confuciano de su tiempo, Mencio, criticará duramente esta postura por ser incompatible con el amor natural que uno tiene con sus allegados, afirmando que ese modo de vida sería vivir como animales.
+
+Hay que destacar que este amor propio de Mozi, no es el amor hacia el prójimo que podemos encontrar en Confucio. Vemos una concepción mecanicista y teleológica del mundo social más próximo al positivismo jurídico. No hay emoción en este amor moísta, sino una preocupación imparcial y razonada por todos los hombres como finalidad en sí. Donde Confucio cree en la bondad humana ---concepción que Mencio volverá fundamental---, Mozi parte de una posición más pesimsita con respecto a los inicios de la humanidad.
+
+
+* Principio moral
+Pese a esta disposición teórica Mozi está lejos de ser un pensador democrático. El principio moral que debe regir la actitud de la población se constituye de arriba hacia abajo. Cada escalón social debe mirar a sus inmediatos superiores y conformarse a ellos como origen de disciplina moral, buscando así en ellos un principio de justicia. En la copa de la pirámide encontramos al rey, que debe de ajustarse a principios morales que poseería por su cualidad de Hijo del Cielo.
+
+Para garantizar ese principio moral arriba de la cima Mozi defiende una visión personificada del Cielo que no encontramos en Confucio ---porque no hacia falta, los principios morales Confucianos no necesitaban de mirar tan arriba. Donde Confucio hablaba del decreto del Cielo Mozi hablá de la voluntad del Cielo.
