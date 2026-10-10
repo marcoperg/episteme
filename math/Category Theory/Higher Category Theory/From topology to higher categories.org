@@ -1,0 +1,472 @@
+:PROPERTIES:
+:ID: F4D2B4E8-91E0-4349-AE65-69B6E3EDC679
+:ROAM_ALIASES: "Higher category theory" "Infinity categories"
+:END:
+#+title: From topology to higher categories
+#+SETUPFILE: ../../../setup.org
+#+LATEX_HEADER: \usepackage{array}
+#+LATEX_HEADER: \setlength{\emergencystretch}{2em}
+
+* The guiding question
+
+Why do we pass from ordinary categories to higher categories? A useful route is
+to begin with topology and ask what happens when we stop identifying things
+merely because they can be continuously deformed into one another.
+
+The progression has two distinct ingredients:
+
+1. *Keep the witnesses of equivalence, and the witnesses between witnesses.*
+   This leads from a space to an \(\infty\)-groupoid.
+2. *Allow some of the arrows to be genuinely directed.* This leads from
+   \((\infty,0)\)-categories to \((\infty,1)\)-categories, then to
+   \((\infty,n)\)-categories.
+
+The notation \((\infty,n)\) means that morphisms may occur in arbitrarily high
+dimensions, but *every morphism of dimension greater than \(n\) is invertible*,
+in the appropriate higher-categorical sense. It does not mean that every
+morphism of dimension at most \(n\) must be noninvertible.
+
+* Start with Top: spaces and continuous maps
+
+The ordinary [[id:6B755D9E-EB8E-4673-ADD0-B4411D410D52][category]] \(\mathrm{Top}\) has topological spaces as objects and
+continuous maps as morphisms. Composition is ordinary composition of functions.
+Its isomorphisms are homeomorphisms.
+
+Homotopy theory asks for a coarser notion of sameness. For example, the interval
+\([0,1]\) and a one-point space are not homeomorphic, but the interval contracts
+to a point. They have the same homotopy type.
+
+Two maps \(f,g:X\to Y\) are *homotopic* if there is a continuous map
+\[
+H:X\times[0,1]\longrightarrow Y,
+\qquad H(x,0)=f(x),\quad H(x,1)=g(x).
+\]
+The map \(H\) is a deformation from \(f\) to \(g\). A homotopy equivalence is a
+map \(f:X\to Y\) with a map \(g:Y\to X\) and homotopies
+\[
+g\circ f\simeq\mathrm{id}_X,
+\qquad f\circ g\simeq\mathrm{id}_Y.
+\]
+Unlike a homeomorphism, it has an inverse only /up to homotopy/.
+
+We can form an ordinary category with homotopy classes of maps. But doing so
+forgets which homotopies relate the maps, whether two homotopies are themselves
+homotopic, and so on. This is the first reason to introduce higher morphisms:
+*a homotopy is mathematical data, not merely permission to declare equality*.
+
+For general spaces, modern homotopy theory usually works with *weak homotopy
+equivalences*: maps inducing bijections on path components and isomorphisms on
+all based homotopy groups. On CW complexes, weak homotopy equivalences are
+homotopy equivalences by Whitehead's theorem. We will distinguish the homotopy
+type of one space from the category that organizes all such types.
+
+* One space gives an infinity-groupoid: (infinity,0)
+
+** Points, paths, and higher homotopies
+
+Fix a space \(X\). Its topology suggests the following hierarchy:
+
+#+ATTR_LATEX: :align >{\raggedright\arraybackslash}p{\dimexpr0.18\linewidth-2\tabcolsep\relax} >{\raggedright\arraybackslash}p{\dimexpr0.30\linewidth-2\tabcolsep\relax} >{\raggedright\arraybackslash}p{\dimexpr0.52\linewidth-2\tabcolsep\relax}
+| Dimension | Categorical interpretation | Topological data |
+|-----------+----------------------------+------------------|
+|         0 | Objects                    | Points of \(X\) |
+|         1 | Morphisms                  | Paths between points |
+|         2 | Morphisms between morphisms | Homotopies between paths, fixing endpoints |
+|         3 | Morphisms between 2-morphisms | Homotopies between those homotopies, fixing boundary data |
+|       ... | ...                        | ... |
+
+There is no universal dimension at which this process stops. Higher homotopy
+groups can carry information arbitrarily far up the hierarchy.
+
+Why is this a /groupoid/? A path \(\gamma:x\to y\) can be reversed to give
+\(\bar\gamma:y\to x\). The concatenation \(\bar\gamma\circ\gamma\) is generally
+not literally the constant path, but it is homotopic to it. Thus paths are
+invertible *up to 2-morphisms*. Reversing a homotopy similarly produces an
+inverse up to a higher homotopy. The same pattern continues in every positive
+dimension.
+
+This is an *\(\infty\)-groupoid*, also called an *\((\infty,0)\)-category*:
+objects need not be invertible, but all positive-dimensional morphisms are.
+
+** Why a fundamental groupoid is not enough
+
+The fundamental groupoid \(\Pi_1(X)\) has points as objects and
+endpoint-preserving homotopy classes of paths as arrows. Passing to classes
+makes path inverses and associativity exact, but discards the higher layers.
+
+For example, \(S^2\) is connected and simply connected, so \(\Pi_1(S^2)\) is
+equivalent to the one-object trivial groupoid. The same is true of a point.
+Nevertheless,
+\[
+\pi_2(S^2)\cong\mathbb{Z},
+\qquad \pi_2(*)=0.
+\]
+A fundamental groupoid cannot distinguish these homotopy types. The
+\(\infty\)-groupoid keeps the information that distinguishes them.
+
+At a chosen point \(x\), \(\pi_1(X,x)\) consists of loops modulo homotopy;
+\(\pi_2(X,x)\) can be understood using 2-morphisms from the identity path to
+itself, modulo 3-morphisms; higher homotopy groups continue this pattern.
+
+** Weak composition and coherence
+
+With ordinary parametrized paths, concatenation is associative only up to
+reparametrization. The two paths
+\[
+(\gamma_3\circ\gamma_2)\circ\gamma_1,
+\qquad
+\gamma_3\circ(\gamma_2\circ\gamma_1)
+\]
+are related by a specified homotopy rather than necessarily being equal.
+Different ways of using such homotopies must themselves agree up to higher
+homotopies. These are *coherence data*.
+
+Some models make selected operations strictly associative, for example by
+using Moore paths. The essential point is not that strict formulas are
+impossible, but that the full homotopy information must survive. A weak higher
+category systematically records composition and its higher coherences.
+
+** The homotopy hypothesis
+
+The *homotopy hypothesis* says that \(\infty\)-groupoids model homotopy types:
+the homotopy theory of spaces and the homotopy theory of
+\(\infty\)-groupoids are equivalent. Here “space” means its weak homotopy type,
+not all its point-set topological features.
+
+A concrete model is the singular simplicial set
+\[
+\operatorname{Sing}(X)_k
+=\operatorname{Hom}_{\mathrm{Top}}(\Delta^k,X).
+\]
+Its simplices encode points, paths, triangles, and higher-dimensional data.
+It is a *Kan complex*, a standard model of an \(\infty\)-groupoid. Geometric
+realization recovers the weak homotopy type. These simplices are a precise
+encoding of the hierarchy above, rather than a literal list of globular
+homotopies.
+
+Thus topology motivates \((\infty,0)\)-categories because a homotopy type
+contains reversible comparisons in every dimension. Ordinary categories can
+still be used to study it, but a category of homotopy classes forgets part of
+the structure.
+
+* Many spaces and their maps give an (infinity,1)-category
+
+** The decisive change: maps need not be reversible
+
+There are now two different levels to keep apart:
+
+- *Inside one space \(X\):* objects are points, and paths are invertible up to
+  homotopy. This gives an \((\infty,0)\)-category.
+- *Between spaces:* objects are homotopy types, and arrows are maps between
+  them. These maps need not be equivalences.
+
+For example, the collapse map \(S^1\to *\) has no homotopy inverse: it destroys
+the nontrivial fundamental group. Homotopy theory needs this map just as much
+as it needs equivalences. We therefore cannot organize all spaces and maps as
+an \(\infty\)-groupoid.
+
+Instead, organize them as follows:
+
+#+ATTR_LATEX: :align >{\raggedright\arraybackslash}p{\dimexpr0.18\linewidth-2\tabcolsep\relax} >{\raggedright\arraybackslash}p{\dimexpr0.82\linewidth-2\tabcolsep\relax}
+| Dimension | Data |
+|-----------+------|
+|         0 | Spaces, understood up to weak homotopy equivalence |
+|         1 | Maps between spaces; not necessarily invertible |
+|         2 | Homotopies between maps |
+|         3 | Homotopies between homotopies |
+|       ... | Higher homotopies |
+
+Every layer above dimension 1 is reversible up to further homotopy, but the
+maps in dimension 1 may be genuinely directed. This is the
+*\((\infty,1)\)-category of spaces*, usually denoted \(\mathcal{S}\).
+
+More precisely, \(\mathcal{S}\) is obtained by /higher-categorical localization/
+of \(\mathrm{Top}\) at weak homotopy equivalences. Localization makes these maps
+equivalences while retaining higher information about maps. It does not make
+every map invertible. Using suitably convenient spaces and replacements gives
+concrete models of this construction.
+
+** Hom-sets become mapping spaces
+
+In an ordinary category, \(\operatorname{Hom}(X,Y)\) is a set. In
+\(\mathcal{S}\), it is replaced by a *mapping space*
+\(\operatorname{Map}_{\mathcal{S}}(X,Y)\):
+
+- its points represent maps \(X\to Y\);
+- its paths represent homotopies between maps;
+- its higher structure represents higher homotopies.
+
+This is a derived mapping space: raw continuous function spaces may require
+replacements to compute it correctly. For CW-type sources and suitable target
+models, the familiar mapping-space picture realizes this intuition.
+
+Taking path components recovers the hom-set in the ordinary homotopy category:
+\[
+\operatorname{Hom}_{h\mathcal{S}}(X,Y)
+=\pi_0\operatorname{Map}_{\mathcal{S}}(X,Y).
+\]
+Thus an \((\infty,1)\)-category has an ordinary homotopy category, but retains
+what taking \(\pi_0\) forgets.
+
+For a particularly simple example,
+\[
+\operatorname{Map}_{\mathcal{S}}(*,Y)\simeq Y.
+\]
+Consequently, maps from a point to \(S^2\) have a mapping space equivalent to
+\(S^2\), although their set of homotopy classes has just one element. Losing
+the mapping space loses its \(\pi_2\), among other data.
+
+** Why the extra data matters in constructions
+
+A homotopy pullback of \(X\xrightarrow{f}Z\xleftarrow{g}Y\) can be modeled by
+triples
+\[
+(x,y,\gamma),\qquad \gamma:f(x)\leadsto g(y).
+\]
+The path \(\gamma\) is a /chosen witness/ of agreement, not simply a yes-or-no
+condition that the images lie in the same path component. Its own homotopies
+contribute to the homotopy type of the pullback.
+
+For example, the homotopy pullback of
+\(*\xrightarrow{z}Z\xleftarrow{z}*\) is the based loop space \(\Omega_z Z\).
+The ordinary pullback is just a point. Retaining coherent witnesses produces
+a genuinely different construction.
+
+This is why \((\infty,1)\)-categories are useful for homotopy theory and derived
+mathematics: they keep noninvertible maps while allowing universal properties
+and diagrams to remember their full homotopy-coherent content.
+
+* Why go beyond (infinity,1)? Directed comparisons between maps
+
+An \((\infty,1)\)-category is appropriate when every comparison /between
+arrows/ is reversible. But many mathematical comparisons are not.
+
+Consider categories, functors, and [[id:F23D46CF-CE5C-4996-A3D3-FCC83C03F9A8][natural transformations]]:
+
+- objects: categories \(C,D,\ldots\);
+- 1-morphisms: functors \(F:C\to D\);
+- 2-morphisms: natural transformations \(\eta:F\Rightarrow G\).
+
+A natural transformation need not be a natural isomorphism. For instance, let
+\(\mathbf{1}\) be the terminal category and let \([1]\) be the category
+\(0\to1\). The functors \(F,G:\mathbf{1}\to[1]\) selecting \(0\) and \(1\)
+have a natural transformation \(F\Rightarrow G\), but none in the reverse
+direction. This is a genuinely noninvertible 2-morphism.
+
+The resulting strict 2-category \(\mathrm{Cat}\) can be viewed as an
+\((\infty,2)\)-category with only identity higher cells. To include its arbitrary
+natural transformations as 2-morphisms, an \((\infty,1)\)-category is insufficient.
+
+There is nevertheless an important \((\infty,1)\)-category
+\(\mathrm{Cat}_\infty\) of \((\infty,1)\)-categories. Its mapping spaces retain
+functors and /natural equivalences/. To retain all natural transformations as
+2-morphisms, one uses an \((\infty,2)\)-category instead. The choice depends on
+which comparisons the problem needs to remember.
+
+Another example is the bicategory of rings and bimodules: rings are objects,
+bimodules are 1-morphisms, and bimodule homomorphisms are 2-morphisms. Composition
+uses tensor products and is associative up to coherent isomorphism. Bimodule
+homomorphisms need not be invertible. Derived versions of this example also
+retain nontrivial higher homotopies.
+
+* The general pattern: (infinity,n)
+
+An *\((\infty,n)\)-category* allows genuinely noninvertible morphisms through
+dimension \(n\), while every morphism above dimension \(n\) is invertible.
+The inverse laws are understood up to coherent higher equivalence, not
+necessarily as strict equations.
+
+The need to increase \(n\) arises when the next layer of comparisons must be
+allowed to be directed:
+
+- \(n=0\): all comparisons are reversible; homotopy types.
+- \(n=1\): maps may be directed; homotopies between them are reversible.
+- \(n=2\): comparisons between maps may also be directed; for example,
+  arbitrary natural transformations.
+- \(n=3\): comparisons between 2-morphisms may also be directed; for example,
+  modifications between suitable transformations of 2-functors.
+
+In the last example, a modification has components that are 2-morphisms in the
+target 2-category. Those components need not be invertible. Thus the familiar
+pattern of categories, functors, and transformations can be iterated, producing
+a need for a third directed layer and then further ones.
+
+A useful recursive intuition, for \(n\geq1\), is
+\[
+\operatorname{Hom}_{\mathcal{C}}(x,y)
+\quad\text{is an }(\infty,n-1)\text{-category}.
+\]
+Its objects are 1-morphisms of \(\mathcal{C}\), its 1-morphisms are
+2-morphisms of \(\mathcal{C}\), and so on. In particular:
+
+- an \((\infty,1)\)-category has mapping /spaces/;
+- an \((\infty,2)\)-category has mapping /\((\infty,1)\)-categories/;
+- an \((\infty,3)\)-category has mapping /\((\infty,2)\)-categories/.
+
+This is a guide to the structure, not a complete definition: composition,
+units, and coherence must also be supplied in a chosen model.
+
+The two parameters answer different questions. The first, \(\infty\), says
+there is no fixed bound on the dimensions of coherence data. The second,
+\(n\), gives the bound above which /invertibility/ is required. Increasing
+\(n\) changes which cells may be directed; it does not merely add more homotopy
+groups to a space. Even a space with nontrivial homotopy groups in arbitrarily
+high degrees is still an \((\infty,0)\)-category.
+
+An ordinary category embeds as an \((\infty,1)\)-category with discrete mapping
+spaces. Similarly, an ordinary groupoid gives an \(\infty\)-groupoid, but models
+only a homotopy 1-type. Higher categories extend these examples rather than
+requiring every higher layer to be nontrivial.
+
+* And (infinity,infinity)? No invertibility cutoff
+
+The same idea suggests an *\((\infty,\infty)\)-category*: morphisms in arbitrarily
+high dimensions, with *no dimension above which invertibility is required*.
+This is often discussed in terms of weak \(\omega\)-categories; precise
+definitions and conventions depend on the model.
+
+Here one can have directed processes, directed comparisons between processes,
+directed comparisons between those comparisons, and so on without a fixed
+cutoff. Some or even all cells may still be invertible; the definition simply
+does not force eventual invertibility.
+
+One elementary source of intuition is to iterate “category of higher
+categories, functors, transformations, modifications, ...”. At any fixed stage
+one obtains only finitely many potentially directed layers. Allowing the
+hierarchy itself to continue indefinitely motivates the unbounded notion.
+Constructing it coherently requires a genuine model of higher categories, not
+just an informal union of the finite stages.
+
+For ordinary homotopy theory of spaces, no such extension is necessary:
+homotopies remain reversible. The reason to go to \((\infty,\infty)\) is an
+unbounded hierarchy of /directed/ comparisons, not a failure of
+\(\infty\)-groupoids to capture higher homotopy groups.
+
+* Summary: two moves, not one ladder of spaces
+
+- *One space:* retain the full homotopy type of \(X\in\mathrm{Top}\) as
+  \(\Pi_\infty(X)\), an \((\infty,0)\)-category.
+- *Spaces together with all maps:* organize them in \(\mathcal{S}\), an
+  \((\infty,1)\)-category.
+- *Directed comparisons through dimension \(n\):* use
+  \((\infty,n)\)-categories.
+- *Directed comparisons with no dimension bound:* use
+  \((\infty,\infty)\)-categories.
+
+The first move retains equivalence witnesses in all dimensions. The second
+allows directed morphisms in successively higher dimensions. Together they
+explain why higher category theory contains both homotopy theory and the
+categorical mathematics of functors, transformations, and their higher analogues.
+
+* Further reading
+
+The following is a reading guide, not a claim that every source was used to
+write this note. The first group is already recorded in Bibliotheca, with PDF
+attachment links in its metadata; this does not guarantee that every attachment
+is currently downloaded. The second group consists of external suggestions not
+found in the current bibliography.
+
+** Already in Bibliotheca
+
+*** Topology and the (infinity,0) viewpoint
+
+- *Allen Hatcher, /Algebraic Topology/*
+  [cite:@allenhatcherAlgebraicTopology2001].
+  Background for the opening of this note: homotopy equivalences, the
+  fundamental group, CW complexes, and higher homotopy groups. Start with
+  Chapter 0 and the fundamental-group material in Chapter 1; return to
+  Chapter 4 for higher homotopy theory. This is a topology textbook, not an
+  introduction to models of higher categories.
+- *Paul G. Goerss and John F. Jardine, /Simplicial Homotopy Theory/*
+  [cite:@goerssSimplicialHomotopyTheory].
+  The technical bridge from spaces to simplicial sets, Kan complexes, and
+  their homotopy theory. Use it when the singular-complex discussion above
+  raises questions about how the combinatorial model actually works. More
+  demanding than Hatcher; best treated as a foundational reference.
+- */Homotopy Type Theory: Univalent Foundations of Mathematics/*
+  [cite:@HomotopyTypeTheory].
+  An optional alternative route: identity types retain paths and iterated
+  identity types retain higher paths. Chapters 2 and 6 are especially relevant
+  to proof-relevant equality and higher inductive types. This illuminates the
+  reversible hierarchy, but is not a replacement for a theory of general
+  directed \((\infty,n)\)-categories.
+
+*** Making (infinity,1)-categories precise
+
+- *Vladimir Hinich, /Lectures on Infinity Categories/*
+  [cite:@hinichLecturesInfinityCategories2018].
+  A lecture-note route into the technical theory. A good next step after an
+  informal survey, particularly if you want to work with concrete models and
+  localization rather than remain at the level of the path analogy.
+- *Emily Riehl and Dominic Verity, /Elements of \(\infty\)-Category Theory/*
+  [cite:@riehlElementsCategoryTheory2022].
+  Develops \((\infty,1)\)-category theory using the model-independent framework
+  of an \(\infty\)-cosmos. Especially useful for understanding how adjunctions,
+  limits, and other familiar categorical constructions survive in the higher
+  setting. Requires a solid command of ordinary category theory; its use of
+  2-categorical methods does not mean its objects are general
+  \((\infty,2)\)-categories.
+- *Jacob Lurie, /Higher Topos Theory/*
+  [cite:@lurieHigherToposTheory2009].
+  A foundational reference for the quasi-category approach to
+  \((\infty,1)\)-categories and higher topoi. Read the introductory motivation
+  first, then consult it for precise constructions and results. It is not the
+  gentlest first textbook, nor a general treatment of every
+  \((\infty,n)\)-category.
+
+*** Directed higher morphisms and coherence
+
+- *Dimitri Ara, Albert Burroni, Yves Guiraud, Philippe Malbos, François
+  Métayer, and Samuel Mimram, /Polygraphs: From Rewriting to Higher Categories/*
+  [cite:@araPolygraphsRewritingHigher2025].
+  A complementary route through rewriting, presentations, and coherence in
+  strict higher categories. Begin with the low-dimensional material to see
+  concrete directed higher cells. Keep the distinction between strict and weak
+  higher categories in mind: this is not simply another presentation of all
+  the homotopy-coherent structures discussed above.
+
+** External suggestions
+
+These links are recommendations only; they have not been imported into Zotero
+or assigned invented Bibliotheca citation keys.
+
+- *Omar Antolín Camarena, /A Whirlwind Tour of the World of
+  \((\infty,1)\)-categories/* (2013),
+  [[https://arxiv.org/abs/1303.4669][arXiv:1303.4669]].
+  *Best immediate follow-up.* An intuition-first survey of what these
+  categories are, why they are useful, and how they fit into the wider higher
+  categorical landscape. It deliberately omits most proofs and technical
+  details, making it a natural continuation of this note.
+- *John C. Baez and Michael Shulman, /Lectures on \(n\)-Categories and
+  Cohomology/*, [[https://arxiv.org/abs/math/0608420][arXiv:math/0608420]].
+  Informal lectures connecting groupoids, the homotopy hypothesis, Postnikov
+  towers, and cohomology. Especially helpful for developing the geometric
+  meaning of higher groupoids beyond the slogan “paths between paths”. The
+  annotated bibliography offers additional routes into the subject.
+- *Viktoriya Ozornova and Martina Rovelli, /\((\infty,n)\)-categories in
+  context/* (2025), [[https://arxiv.org/abs/2501.05969][arXiv:2501.05969]].
+  The most direct follow-up to the transition from \((\infty,1)\) to
+  \((\infty,n)\): an informal introduction with examples, a discussion of
+  different models, and connections to mathematical physics. Read this before
+  attempting a technical comparison of models.
+- *Tom Leinster, /Higher Operads, Higher Categories/*,
+  [[https://arxiv.org/abs/math/0305049][arXiv:math/0305049]].
+  A substantial book on operads and higher-dimensional category theory, with
+  an introductory chapter aimed at topologists. Useful for the algebraic
+  organization of weak composition and coherence, including the motivation
+  for unbounded higher categories. It is not primarily a modern
+  \((\infty,1)\)-category textbook.
+
+** Suggested order
+
+1. Read *Antolín Camarena* for the broad picture, followed by *Ozornova--Rovelli*
+   for the \((\infty,n)\) extension.
+2. If the topology is unfamiliar, fill in the relevant parts of *Hatcher*;
+   read *Baez--Shulman* alongside it for the higher-groupoid interpretation.
+3. Choose a technical \((\infty,1)\) route: *Hinich* for lecture notes, or
+   *Riehl--Verity* for model-independent categorical methods. Use
+   *Goerss--Jardine* for simplicial foundations and *Lurie* as a deeper reference.
+4. For directed higher cells and coherence, branch into *Polygraphs* for
+   rewriting and strict models, or *Leinster* for operadic and weak higher
+   categorical structures. These are complementary branches, not mandatory
+   prerequisites for \((\infty,1)\)-category theory.
