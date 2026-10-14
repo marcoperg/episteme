@@ -1,0 +1,197 @@
+:PROPERTIES:
+:ID: d4d9c729-f044-4b87-8a22-2e56af8b6343
+:END:
+#+TITLE: Small-step operational semantics
+#+LANGUAGE: en
+#+OPTIONS: toc:nil num:nil ^:{} d:nil
+#+STARTUP: content
+#+SETUPFILE: ../../../setup.org
+#+BIBLIOGRAPHY: ../../../../bibliotheca/zotero-library.bib
+#+CITE_EXPORT: biblatex authoryear
+#+LATEX_HEADER: \usepackage{xurl,needspace}
+#+LATEX_HEADER: \hypersetup{hidelinks}
+#+LATEX_HEADER: \PassOptionsToPackage{uniquelist=false,maxcitenames=2,maxbibnames=3}{biblatex}
+#+LATEX_HEADER: \AtBeginDocument{\AtBeginBibliography{\emergencystretch=2em}}
+
+:RELATIONS:
+- informed-by :: [cite:@pierceProgrammingLanguageFoundations2026]
+- informed-by :: [cite:@jacobsIntroductionCoalgebraMathematics2012]
+:END:
+
+Related: [[id:f82515f7-7c76-4939-b56c-20244819c7f5][Overview and correspondence theorems]],
+[[id:93a89b32-fd3d-49b1-a2cb-0f57e868658c][Denotational semantics]], and
+[[id:214c2897-d74b-444a-bca4-c7596d3c98fb][Big-step semantics]].
+
+* The idea and the setting
+
+*Small-step semantics specifies the next computation step.*
+Repeated transitions describe execution; individual transitions may be
+justified by several inference-rule applications
+[cite:@pierceProgrammingLanguageFoundations2026 chap. Smallstep, introduction].
+
+Use the finite arithmetic syntax
+
+\[
+E=\mu F,
+\qquad F(X)=\mathbb Z+\mathrm{Var}+\mathrm{Op}\times X^2,
+\qquad \mathrm{Op}=\{+,-,*\}.
+\]
+
+Environments \(\rho:\mathrm{Var}\to\mathbb Z\) are total and unchanged
+by evaluation. Values are syntactic numerals \(\underline n\).
+The operation \(\widehat o:\mathbb Z^2\to\mathbb Z\) interprets \(o\).
+
+* A left-to-right transition relation
+
+The judgement \(\rho\vdash e\longrightarrow e'\) means one step under
+\(\rho\). Define it as the least relation closed under these rules:
+
+\[
+\frac{}{\rho\vdash x\longrightarrow\underline{\rho(x)}}
+\qquad
+\frac{}{
+\rho\vdash\underline{n_1}\mathbin{o}\underline{n_2}
+\longrightarrow\underline{\widehat o(n_1,n_2)}
+}
+\]
+
+\[
+\frac{\rho\vdash e_1\longrightarrow e_1'}{
+\rho\vdash e_1\mathbin{o}e_2\longrightarrow e_1'\mathbin{o}e_2
+}
+\qquad
+\frac{\rho\vdash e_2\longrightarrow e_2'}{
+\rho\vdash\underline{n_1}\mathbin{o}e_2
+\longrightarrow\underline{n_1}\mathbin{o}e_2'
+}.
+\]
+
+There is no rule reducing a numeral. The last rule permits evaluation of
+the right operand only when the left is already a numeral.
+
+#+LATEX: \Needspace{5\baselineskip}
+For example, with \(\rho(x)=4\), and numeral underlining suppressed,
+
+\[
+(x+2)*3\longrightarrow(4+2)*3\longrightarrow6*3\longrightarrow18.
+\]
+
+Write \(\longrightarrow^k\) for exactly \(k\) transitions and
+\(\longrightarrow^*=\bigcup_{k\in\mathbb N}\longrightarrow^k\).
+In particular, \(\longrightarrow^0\) is equality.
+
+* From an inductive relation to a coalgebra
+
+The rules above define an *inductive relation*, just as big-step rules
+do. Once defined, that relation can be packaged as a *coalgebra*.
+These are two descriptions of the same transition system, not competing
+choices between induction and coinduction
+[cite:@jacobsIntroductionCoalgebraMathematics2012 secs. 2.2.4 and 5.5].
+
+Let \(C=\mathrm{Env}\times E\). Define
+
+\[
+\gamma:C\to\mathcal P(C),
+\qquad
+\gamma(\rho,e)=\{(\rho,e')\mid\rho\vdash e\longrightarrow e'\}.
+\]
+
+This is a coalgebra for the covariant powerset functor, whose action on
+maps is \(\mathcal P(h)(U)=h[U]\). It exposes possible successors.
+By itself, however, it does not record a final integer: all numeral
+configurations have the same empty successor set. An output observation
+must be included to distinguish their results.
+
+* A deterministic coalgebra with results
+
+For the displayed rules, structural induction establishes determinism
+and progress: every non-numeral has exactly one successor.
+For termination, define
+
+\begin{align*}
+m(\underline n)&=0,\\
+m(x)&=1,\\
+m(e_1\mathbin{o}e_2)&=1+m(e_1)+m(e_2).
+\end{align*}
+
+Induction on a one-step derivation shows that each transition decreases
+\(m\) by exactly one. Together with progress, this proves that every
+expression reaches a numeral in exactly \(m(e)\) transitions.
+This counts semantic transitions, not machine running time.
+
+#+LATEX: \Needspace{8\baselineskip}
+For a fixed \(\rho\), we can consequently define a total map
+
+\begin{equation*}
+\boxed{
+\gamma_\rho:E\to\mathbb Z+E,
+\qquad
+\gamma_\rho(e)=
+\begin{cases}
+\mathrm{inl}(n),&e=\underline n,\\
+\mathrm{inr}(e'),&\rho\vdash e\longrightarrow e'.
+\end{cases}
+}
+\end{equation*}
+
+This is a coalgebra for \(G(X)=\mathbb Z+X\), with
+\(G(h)=\mathrm{id}_{\mathbb Z}+h\): *return an integer or take a step*.
+The behavioural functor \(G\) is not the syntax functor \(F\).
+
+* Whole executions through a final coalgebra
+
+An initial algebra supplies a unique /fold/ out of syntax; a final
+coalgebra supplies a unique /behaviour map/ out of a transition system.
+The latter must preserve observations and successors
+[cite:@jacobsIntroductionCoalgebraMathematics2012 secs. 1.2 and 2.3].
+For the dual initial-algebra construction, see
+[[id:2D0BB075-2A72-4BD2-B116-7ABEBE2AE647][Initial algebra of an endofunctor]].
+
+For this particular \(G\), the final coalgebra has carrier
+
+\[
+Q=\nu G\cong(\mathbb Z\times\mathbb N)+\{\infty\},
+\]
+
+where \((n,k)\) means returning \(n\) after \(k\) transitions, and
+\(\infty\) means continuing forever. Its structure map
+\(\mathsf{out}:Q\to\mathbb Z+Q\) is
+
+\begin{align*}
+\mathsf{out}(n,0)&=\mathrm{inl}(n),\\
+\mathsf{out}(n,k+1)&=\mathrm{inr}(n,k),\\
+\mathsf{out}(\infty)&=\mathrm{inr}(\infty).
+\end{align*}
+
+Every \(G\)-coalgebra state either returns a particular integer after a
+unique finite number of transitions or continues forever. Sending states
+to those outcomes defines the unique coalgebra morphism into \(Q\).
+Applied to our evaluator, this gives
+
+\[
+\mathsf{beh}_\rho:E\to Q,
+\qquad
+\boxed{
+\mathsf{out}\circ\mathsf{beh}_\rho
+=G(\mathsf{beh}_\rho)\circ\gamma_\rho.
+}
+\]
+
+In particular,
+
+\[
+\mathsf{beh}_\rho(e)=(n,k)
+\iff\rho\vdash e\longrightarrow^k\underline n.
+\]
+
+Here \(\infty\) is never reached, by the termination argument above.
+This choice of functor remembers the result and step count, /not/ the
+intermediate expression trees. Other observations require a different
+behavioural functor; stuck states would also require a separate case.
+
+* References
+
+#+PRINT_BIBLIOGRAPHY: :heading none
+
+Online texts: [[https://softwarefoundations.cis.upenn.edu/plf-current/Smallstep.html][Smallstep: Small-step Operational Semantics]] and
+[[https://www.cs.ru.nl/B.Jacobs/CLG/JacobsCoalgebraIntro.pdf][Jacobs's coalgebra draft]].

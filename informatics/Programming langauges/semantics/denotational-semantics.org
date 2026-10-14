@@ -1,0 +1,180 @@
+:PROPERTIES:
+:ID: 93a89b32-fd3d-49b1-a2cb-0f57e868658c
+:END:
+#+TITLE: Denotational semantics of inductive types
+#+LANGUAGE: en
+#+OPTIONS: toc:nil num:nil ^:{}
+#+STARTUP: content
+#+SETUPFILE: ../../../setup.org
+#+BIBLIOGRAPHY: ../../../../bibliotheca/zotero-library.bib
+#+CITE_EXPORT: biblatex authoryear
+#+LATEX_HEADER: \AtBeginDocument{\AtBeginBibliography{\emergencystretch=2em}}
+
+* The idea
+
+*Syntax supplies constructors; semantics supplies their interpretations.*
+For an inductively defined syntax, the interpretation extends uniquely to
+all terms by structural recursion. Categorically, this is a homomorphism
+from an initial algebra into a chosen semantic algebra
+[cite:@goguenInitialAlgebraSemantics1977].
+
+We work in \(\mathbf{Set}\), with ordinary, non-indexed algebraic inductive
+types. This suffices for the arithmetic language below.
+
+* Minimal preliminaries
+
+An *endofunctor* \(F:\mathbf{Set}\to\mathbf{Set}\) describes one layer of
+syntax. Replace recursive occurrences of the type by \(X\): constructor
+alternatives become coproducts (disjoint unions), simultaneous arguments
+become products, and nonrecursive argument types stay fixed.
+On functions, \(F\) maps the recursive positions and preserves the rest.
+
+An *\(F\)-algebra* (see [[id:F5B69F90-6182-4E71-9585-FFE49AA48942][Algebra for an endofunctor]]) is a carrier \(A\)
+equipped with a map
+\(a:F(A)\to A\): a way to combine one layer of inputs into a result.
+The inductive type \(T=\mu F\), with its constructors bundled into
+
+\[
+\mathsf{in}:F(T)\to T,
+\]
+
+is the *initial \(F\)-algebra* (see [[id:2D0BB075-2A72-4BD2-B116-7ABEBE2AE647][Initial algebra of an endofunctor]]):
+there is exactly one algebra homomorphism
+from it to every other \(F\)-algebra. This is structural recursion with
+uniqueness, not merely the fixed-point equation \(T\cong F(T)\)
+[cite:@goguenInitialAlgebraSemantics1977].
+
+For the connection with free algebras and assignments of generators, see
+[[file:../rewriting/initiality-adjunction.org][Initiality and the Free--Forgetful Adjunction]].
+
+* Denotational semantics as a fold
+
+Choose a *semantic domain* \(D\) and a *semantic algebra*
+\(\alpha:F(D)\to D\). The latter interprets each constructor using the
+meanings of its immediate subterms, rather than the subterms themselves.
+
+Initiality gives the unique interpretation map, called a *fold* or
+*catamorphism* [cite:@meijerFunctionalProgrammingBananas1991 secs. 3-4].[fn:folds]
+
+\[
+\boxed{
+[\![-]\!]=\mathsf{fold}_{\alpha}:T\to D.
+}
+\]
+
+Being an algebra homomorphism means precisely that
+
+\[
+\boxed{
+[\![-]\!]\circ\mathsf{in}
+=
+\alpha\circ F([\![-]\!]).
+}
+\]
+
+The left side constructs a term and then interprets it. The right side
+first interprets its subterms and then combines their meanings.
+*This equation expresses compositionality*
+[cite:@goguenInitialAlgebraSemantics1977].
+
+Thus \((D,\alpha)\) is the semantic choice; the map
+\([\![-]\!]\) follows uniquely. Initiality does not choose the intended
+operations for us, nor by itself prove agreement with an operational
+semantics.
+
+* Example: arithmetic expressions
+
+** Syntax
+
+\begin{gather*}
+e ::= n \mid x \mid e+e \mid e-e \mid e*e,
+\\
+n\in\mathbb Z,\qquad x\in\mathrm{Var}.
+\end{gather*}
+
+The signature functor is
+
+\[
+F(X)=\mathbb Z+\mathrm{Var}
+     +(X\times X)+(X\times X)+(X\times X).
+\]
+
+For \(h:X\to Y\), its action on functions is
+
+\[
+F(h)=\mathrm{id}_{\mathbb Z}+\mathrm{id}_{\mathrm{Var}}
+     +(h\times h)+(h\times h)+(h\times h).
+\]
+
+Here \(+\) denotes coproduct, not arithmetic addition. The five summands
+are tagged \(\mathsf{num},\mathsf{var},\mathsf{add},\mathsf{sub},\mathsf{mul}\).
+The finite expression trees form \(E=\mu F\); \(\mathsf{in}\) turns a tagged
+layer of subexpressions into an expression.
+
+** Semantic domain and algebra
+
+A variable environment assigns an integer to each variable. Take
+
+\[
+\mathrm{Env}=\mathrm{Var}\to\mathbb Z,
+\qquad
+D=\mathrm{Env}\to\mathbb Z.
+\]
+
+An expression denotes a *function of its environment*, not a single
+integer. Define \(\alpha:F(D)\to D\) by
+
+\begin{align*}
+\alpha(\mathsf{num}(n))     &= \lambda\rho.\,n,\\
+\alpha(\mathsf{var}(x))     &= \lambda\rho.\,\rho(x),\\
+\alpha(\mathsf{add}(f,g))   &= \lambda\rho.\,f(\rho)+g(\rho),\\
+\alpha(\mathsf{sub}(f,g))   &= \lambda\rho.\,f(\rho)-g(\rho),\\
+\alpha(\mathsf{mul}(f,g))   &= \lambda\rho.\,f(\rho)\cdot g(\rho).
+\end{align*}
+
+The tags here are coproduct injections; \(f,g\in D\) are already meanings.
+Integer arithmetic occurs only on the right-hand sides.
+
+** Induced interpretation
+
+The unique homomorphism
+\([\![-]\!]=\mathsf{fold}_{\alpha}:E\to D\) satisfies
+
+\begin{align*}
+[\![n]\!]\rho &= n,\\
+[\![x]\!]\rho &= \rho(x),\\
+[\![e_1\mathbin{\diamond}e_2]\!]\rho
+ &= ([\![e_1]\!]\rho)\mathbin{\diamond}([\![e_2]\!]\rho),
+\qquad \diamond\in\{+,-,*\}.
+\end{align*}
+
+On the left, \(\diamond\) is a syntax constructor; on the right, its
+integer interpretation. These familiar semantic clauses are exactly the
+homomorphism equation expanded constructor by constructor.
+Fixing \(\rho\) gives the evaluator \(e\mapsto[\![e]\!]\rho\).
+
+* Semantic equality
+
+Different syntax can have the same denotation. Define
+
+\begin{align*}
+e\equiv_{\mathrm{sem}}e'
+&\quad\Longleftrightarrow\quad
+[\![e]\!]=[\![e']\!]\\
+&\quad\Longleftrightarrow\quad
+\forall\rho\in\mathrm{Env},\;
+[\![e]\!]\rho=[\![e']\!]\rho.
+\end{align*}
+
+For example, \(x+0\equiv_{\mathrm{sem}}x\), although the syntax trees differ.
+The homomorphism equation makes this equivalence a *congruence*: replacing
+a subexpression by one with the same denotation preserves the meaning of
+the whole expression.
+
+* References
+
+#+PRINT_BIBLIOGRAPHY: :heading none
+
+[fn:folds] The [[https://maartenfokkinga.github.io/utwente/mmf91m.pdf][fold-calculus paper]] develops its account in a
+domain-theoretic setting; the present note uses its elementary set-based
+counterpart.

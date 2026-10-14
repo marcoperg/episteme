@@ -1,0 +1,193 @@
+:PROPERTIES:
+:ID: f82515f7-7c76-4939-b56c-20244819c7f5
+:END:
+#+TITLE: Denotational and operational semantics: the connections
+#+LANGUAGE: en
+#+OPTIONS: toc:nil num:nil ^:{} d:nil
+#+STARTUP: content
+#+SETUPFILE: ../../../setup.org
+#+BIBLIOGRAPHY: ../../../../bibliotheca/zotero-library.bib
+#+CITE_EXPORT: biblatex authoryear
+#+LATEX_HEADER: \usepackage{tabularx,xurl,needspace}
+#+LATEX_HEADER: \hypersetup{hidelinks}
+#+LATEX_HEADER: \PassOptionsToPackage{uniquelist=false,maxcitenames=2,maxbibnames=3}{biblatex}
+#+LATEX_HEADER: \AtBeginDocument{\AtBeginBibliography{\emergencystretch=2em}}
+
+:RELATIONS:
+- informed-by :: [cite:@pierceLogicalFoundations2026]
+- informed-by :: [cite:@pierceProgrammingLanguageFoundations2026]
+- informed-by :: [cite:@jacobsIntroductionCoalgebraMathematics2012]
+:END:
+
+* Reading map
+
+#+ATTR_LATEX: :environment tabularx :width \linewidth :align >{\raggedright\arraybackslash}p{0.36\linewidth}>{\raggedright\arraybackslash}X
+| Note | Main construction |
+|------+-------------------|
+| [[id:93a89b32-fd3d-49b1-a2cb-0f57e868658c][Denotational semantics]] | Semantic algebra and the unique interpretation fold |
+| [[id:214c2897-d74b-444a-bca4-c7596d3c98fb][Big-step operational semantics]] | Inductive evaluation relation and derivation trees |
+| [[id:d4d9c729-f044-4b87-8a22-2e56af8b6343][Small-step operational semantics]] | One-step reduction, coalgebras and execution behaviour |
+
+This note relates the three constructions. The example throughout uses
+finite arithmetic expressions, total integer environments, and the usual
+integer operations; small-step evaluation is left-to-right.
+
+* Shared syntax, different semantic choices
+
+We work in \(\mathbf{Set}\), with
+
+\begin{gather*}
+F(X)=\mathbb Z+\mathrm{Var}+\{+,-,*\}\times X^2,
+\\
+E=\mu F,
+\qquad \mathrm{Env}=\mathrm{Var}\to\mathbb Z.
+\end{gather*}
+
+The map \(\mathsf{in}:F(E)\to E\) supplies the syntax constructors.
+It does not choose how programs should execute.
+
+*Denotational semantics* chooses an algebra \(\alpha:F(D)\to D\),
+where \(D=\mathrm{Env}\to\mathbb Z\), and obtains
+
+\[
+[\![-]\!]=\mathsf{fold}_\alpha:E\to D,
+\qquad
+[\![-]\!]\circ\mathsf{in}=\alpha\circ F([\![-]\!]).
+\]
+
+*Big-step semantics* independently gives rules defining the least
+relation \(\rho\vdash e\Downarrow n\): complete successful evaluations.
+
+*Small-step semantics* independently gives rules defining
+\(\rho\vdash e\longrightarrow e'\): individual transitions. With the
+specified strategy and total environments, these can be packaged as
+\(\gamma_\rho:E\to G(E)\), where \(G(X)=\mathbb Z+X\).
+
+Thus \(F\) describes /syntax constructors/, while \(G\) describes
+/behavioural observations/. There is no requirement that \(F=G\).
+The rule-based and coalgebraic descriptions are compatible: the rules
+can inductively define the very relation represented by a coalgebra
+[cite:@jacobsIntroductionCoalgebraMathematics2012 sec. 5.5].
+
+* Agreement is a theorem
+
+For the particular semantics in these notes,
+
+\begin{equation*}
+\boxed{
+\begin{aligned}
+\rho\vdash e\Downarrow n
+&\quad\Longleftrightarrow\quad
+\rho\vdash e\longrightarrow^*\underline n
+\\
+&\quad\Longleftrightarrow\quad
+[\![e]\!]\rho=n.
+\end{aligned}
+}
+\end{equation*}
+
+Here \(\underline n\) is a syntactic numeral and
+\(\longrightarrow^*\) allows any finite number of steps, including zero.
+Agreement does not follow merely from sharing a syntax functor.
+
+** Big-step and denotational semantics
+
+Prove the first-to-last correspondence by structural induction on \(e\),
+using inversion of the big-step rules. Constants and variables agree
+immediately. For a binary constructor, both definitions combine exactly
+the values of the two subexpressions using the same integer operation.
+The induction hypotheses identify those values
+[cite:@pierceLogicalFoundations2026 chap. Imp, sec. Equivalence of the Definitions].
+
+** Big-step and small-step semantics
+
+For big-step to small-step, induct on the evaluation derivation.
+In the binary case, concatenate the left operand's reduction, the right
+operand's reduction, and the final arithmetic step, using the context
+rules to lift the subexpression reductions.
+
+For the converse, first prove by induction on a one-step derivation that
+
+\[
+\rho\vdash e\longrightarrow e'
+\;\land\;
+\rho\vdash e'\Downarrow n
+\quad\Longrightarrow\quad
+\rho\vdash e\Downarrow n.
+\]
+
+Starting with \(\rho\vdash\underline n\Downarrow n\), apply this lemma
+backwards along a finite reduction to obtain \(\rho\vdash e\Downarrow n\).
+These implications relate finite results; they do not require a separate
+assumption that /every/ program terminates
+[cite:@pierceProgrammingLanguageFoundations2026 chap. Smallstep, sec. Equivalence of Big-Step and Small-Step].
+
+* Relating behaviour to denotation
+
+The [[id:d4d9c729-f044-4b87-8a22-2e56af8b6343][small-step note]] constructs the unique behaviour map
+
+\[
+\mathsf{beh}_\rho:E\to Q,
+\qquad Q=(\mathbb Z\times\mathbb N)+\{\infty\}.
+\]
+
+It records the result and number of transitions, or divergence.
+Let \(\mathbb Z_\bot=\mathbb Z+\{\bot\}\), and define an abstraction
+
+\[
+q:Q\to\mathbb Z_\bot,
+\qquad q(n,k)=n,
+\qquad q(\infty)=\bot.
+\]
+
+Writing \(\iota:\mathbb Z\to\mathbb Z_\bot\) for the inclusion, agreement
+and termination give
+
+\[
+\boxed{
+\iota([\![e]\!]\rho)=q(\mathsf{beh}_\rho(e)).
+}
+\]
+
+The denotation here forgets the transition count. For example,
+\([\![x+0]\!]=[\![x]\!]\), but \(x+0\) takes two transitions and
+\(x\) takes one. Equal final values therefore need not mean equal
+coalgebraic behaviours for this choice of \(G\).
+
+* Scope and generalisation
+
+These are not exclusive mathematical categories. The big-step relation
+for this language is itself recoverable by a syntax fold; small-step
+rules are inductive even though executions can be studied coalgebraically.
+Nor must denotational semantics forget time: a richer semantic domain
+can record cost, traces, state changes or other chosen observations.
+
+Finite syntax does not in general imply terminating execution: adding a
+loop constructor still gives finite syntax trees. Ordinary inductive
+big-step rules record finite successful evaluations; without additional
+judgements, absence of a result does not distinguish divergence from
+getting stuck. Small-step semantics exposes that distinction as an
+infinite run versus a non-value with no successor
+[cite:@pierceProgrammingLanguageFoundations2026 chap. Smallstep, introduction].
+
+#+LATEX: \Needspace{8\baselineskip}
+A further categorical step is /bialgebraic operational semantics/:
+combine syntax and behaviour on one carrier,
+
+\[
+F(E)\xrightarrow{\mathsf{in}}E\xrightarrow{\gamma_\rho}G(E),
+\]
+
+and express their compatibility using suitable distributive-law data.
+Such compatibility can ensure that behavioural equivalence is a
+congruence for syntax constructors; merely giving the two maps does not
+supply that guarantee
+[cite:@jacobsIntroductionCoalgebraMathematics2012 sec. 5.5].
+
+* References
+
+#+PRINT_BIBLIOGRAPHY: :heading none
+
+Online texts: [[https://softwarefoundations.cis.upenn.edu/lf-current/Imp.html][Imp]],
+[[https://softwarefoundations.cis.upenn.edu/plf-current/Smallstep.html][Smallstep]], and
+[[https://www.cs.ru.nl/B.Jacobs/CLG/JacobsCoalgebraIntro.pdf][Jacobs's coalgebra draft]].

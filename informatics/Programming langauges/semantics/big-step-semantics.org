@@ -1,0 +1,180 @@
+:PROPERTIES:
+:ID: 214c2897-d74b-444a-bca4-c7596d3c98fb
+:END:
+#+TITLE: Big-step operational semantics
+#+LANGUAGE: en
+#+OPTIONS: toc:nil num:nil ^:{} d:nil
+#+STARTUP: content
+#+SETUPFILE: ../../../setup.org
+#+BIBLIOGRAPHY: ../../../../bibliotheca/zotero-library.bib
+#+CITE_EXPORT: biblatex authoryear
+#+LATEX_HEADER: \usepackage{xurl,needspace}
+#+LATEX_HEADER: \hypersetup{hidelinks}
+#+LATEX_HEADER: \PassOptionsToPackage{uniquelist=false,maxcitenames=2,maxbibnames=3}{biblatex}
+#+LATEX_HEADER: \AtBeginDocument{\AtBeginBibliography{\emergencystretch=2em}}
+
+:RELATIONS:
+- informed-by :: [cite:@pierceLogicalFoundations2026]
+- informed-by :: [cite:@jacobsIntroductionCoalgebraMathematics2012]
+:END:
+
+Related: [[id:f82515f7-7c76-4939-b56c-20244819c7f5][Overview and correspondence theorems]],
+[[id:93a89b32-fd3d-49b1-a2cb-0f57e868658c][Denotational semantics]], and
+[[id:d4d9c729-f044-4b87-8a22-2e56af8b6343][Small-step semantics]].
+
+* The idea
+
+*Big-step semantics defines complete evaluations by inference rules.*
+A judgement records an input and a final result; its justification is a
+finite derivation tree. The relation is the /least/ one closed under the
+rules, not an arbitrary relation satisfying their implications
+[cite:@pierceLogicalFoundations2026 chap. Imp, sec. Evaluation as a Relation].
+The rules below adapt that presentation to integers and total environments.
+
+We work in \(\mathbf{Set}\). For our arithmetic syntax, recall
+
+\[
+F(X)=\mathbb Z+\mathrm{Var}+\mathrm{Op}\times X^2,
+\qquad E=\mu F,
+\qquad \mathrm{Op}=\{+,-,*\}.
+\]
+
+Let \(\mathrm{Env}=\mathrm{Var}\to\mathbb Z\), with total environments.
+Write \(\underline n\) for a syntactic numeral and
+\(\widehat o:\mathbb Z^2\to\mathbb Z\) for the integer operation
+interpreting the syntactic operator \(o\).
+
+* Judgements and rules
+
+The judgement \(\rho\vdash e\Downarrow n\) means that \(e\) evaluates
+to \(n\) under \(\rho\). Define it inductively by
+
+\[
+\frac{}{\rho\vdash\underline n\Downarrow n}
+\qquad
+\frac{}{\rho\vdash x\Downarrow\rho(x)}
+\]
+
+and, for each \(o\in\mathrm{Op}\),
+
+\[
+\frac{
+  \rho\vdash e_1\Downarrow n_1
+  \qquad
+  \rho\vdash e_2\Downarrow n_2
+}{
+  \rho\vdash e_1\mathbin{o}e_2\Downarrow\widehat o(n_1,n_2)
+}.
+\]
+
+The premises justify the result; their placement does not, by itself,
+specify a temporal order of evaluation. In this pure, total language,
+that order does not affect the integer obtained.
+
+* The relation as a least fixed point
+
+Let \(J=\mathrm{Env}\times E\times\mathbb Z\) be the set of possible
+judgements. Define the axiom instances
+
+\begin{align*}
+B_0={}&
+\{(\rho,\underline n,n)\mid\rho\in\mathrm{Env},\ n\in\mathbb Z\}
+\\
+&\;\cup\;
+\{(\rho,x,\rho(x))\mid\rho\in\mathrm{Env},\ x\in\mathrm{Var}\}.
+\end{align*}
+
+The rules induce a monotone operator
+\(\Phi:\mathcal P(J)\to\mathcal P(J)\):
+
+\begin{align*}
+\Phi(R)=B_0\;\cup\;\bigl\{&
+  (\rho,e_1\mathbin{o}e_2,\widehat o(n_1,n_2))\mid\\
+  &o\in\mathrm{Op},\;
+   (\rho,e_1,n_1)\in R,\;
+   (\rho,e_2,n_2)\in R\,\bigr\}.
+\end{align*}
+
+Thus the big-step relation is
+
+\[
+\boxed{B=\mu\Phi=\bigcup_{k\in\mathbb N}\Phi^k(\varnothing).}
+\]
+
+The union over finite stages suffices because these rules have finitely
+many premises. Membership in \(B\) means having a finite derivation;
+the iteration index bounds derivation height, not execution steps.
+
+There is an initial-algebra reading here too. Regard
+\((\mathcal P(J),\subseteq)\) as a category, with an arrow exactly when
+one relation is included in another. Monotonicity makes \(\Phi\) an
+endofunctor. A \(\Phi\)-algebra is an inclusion \(\Phi(R)\subseteq R\),
+i.e. a rule-closed relation. Since \(B\) is contained in every such
+relation, it is the *initial \(\Phi\)-algebra*. This is a different
+category and functor from those defining the syntax \(E\). For the general
+initial-algebra and fixed-point background, see
+[cite:@jacobsIntroductionCoalgebraMathematics2012 secs. 2.4 and 4.5.1].
+The poset and judgement-family constructions here are worked out for the
+displayed inference rules; see also
+[[id:2D0BB075-2A72-4BD2-B116-7ABEBE2AE647][Initial algebra of an endofunctor]].
+
+#+LATEX: \Needspace{10\baselineskip}
+* Derivations as an inductive type
+
+To retain proofs rather than just their existence, use families of sets
+indexed by judgements. For a family \(A=(A_j)_{j\in J}\), define
+
+\[
+(H A)_j=
+\sum_{r\in\mathcal R_j}\prod_{i=1}^{k_r} A_{p_{r,i}}.
+\]
+
+Here \(\mathcal R_j\) consists of instantiated rules concluding \(j\),
+and \(p_{r,1},\ldots,p_{r,k_r}\) are the premises of \(r\).
+The empty product is \(1\), accounting for axioms. On maps, \(H\) maps
+each premise component. The initial algebra in \(\mathbf{Set}^J\) is
+
+\[
+\mathrm{Deriv}=\mu H,
+\qquad
+j\in B\iff\mathrm{Deriv}_j\ne\varnothing.
+\]
+
+*\(\mu F\) contains syntax trees; \(\mu H\) contains derivation trees.*
+Passing to \(B\) forgets which derivation establishes a judgement.
+
+* For this language, evaluation is also a fold
+
+Take \(D_{\mathrm{rel}}=\mathrm{Env}\to\mathcal P(\mathbb Z)\).
+Define \(\alpha_{\mathrm{rel}}:F(D_{\mathrm{rel}})\to D_{\mathrm{rel}}\)
+by
+
+\begin{align*}
+\alpha_{\mathrm{rel}}(\mathsf{num}(n))(\rho)&=\{n\},\\
+\alpha_{\mathrm{rel}}(\mathsf{var}(x))(\rho)&=\{\rho(x)\},\\
+\alpha_{\mathrm{rel}}(o,f,g)(\rho)
+  &=\{\widehat o(a,b)\mid a\in f(\rho),\ b\in g(\rho)\}.
+\end{align*}
+
+Structural induction, using the rules above, gives
+
+\[
+\boxed{
+\mathsf{fold}_{\alpha_{\mathrm{rel}}}(e)(\rho)
+=\{n\mid\rho\vdash e\Downarrow n\}
+=\{[\![e]\!]\rho\}.
+}
+\]
+
+Every result set is therefore a singleton. This fold presentation works
+because evaluation recurses on proper subexpressions. For languages with
+loops or general recursion, rule premises may instead evaluate the same
+program again; a direct structural evaluator need not exist.
+See the [[id:f82515f7-7c76-4939-b56c-20244819c7f5][overview]] for the correspondence proofs and scope.
+
+* References
+
+#+PRINT_BIBLIOGRAPHY: :heading none
+
+Online texts: [[https://softwarefoundations.cis.upenn.edu/lf-current/Imp.html][Imp: Simple Imperative Programs]] and
+[[https://www.cs.ru.nl/B.Jacobs/CLG/JacobsCoalgebraIntro.pdf][Jacobs's coalgebra draft]].
