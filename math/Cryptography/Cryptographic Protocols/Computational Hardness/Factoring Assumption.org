@@ -1,0 +1,64 @@
+:PROPERTIES:
+:ID: 69560A39-4283-597D-9A11-69E69EFE6B78
+:END:
+#+title: Factoring Assumption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Multiplying large primes is efficient. The factoring assumption asserts that
+recovering those factors from a randomly generated product is computationally
+hard. It is a claim about a specified modulus distribution.
+
+* Experiment and definition
+
+Fix an efficient sampler for pairs of distinct \(n\)-bit primes \((p,q)\).
+For example, sample uniformly from ordered distinct pairs of \(n\)-bit primes.
+The factoring experiment computes \(N=pq\), gives \((1^n,N)\) to \(A\), and
+accepts exactly when \(A\) returns admissible primes \(p',q'\) with
+
+\[
+p'q'=N.
+\]
+
+The *factoring assumption for this sampler* is that the acceptance probability
+is negligible for every PPT \(A\). The probability includes prime generation
+and adversarial coins. Prime sampling uses the efficient-sampling convention
+of computational security
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.4.2].
+
+* A candidate one-way map
+
+On this sampled domain, \(f(p,q)=pq\) is efficient to compute. An inverter
+must return an admissible input pair; the trivial expression \(1\cdot N\)
+is not a valid inverse. Either order of the prime factors is valid, so the
+map is not a permutation when \(p\ne q\).
+
+One may instead sample primes independently and allow \(p=q\), but then
+that easy square-modulus event must be included in the analysis. Excluding
+equal primes makes the convention explicit.
+
+* Examples and distinctions
+
+The product \(11\cdot13=143\) illustrates evaluation and inversion, but its
+factors are easily found by trial division. Large size alone is not the whole
+assumption: special modulus families may have different algorithms or attacks.
+
+The distribution used by Blum-Blum-Shub additionally restricts both primes to
+\(3\bmod4\). Hardness for that family must be stated for that sampler; it
+does not follow merely by naming a different random-prime experiment.
+
+Factoring also enables inversion of suitable RSA maps. The converse reduction
+is not known in general, so factoring hardness must not be identified with
+the RSA assumption.
+
+* Connections
+
+- [[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way functions]] clarify what counts as a valid inverse.
+- [[id:50375158-9DAE-5BF7-B385-B98313B01181][Blum-Blum-Shub]] uses the factoring assumption for Blum moduli.
+
+* Sources
+
+#+print_bibliography: :heading none

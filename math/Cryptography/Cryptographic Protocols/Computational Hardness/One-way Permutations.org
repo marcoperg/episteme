@@ -1,0 +1,78 @@
+:PROPERTIES:
+:ID: C43C8CF7-FADC-51D8-B380-715240FA3F51
+:ROAM_ALIASES: "OWP"
+:END:
+#+title: One-way Permutations
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A one-way permutation combines computationally difficult inversion with an
+exact distributional property: applying a bijection to a uniform input gives a
+uniform output.
+
+* Definition and inversion experiment
+
+A one-way permutation is a one-way function family
+
+\[
+f_n:\{0,1\}^n\longrightarrow\{0,1\}^n
+\]
+
+in which every \(f_n\) is bijective. Sample uniform \(x\), give
+\((1^n,f_n(x))\) to a PPT inverter, and accept exactly when its answer is
+\(x\). This is the OWF experiment with a unique valid preimage. Its success
+probability must be negligible
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.4.1].
+
+More generally, the same notion applies to a publicly described permutation of
+an efficiently represented, uniformly sampleable finite set \(S\), with
+negligibility measured in a stated security parameter.
+
+* Uniformity is exact
+
+If \(X\) is uniform on finite \(S\) and \(f:S\to S\) is bijective, then
+for every \(y\in S\),
+
+\[
+\Pr[f(X)=y]=\Pr[X=f^{-1}(y)]=\frac1{|S|}.
+\]
+
+This fact is unconditional. One-wayness says that an efficient adversary
+cannot usually compute that unique inverse, not that the inverse fails to
+exist.
+
+* Why permutations help construct PRGs
+
+If \(h\) is hard-core for a bitstring permutation \(f\), then
+
+\[
+(f(U_n),h(U_n))\approx_c(f(U_n),U_1)=U_{n+1},
+\]
+
+where the independent random bit on the right is sampled separately. Thus
+\(s\mapsto f(s)\mathbin\Vert h(s)\) is a one-bit expanding PRG.
+For an arbitrary OWF, \(f(U_n)\) need not be uniform, so this proof fails.
+
+* Examples and cautions
+
+Under the appropriate assumptions, exponentiation on a carefully specified
+finite set and squaring on quadratic residues modulo a Blum integer give
+number-theoretic examples. Their binary encodings must not silently be treated
+as uniform \(n\)-bit strings. Bijectivity alone is also insufficient: the
+identity is a permutation but is easy to invert.
+
+The existence of OWFs is not known to imply the existence of OWPs. The general
+OWF-to-PRG theorem therefore goes beyond this elementary permutation route.
+
+* Connections
+
+- [[id:DE2F10E2-AC2E-5735-8CD7-98A04040D891][Goldreich-Levin]] supplies a hard-core predicate after extending the domain.
+- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom generators]] develop the resulting expansion.
+- [[id:50375158-9DAE-5BF7-B385-B98313B01181][Blum-Blum-Shub]] uses a permutation of quadratic residues.
+
+* Sources
+
+#+print_bibliography: :heading none

@@ -1,0 +1,76 @@
+:PROPERTIES:
+:ID: C4E605D8-8C61-4069-ACEA-93F81165C05F
+:END:
+#+title: Encryption Schemes
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Encryption specifies how to protect a message and recover it with a key.
+Correctness and adversarial security are separate requirements.
+
+In *secret-key encryption*, Alice and Bob share a secret key. In *public-key
+encryption*, Bob publishes an encryption key and retains a secret decryption
+key. The algorithms are public: secrecy should reside in the keys, not in an
+undisclosed algorithm [cite:@fioreCryptographicProtocolosApplicatons sec. 1.1].
+
+The definitions below concern the shared-key setting.
+
+* Shannon cipher
+
+A Shannon cipher on nonempty finite spaces \((\mathcal K,\mathcal M,
+\mathcal C)\) is a pair of functions
+
+\[
+E:\mathcal K\times\mathcal M\to\mathcal C,
+\qquad D:\mathcal K\times\mathcal C\to\mathcal M
+\]
+
+satisfying \(D(k,E(k,m))=m\) for every \(k,m\). Thus encryption is injective
+for each key. Neither efficiency nor secrecy is assumed
+[cite:@fioreCryptographicProtocolosApplicatons sec. 1.2].
+
+* Computational cipher
+
+A computational cipher has efficient, parameterized algorithms. Encryption
+computes \(c\leftarrow E(k,m)\), possibly at random. Deterministic decryption
+returns \(D(k,c)\in\mathcal M\cup\{\bot\}\), where \(\bot\) means rejection.
+
+Spaces have efficient encodings and membership tests, keys can be sampled, and
+correctness requires
+
+\[
+\Pr[D(k,E(k,m))=m]=1
+\]
+
+for every legitimate key and message. The probability is over encryption
+coins. A deterministic computational cipher is a Shannon cipher at each fixed
+parameter; an arbitrary Shannon cipher need not be efficiently computable
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.1].
+
+* Examples and security goals
+
+The shift cipher adds one key modulo \(26\) to every letter. It is correct,
+but repeated use of a shift exposes equal-letter patterns. A single uniformly
+shifted letter, unlike a whole string under one shift, is perfectly hidden.
+
+Three communication goals must be distinguished:
+
+- *Confidentiality:* hide the protected message contents.
+- *Integrity:* detect unauthorized changes.
+- *Authenticity:* establish the claimed origin within the relevant key model.
+
+Encryption alone need not provide the last two. For example, XOR masking hides
+a message but permits predictable bit flips in its decryption.
+
+* Connections
+
+- [[id:1A9739E1-DEC0-5D22-8A85-A78669876A3D][One-time pad]] is a simple Shannon cipher.
+- [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information-theoretic security]] defines perfect secrecy.
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] supplies a computational confidentiality game.
+
+* Sources
+
+#+print_bibliography: :heading none

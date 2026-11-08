@@ -1,0 +1,75 @@
+:PROPERTIES:
+:ID: 6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649
+:END:
+#+title: One-time Semantic Security
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+One-time semantic security says that one ciphertext under a fresh secret key
+does not efficiently reveal which of two chosen messages was encrypted. Here
+the term uses the course's indistinguishability formulation.
+
+* Experiment
+
+Let \(\Pi=(E,D)\) be a secret-key cipher. For a fixed \(b\in\{0,1\}\),
+experiment \(\mathsf{SS}_b(A,\Pi)\) proceeds as follows:
+
+1. \(A(1^\lambda)\) chooses admissible equal-length messages \(m_0,m_1\)
+   and retains its internal state.
+2. The challenger samples a uniform key \(k\in\mathcal K\), computes
+   \(c\leftarrow E(k,m_b)\), and sends \(c\) to \(A\).
+3. \(A\) outputs a bit; the experiment returns that bit.
+
+All encryption coins are fresh. Define
+
+\[
+p_b=\Pr[\mathsf{SS}_b(A,\Pi)=1],
+\qquad \operatorname{SSAdv}[A,\Pi]=|p_0-p_1|.
+\]
+
+The cipher is secure if this advantage is negligible for every PPT \(A\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.2].
+
+* Equivalent guessing game
+
+Instead sample \(b\) uniformly and let \(\widehat b\) be the adversary's
+guess. With the same strategy and output labels, define
+
+\[
+\operatorname{SSAdv}^{*}[A,\Pi]
+=\left|\Pr[\widehat b=b]-\tfrac12\right|.
+\]
+
+Since \(\Pr[\widehat b=b]=\tfrac12(1-p_0+p_1)\),
+
+\[
+\operatorname{SSAdv}[A,\Pi]
+=2\operatorname{SSAdv}^{*}[A,\Pi].
+\]
+
+The absolute value also counts a strategy that consistently reverses the
+correct answer. The factor of two matters in concrete reduction bounds.
+
+* Examples and limits
+
+The one-time pad has zero advantage even against unbounded adversaries.
+Masking with a secure PRG instead gives computational one-time security.
+
+Equal-length challenges allow ciphertext length to reveal message length.
+Padding is a separate mechanism if length itself must be hidden.
+
+There are no encryption or decryption oracles in this game. Security here does
+not justify reusing a PRG pad or encrypting many messages under the same key.
+
+* Connections
+
+- [[id:1A9739E1-DEC0-5D22-8A85-A78669876A3D][One-time pad]] gives the ideal example.
+- [[id:2F9A15B8-0CFB-5D9F-8EA3-F33BCA747C70][PRG-based one-time encryption]] reduces this game to PRG security.
+- [[id:93DB4F31-F879-5414-8DDD-01533DC62F0E][Chosen-plaintext security]] allows many adaptive encryption queries.
+
+* Sources
+
+#+print_bibliography: :heading none

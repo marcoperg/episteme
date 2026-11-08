@@ -2,6 +2,11 @@
 :ID: 64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC
 :END:
 #+title: Information Theoretic Security
+#+SETUPFILE: ../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../bibliotheca/zotero-library.bib
 
 :RELATIONS:
 - informed-by :: [cite:@fioreCryptographicProtocolosApplicatons]
@@ -9,8 +14,9 @@
 
 A cryptographic construction has *information-theoretic security* when its
 guarantee does not depend on limiting the adversary's time or computational
-power. By contrast, computational security relies on the assumed difficulty of
-some computation.
+power. Computational security instead restricts the adversary's resources;
+practical short-key constructions usually rely on computational hardness
+assumptions.
 
 * Perfect secrecy
 
@@ -61,12 +67,14 @@ The key must be uniformly random, as long as the message, and used only once.
 Reusing a pad relates the ciphertexts through their XOR and destroys the
 one-time security argument.
 
+#+latex: \newpage
+
 * Shannon's key-space lower bound
 
 Every perfectly secure cipher satisfies
 
 \[
-|\mathcal K|\geq|\mathcal M|.
+\lvert\mathcal K\rvert\geq\lvert\mathcal M\rvert.
 \]
 
 Suppose instead that \(|\mathcal K|<|\mathcal M|\). Choose
@@ -83,7 +91,7 @@ with probability zero for \(m_1\): if \(E(k,m_1)=c\), correctness would imply
 
 The OTP's long key is therefore not merely an implementation defect. Short keys
 for long messages require the computational relaxation developed in
-[[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational Security and Indistinguishability]].
+[[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational security]].
 
 * Other uses
 
@@ -91,3 +99,10 @@ Information-theoretic guarantees also arise in tasks such as secret sharing and
 some secure multiparty computation protocols. For example,
 [[id:F5AF9B91-7D2B-4C13-93CC-71B4E9C3E035][Shamir's secret sharing]] reveals no information about the secret to a set of
 participants below its reconstruction threshold.
+
+* Sources
+
+Perfect secrecy and the key-space bound:
+[cite:@fioreCryptographicProtocolosApplicatons secs. 1.3 and 1.4].
+
+#+print_bibliography: :heading none

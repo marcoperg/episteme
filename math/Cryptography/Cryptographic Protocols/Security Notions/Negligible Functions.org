@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID: 0A381DA6-37CC-54DF-9F07-F003CEA6AE31
+:END:
+#+title: Negligible Functions
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A negligible function becomes small faster than every inverse polynomial.
+This is stronger than merely tending to zero.
+
+* Definition
+
+A function \(\varepsilon:\mathbb N_{>0}\to\mathbb R\) is *negligible* if
+
+\[
+\forall c>0\;\exists\lambda_c\;\forall\lambda\geq\lambda_c,
+\qquad |\varepsilon(\lambda)|<\lambda^{-c}.
+\]
+
+The threshold may depend on \(c\). The notation
+\(\operatorname{negl}(\lambda)\) denotes an unspecified negligible function,
+not a particular numerical bound
+[cite:@fioreCryptographicProtocolosApplicatons sec. 1.5.2].
+
+* Examples and non-examples
+
+- \(2^{-\lambda}\), \(2^{-\sqrt\lambda}\), and
+  \(\lambda^{-\log_2\lambda}\) are negligible.
+- \(\lambda^{-100}\) is not negligible: it fails the definition for \(c=101\).
+- A fixed small constant, such as \(2^{-128}\), is not negligible as a function
+  of \(\lambda\). It may nevertheless be a useful concrete error bound.
+
+A positive function \(N\) is *super-polynomial* here when \(1/N\) is
+negligible. For \(N=2^{d(\lambda)}\), this holds exactly when
+\(d(\lambda)/\log_2\lambda\to\infty\).
+
+* Closure properties
+
+A fixed finite sum of negligible functions is negligible. If \(p\) is
+polynomially bounded and \(\varepsilon\) is negligible, then
+\(p\varepsilon\) is negligible.
+
+For the product, take constants \(C,d>0\) with
+\(|p(\lambda)|\leq C\lambda^d\) eventually. Given \(c>0\), negligibility
+gives \(|\varepsilon(\lambda)|<\lambda^{-(c+d+1)}\) eventually. Thus
+\(|p(\lambda)\varepsilon(\lambda)|<\lambda^{-c}\) once \(\lambda>C\).
+
+* Polynomially many opportunities to fail
+
+Suppose at most \(p(\lambda)\) events each have probability bounded by the
+*same* negligible function \(\varepsilon(\lambda)\). The union bound gives
+
+\[
+\Pr\!\left[\bigcup_{i=1}^{p(\lambda)} B_i\right]
+\leq p(\lambda)\varepsilon(\lambda)
+=\operatorname{negl}(\lambda).
+\]
+
+No independence assumption is needed. The common bound matters: an arbitrary
+parameter-dependent selection from infinitely many negligible functions need
+not be negligible.
+
+* Connections
+
+- [[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational security]] uses negligibility to express asymptotic guarantees.
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] incur polynomial losses that preserve negligibility.
+
+* Sources
+
+#+print_bibliography: :heading none

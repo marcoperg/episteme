@@ -1,4 +1,5 @@
 .DS_Store
+/.pdfs/
 __pycache__/
 *.py[cod]
 /infra/ciao/relations/generated/

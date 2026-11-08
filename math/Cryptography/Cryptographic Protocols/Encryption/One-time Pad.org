@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID: 1A9739E1-DEC0-5D22-8A85-A78669876A3D
+:ROAM_ALIASES: "OTP"
+:END:
+#+title: One-time Pad
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+The one-time pad hides a message by XORing it with an independent uniform key
+of the same length. Its secrecy is unconditional, but its key cannot be reused.
+
+* Construction and correctness
+
+For \(L\geq1\), let
+\(\mathcal K=\mathcal M=\mathcal C=\{0,1\}^L\), and define
+
+\[
+E(k,m)=k\oplus m,\qquad D(k,c)=k\oplus c.
+\]
+
+Correctness follows from
+\(k\oplus(k\oplus m)=(k\oplus k)\oplus m=m\)
+[cite:@fioreCryptographicProtocolosApplicatons secs. 1.2 and 1.3].
+
+* Perfect secrecy
+
+For fixed \(m,c\), exactly one key produces that ciphertext:
+\(k=m\oplus c\). With a uniform key independent of the message,
+
+\[
+\Pr[E(K,m)=c]=2^{-L}.
+\]
+
+This distribution does not depend on \(m\). Thus observing a ciphertext does
+not update any prior message distribution. An unbounded adversary has zero
+distinguishing advantage, not zero probability of guessing the message.
+
+The general definitions and Shannon's lower bound belong in
+[[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information-theoretic security]]. The bound explains why a perfectly secret
+cipher cannot replace this long key by a shorter one.
+
+* Worked example
+
+Take \(m=1011\) and \(k=0110\). Then \(c=1101\), and
+\(0110\oplus1101=1011\) recovers the message. These tiny strings illustrate
+the operations, not a practical key size.
+
+* Two different limitations
+
+*Pad reuse* exposes a relation between messages:
+
+\[
+c_1\oplus c_2=(k\oplus m_1)\oplus(k\oplus m_2)=m_1\oplus m_2.
+\]
+
+Knowing either plaintext then reveals the other. Perfect secrecy for one
+message does not imply secrecy for repeated use of that same key.
+
+*Malleability* is a separate issue. Replacing \(c\) by \(c\oplus\Delta\)
+makes Bob recover \(m\oplus\Delta\), without an intrinsic indication of
+tampering. Even a correctly used one-time pad does not authenticate a message.
+
+* Connections
+
+- [[id:2F9A15B8-0CFB-5D9F-8EA3-F33BCA747C70][PRG-based one-time encryption]] shortens the key by relaxing secrecy.
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] addresses many-message use.
+
+* Sources
+
+#+print_bibliography: :heading none

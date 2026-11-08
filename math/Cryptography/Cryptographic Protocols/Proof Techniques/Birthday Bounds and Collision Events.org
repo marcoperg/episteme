@@ -1,0 +1,78 @@
+:PROPERTIES:
+:ID: DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44
+:END:
+#+title: Birthday Bounds and Collision Events
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A collision bound quantifies the risk that independently sampled values
+repeat. In cryptographic proofs, repetitions often mark the point where an
+ideal independent-pad simulation ceases to match a random-function game.
+
+* Collision probability
+
+Let \(R_1,\ldots,R_Q\) be independent uniform elements of a set of size
+\(N\). Let \(\mathsf{Bad}\) be the event that \(R_i=R_j\) for some
+\(i<j\). Each pair collides with probability \(1/N\), so the union bound gives
+
+\[
+\Pr[\mathsf{Bad}]\leq
+\min\!\left\{1,\frac{\binom Q2}{N}\right\}.
+\]
+
+The pair events need not be independent. For \(Q\leq N\), the exact
+probability is
+
+\[
+\Pr[\mathsf{Bad}]=1-\prod_{j=0}^{Q-1}\left(1-\frac jN\right).
+\]
+
+For \(Q>N\), a collision is certain. The birthday scale is
+\(Q\) on the order of \(\sqrt N\), not \(N\)
+[cite:@fioreCryptographicProtocolosApplicatons secs. 5.3 and 5.6.1].
+
+* Comparing games until a bad event
+
+Suppose two games are coupled on one probability space and their success
+indicators agree whenever \(\mathsf{Bad}\) does not occur. Then
+
+\[
+\lvert\Pr[W_0]-\Pr[W_1]\rvert\leq\Pr[\mathsf{Bad}].
+\]
+
+Indeed, pointwise
+\(|\mathbf1_{W_0}-\mathbf1_{W_1}|\leq\mathbf1_{\mathsf{Bad}}\).
+Take expectations and use the triangle inequality. No independence between
+success and the bad event is assumed.
+
+* Example: random indices in encryption
+
+PRF-based masking samples \(r_i\in\{0,1\}^d\) on each query. After
+replacing the PRF by a random function, new indices give fresh pads, but a
+repeated index gives the old pad. Its deviation from an independent-pad game
+is at most \(\binom Q2/2^d\).
+
+Adaptive plaintext selection does not invalidate this bound: the encryption
+algorithm still chooses fresh independent indices. For an adversary making
+at most \(Q\) queries, pre-sampling \(Q\) hidden indices also covers early
+termination.
+
+* Identify the right collision
+
+Repeated *inputs* to a random function reuse an output. Coincident *outputs*
+at distinct inputs are allowed and do not violate independence. A proof must
+say which event actually breaks its simulation; it cannot merely attach a
+birthday term to an unspecified repetition.
+
+* Connections
+
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] includes the bound in its CPA theorem.
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] makes repeated-input consistency explicit.
+- [[id:17111DA9-A4BE-5A36-8A6B-FC32260FDE5C][Security reductions]] combine statistical errors with computational assumptions.
+
+* Sources
+
+#+print_bibliography: :heading none

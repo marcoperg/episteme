@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID: 93DB4F31-F879-5414-8DDD-01533DC62F0E
+:END:
+#+title: Chosen-plaintext Security
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Chosen-plaintext security protects many encryptions under one key, even when
+the adversary chooses later messages using earlier ciphertexts. This note
+defines the secret-key, stateless version.
+
+* Experiment and definition
+
+For a fixed \(b\in\{0,1\}\), the challenger samples one uniform key
+\(k\in\mathcal K\). It gives \(A(1^\lambda)\) access to the oracle
+
+\[
+\mathsf{LR}_{k,b}(m_0,m_1):
+\quad\text{return a fresh }c\leftarrow E(k,m_b).
+\]
+
+Each query contains two admissible messages of the same length. Queries may be
+adaptive. The same key and hidden bit are used throughout, but each encryption
+uses fresh independent coins. Invalid queries are rejected independently of
+\(b\). The adversary eventually outputs a bit.
+
+If \(p_b\) is its probability of outputting \(1\), define
+
+\[
+\operatorname{CPAAdv}[A,\Pi]=|p_0-p_1|.
+\]
+
+The cipher is *CPA secure* if this quantity is negligible for every PPT oracle
+adversary. A query \((m,m)\) obtains an ordinary chosen-message encryption
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.2].
+
+Sampling a uniform hidden bit instead gives
+\(\operatorname{CPAAdv}^{*}=|\Pr[\widehat b=b]-1/2|\), with
+\(\operatorname{CPAAdv}=2\operatorname{CPAAdv}^{*}\).
+
+* Why stateless deterministic encryption fails
+
+Choose efficiently constructible distinct equal-length messages \(u,v\).
+First query \((u,u)\), obtaining \(c_u\). Then query \((u,v)\), obtaining
+\(c\). Output \(0\) if \(c=c_u\), and \(1\) otherwise.
+
+When \(b=0\), determinism makes the ciphertexts equal. When \(b=1\),
+correctness makes them unequal: one ciphertext cannot decrypt to both \(u\)
+and \(v\). Thus the distinguishing advantage is \(1\).
+
+The stateless restriction matters. A stream cipher updates its secret state
+between blocks and has a different interface.
+
+* What CPA security does not say
+
+The adversary gets no decryption oracle. The definition does not require
+detection of modified ciphertexts, identify a sender, or hide message length.
+Randomized PRF masking is CPA secure under suitable parameters but remains
+malleable.
+
+* Connections
+
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] has only one challenge ciphertext.
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] gives a construction and concrete bound.
+- [[id:9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1][Stateful stream encryption]] uses evolving state instead of independent calls.
+
+* Sources
+
+#+print_bibliography: :heading none

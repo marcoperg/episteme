@@ -1,0 +1,75 @@
+:PROPERTIES:
+:ID: A8AB1A75-CEE1-597B-84E5-778793675D87
+:END:
+#+title: Blum-Micali Generator
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+Blum-Micali turns discrete-logarithm hardness into pseudorandom bits by
+iterating a permutation and emitting a hard-core bit of each previous state.
+
+* Permutation and predicate
+
+Let \(p\) be an odd prime and \(g\) a generator of \(\mathbb Z_p^*\).
+On \(S=\{1,\ldots,p-1\}\), define
+
+\[
+f(x)=g^x\bmod p,\qquad
+h(x)=\begin{cases}
+0,&1\leq x\leq(p-1)/2,\\
+1,&(p-1)/2<x\leq p-1.
+\end{cases}
+\]
+
+The map \(f\) is a permutation. Under the discrete logarithm assumption for
+the chosen parameter family, the Blum-Micali hard-core theorem states that
+\(h\) is hard-core for \(f\)
+[cite:@fioreCryptographicProtocolosApplicatons secs. 2.6.1 and 3.3.1].
+
+The predicate identifies the half of the exponent interval containing \(x\).
+Calling it an MSB does not mean it is the leading bit of an arbitrary
+fixed-width encoding.
+
+* Generator
+
+Sample uniform \(s_0\in S\). For polynomially many steps, compute
+
+\[
+r_i=h(s_{i-1}),\qquad s_i=g^{s_{i-1}}\bmod p,
+\]
+
+and output \(r_1\cdots r_t\). The modulus, generator, and parameter are
+public; the initial state is secret.
+
+* Security argument
+
+The one-step pair \((h(S),f(S))\) is indistinguishable from a uniform bit and
+an independent uniform state in \(S\). The hard-core theorem gives the first
+replacement, and permutation uniformity gives the second component's exact
+distribution. Sequential composition and projection away from the final state
+then give an output indistinguishable from \(U_t\).
+
+The ideal state is uniform on \(S\), not on all bitstrings of its encoding
+length. The final output consists only of bits, so its ideal distribution is
+indeed uniform on \(\{0,1\}^t\). The hard-core theorem is used here without
+proof; it is not established by iteration alone.
+
+* Small example
+
+With \(p=11\), \(g=2\), and \(s_0=3\), the states alternate between
+\(3\) and \(8\), emitting \(0101\ldots\). This tiny instance is visibly
+insecure. It illustrates the recurrence and why the security statement must
+refer to an appropriate growing parameter family.
+
+* Connections
+
+- [[id:F0DC1C09-62D0-5AD3-B854-7EA46C9F8371][Discrete logarithm]] specifies the underlying inversion assumption.
+- [[id:EF6900D1-B10A-5186-86D5-716555729BAD][Hard-core predicates]] define the required hidden-bit property.
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][Stretch amplification]] supplies the iteration theorem.
+
+* Sources
+
+#+print_bibliography: :heading none

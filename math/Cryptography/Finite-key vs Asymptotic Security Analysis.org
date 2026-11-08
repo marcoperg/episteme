@@ -2,6 +2,7 @@
 :ID: 2C95A77B-191B-4D39-80EE-F4084193B550
 :END:
 #+title: Finite-key vs Asymptotic Security Analysis
+#+SETUPFILE: ../../setup.org
 
 When creating security proofs for cryptographic protocols is important to distinguish between two main type of security arguments.
 

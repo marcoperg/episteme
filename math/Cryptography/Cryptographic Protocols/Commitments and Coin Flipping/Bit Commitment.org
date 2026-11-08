@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID: 45474AD9-A163-4CC9-983A-78EFD52E93C9
+:END:
+#+title: Bit Commitment
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A bit commitment lets Alice fix a bit now and disclose it later. It must hide
+the bit from Bob before opening, while preventing Alice from changing what
+she committed to. These properties protect opposite parties.
+
+* Interface and correctness
+
+A commitment protocol has a commit phase, an opening phase, and a verification
+rule. The commit phase may be interactive. It produces a transcript \(\tau\)
+and opening information \(w\) for the bit \(b\). Bob later tests
+\(\mathsf{Ver}(\tau,b,w)\), using any retained receiver state.
+
+*Correctness* requires an honest commit phase followed by its honest opening
+to be accepted with probability \(1\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.4.2].
+
+* Hiding experiment
+
+For fixed \(b\), an honest committer commits to \(b\) while interacting with
+a possibly malicious receiver \(R^*\). No opening is provided. Let \(p_b\)
+be the probability that \(R^*\) outputs \(1\), including all protocol coins
+and its private state. The hiding advantage is \(|p_0-p_1|\).
+
+*Computational hiding* requires negligible advantage for every PPT receiver.
+*Statistical hiding* allows every receiver, including unbounded ones, but
+still permits negligible advantage. *Perfect hiding* requires identical view
+distributions, hence exactly zero advantage.
+
+* Binding experiment
+
+A cheating committer \(C^*\) interacts with an honest receiver in the commit
+phase, producing one fixed transcript. It then outputs openings \(w_0,w_1\).
+It wins exactly when both
+
+\[
+\mathsf{Ver}(\tau,0,w_0)=1,
+\qquad \mathsf{Ver}(\tau,1,w_1)=1.
+\]
+
+*Computational binding* requires negligible success for PPT committers.
+*Statistical binding* requires negligible success even for unbounded
+committers. *Perfect binding* makes that success probability zero. The
+probability includes the honest receiver's randomness.
+
+* Example and non-example
+
+A sealed box suggests both properties: Bob cannot inspect its contents, and
+Alice cannot replace them after handing it over. It is an analogy, not a
+cryptographic construction.
+
+An OTP ciphertext of one bit is perfectly hiding but not binding if Alice
+later opens by revealing a key. For any fixed \(c\), she can claim either
+\(b\) by providing \(k=c\oplus b\). Encryption confidentiality alone does
+not give commitment.
+
+* Connections
+
+- [[id:DD4FB7B7-4B47-51F5-A360-F801A0997C19][Naor's PRG-based commitment]] is computationally hiding and statistically binding.
+- [[id:F757404B-2CF2-58C0-AD16-EFCD0B88B28D][Coin flipping]] uses both properties, but still permits selective abort.
+
+* Sources
+
+#+print_bibliography: :heading none

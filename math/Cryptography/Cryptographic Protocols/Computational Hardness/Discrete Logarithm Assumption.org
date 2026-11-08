@@ -1,0 +1,65 @@
+:PROPERTIES:
+:ID: F0DC1C09-62D0-5AD3-B854-7EA46C9F8371
+:END:
+#+title: Discrete Logarithm Assumption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Exponentiation in a suitable finite group is efficient; recovering a random
+exponent from its group element is conjectured to be difficult. The claim
+depends on the group family and its generation procedure.
+
+* Problem and experiment
+
+A public setup generates an efficiently represented cyclic group
+\(\mathbb G=\langle g\rangle\) of known order \(q\). Group operations,
+equality, and sampling are efficient. The inversion experiment is:
+
+1. Generate and publish the group description, \(q\), and \(g\).
+2. Sample uniform \(x\in\mathbb Z_q\) and compute \(y=g^x\).
+3. Give \(y\) and the public parameters to \(A\).
+4. Accept exactly when \(A\) returns \(x'\in\mathbb Z_q\) with \(g^{x'}=y\).
+
+The *discrete logarithm assumption* says this success probability is negligible
+for every PPT \(A\), over setup, the exponent, and adversarial coins
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.4.2].
+
+* Domains matter
+
+The map \(x\mapsto g^x\) is a bijection
+\(\mathbb Z_q\to\mathbb G\), but these are different represented sets.
+It is not literally an \(n\)-bit permutation without additional conventions.
+
+If \(p\) is prime and \(g\) generates \(\mathbb Z_p^*\), an alternative is
+
+\[
+f:\{1,\ldots,p-1\}\to\{1,\ldots,p-1\},\qquad f(x)=g^x\bmod p.
+\]
+
+Here the exponent \(p-1\) represents \(0\) modulo \(p-1\), making the map
+a permutation of one finite set. Public setup must still select a group
+family where inversion is assumed hard.
+
+* Example and limitations
+
+Modulo \(5\), the generator \(2\) gives
+\(2^1=2\), \(2^2=4\), \(2^3=3\), and \(2^4=1\). This demonstrates the
+bijection; inversion is trivial by enumeration at this size.
+
+An exponentially large group is necessary but not sufficient for hardness:
+the group structure and available algorithms matter. Likewise, hardness of
+discrete logarithms does not by itself establish the DDH assumption, which is
+a different, decisional claim.
+
+* Connections
+
+- [[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way functions]] provide the abstract inversion definition.
+- [[id:A8AB1A75-CEE1-597B-84E5-778793675D87][Blum-Micali]] combines exponentiation with a hard-core predicate.
+- [[id:11862CED-F757-5A19-878C-5B8FCAA2F1F9][DDH]] compares distributions of group-element triples.
+
+* Sources
+
+#+print_bibliography: :heading none

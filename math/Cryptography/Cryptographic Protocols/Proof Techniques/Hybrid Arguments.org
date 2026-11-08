@@ -1,0 +1,75 @@
+:PROPERTIES:
+:ID: 7CFA08F5-5923-55CA-B112-FB80F1D875F3
+:END:
+#+title: Hybrid Arguments
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A hybrid argument connects two experiments by smaller changes that can each
+be related to a known assumption. The main work is defining the intermediate
+experiments and simulating their transitions efficiently.
+
+* Probability calculation
+
+Let \(H_0,\ldots,H_t\) be experiments or distributions with a common
+adversarial interface. Write \(p_i=\Pr[A(H_i)=1]\). Then
+
+\[
+\lvert p_0-p_t\rvert
+=\left|\sum_{i=1}^t(p_{i-1}-p_i)\right|
+\leq\sum_{i=1}^t|p_{i-1}-p_i|.
+\]
+
+An endpoint gap therefore implies some adjacent gap of at least
+\(|p_0-p_t|/t\). But existence of an index is not yet an algorithm for
+choosing it uniformly across security parameters
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.2].
+
+* Random-transition reduction
+
+Suppose one challenge can simulate \(H_{i-1}\) in its real case and \(H_i\)
+in its ideal case, for each \(i\), with the same output orientation.
+An efficient reduction chooses uniform \(I\in\{1,\ldots,t\}\), embeds the
+challenge at transition \(I\), and returns \(A\)'s output. Its advantage is
+
+\[
+\left|\frac1t\sum_{i=1}^t(p_{i-1}-p_i)\right|
+=\frac{|p_0-p_t|}{t}.
+\]
+
+This is the average of *signed* gaps before taking an absolute value. It is
+not the average of their absolute values. The exact telescoping identity
+avoids guessing the signs of the individual gaps.
+
+* Example: stretching a PRG
+
+In sequential expansion, \(H_j\) makes the first \(j\) output bits and the
+current state uniform, then continues the generator. A challenge inserted at
+step \(j\) simulates the earlier or later hybrid according to whether that
+challenge is generated or uniform. The reduction loses a factor equal to the
+number of generator steps.
+
+For GGM, the transition is a tree *level*, and only queried prefixes are
+represented. An exponentially large conceptual tree does not require an
+exponentially large simulator.
+
+* Limits of the method
+
+A polynomial number of transitions and polynomial simulation cost preserve
+computational security. An exponential hybrid chain can erase the useful
+advantage or require an inefficient reduction. Each application must also
+justify its own correlations and adaptive queries: saying "by a hybrid
+argument" does not replace that analysis.
+
+* Connections
+
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG stretch amplification]] gives a full random-position construction.
+- [[id:51CA79F8-4291-5B5D-8526-4868010DE372][Parallel composition]] replaces independent samples one at a time.
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] uses level hybrids and efficient prefix simulation.
+
+* Sources
+
+#+print_bibliography: :heading none

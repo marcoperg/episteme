@@ -1,0 +1,71 @@
+:PROPERTIES:
+:ID: 2F9A15B8-0CFB-5D9F-8EA3-F33BCA747C70
+:END:
+#+title: PRG-based One-time Encryption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A secure PRG lets a short secret seed replace a long one-time pad. The result
+is computationally secure for one encryption, not perfectly secret and not
+safe under pad reuse.
+
+* Construction
+
+Let \(G:\{0,1\}^n\to\{0,1\}^{L(n)}\) be a secure PRG, with polynomially
+bounded \(L(n)>n\). For a uniform key \(k\in\{0,1\}^n\), define
+
+\[
+E(k,m)=G(k)\oplus m,\qquad D(k,c)=G(k)\oplus c.
+\]
+
+Messages have length \(L(n)\); correctness follows by XOR cancellation.
+For shorter messages, use the corresponding prefix of the pad, and compare
+only equal-length messages in the security game
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.3.2].
+
+* Security reduction
+
+Use the one-time bit-guessing experiment. Replace \(G(k)\) by a fresh uniform
+\(L\)-bit string. In this ideal game the challenge is an OTP ciphertext, so
+the adversary guesses the hidden bit with probability exactly \(1/2\).
+
+A PRG distinguisher \(B\), given a challenge string \(z\), performs:
+
+1. Run \(A\) to obtain \(m_0,m_1\) and its retained state.
+2. Sample a uniform bit \(b\), and send \(z\oplus m_b\) to \(A\).
+3. Output \(1\) exactly when \(A\)'s guess equals \(b\).
+
+A generated challenge simulates real encryption; a uniform challenge simulates
+the ideal game. Consequently,
+
+\begin{equation*}
+\begin{aligned}
+\operatorname{PRGAdv}[B,G]&=\operatorname{SSAdv}^{*}[A,\Pi],\\
+\operatorname{SSAdv}[A,\Pi]&=2\operatorname{PRGAdv}[B,G].
+\end{aligned}
+\end{equation*}
+
+The wrapper has polynomial overhead, so PRG security proves one-time semantic
+security. The argument is a reduction, not an assertion that PRG output is
+actually uniform.
+
+* Why the qualifier matters
+
+Shannon's lower bound excludes perfect secrecy when \(L>n\).
+Reusing the key also reuses \(G(k)\), giving
+\(c_1\oplus c_2=m_1\oplus m_2\). A strong PRG does not prevent this attack.
+Finally, modifying the ciphertext by \(\Delta\) modifies the plaintext by
+the same \(\Delta\): confidentiality does not imply integrity.
+
+* Connections
+
+- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom generators]] define the underlying assumption and experiment.
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] fixes the advantage convention.
+- [[id:9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1][Stateful stream encryption]] consumes successive pseudorandom pads.
+
+* Sources
+
+#+print_bibliography: :heading none

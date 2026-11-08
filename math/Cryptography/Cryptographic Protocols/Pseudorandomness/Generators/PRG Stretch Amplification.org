@@ -1,0 +1,85 @@
+:PROPERTIES:
+:ID: A0997AA0-C919-44A4-BF11-86385CB65969
+:END:
+#+title: PRG Stretch Amplification
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+A secure generator that emits one extra bit can be iterated to obtain any
+polynomial amount of expansion. A hybrid proof accounts for the dependencies
+between successive states.
+
+* Sequential construction
+
+Let \(G_1:\{0,1\}^n\to\{0,1\}\times\{0,1\}^n\) be a secure PRG.
+For an efficiently computable polynomial bound \(t(n)\geq1\), start with
+seed \(s_0=s\), and compute
+
+\[
+(r_i,s_i)=G_1(s_{i-1})\quad(1\leq i\leq t),\qquad
+G^{[t]}(s)=r_1\mathbin\Vert\cdots\mathbin\Vert r_t\mathbin\Vert s_t.
+\]
+
+The output has \(n+t\) bits. If a one-step generator places its state before
+the emitted bit, reorder its coordinates first
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.2].
+
+* Hybrids
+
+For \(0\leq j\leq t\), sample independent uniform bits \(r_1,\ldots,r_j\)
+and a uniform state \(s_j\). Continue the generator for steps \(j+1\) through
+\(t\), then output all emitted bits and the final state. Call this
+distribution \(H_j\). Thus
+
+\[
+H_0=G^{[t]}(U_n),\qquad H_t=U_{n+t}.
+\]
+
+Adjacent hybrids replace one generated bit/state pair by a uniform pair.
+For \(p_j=\Pr[A(H_j)=1]\), the endpoint advantage is \(|p_0-p_t|\).
+
+#+latex: \newpage
+
+* Random-position reduction
+
+Given one challenge pair \((r,s)\), a distinguisher \(B\):
+
+1. Samples uniform \(J\in\{1,\ldots,t\}\).
+2. Samples the earlier emitted bits \(r_1,\ldots,r_{J-1}\) uniformly.
+3. Inserts \((r_J,s_J)=(r,s)\), then computes all later steps normally.
+4. Runs \(A\) on the completed output and returns its bit.
+
+Conditioned on \(J=j\), a generated challenge produces \(H_{j-1}\), while
+a uniform challenge produces \(H_j\). Subtracting probabilities *before*
+taking absolute values yields
+
+\[
+\operatorname{PRGAdv}[B,G_1]
+=\left|\frac1t\sum_{j=1}^t(p_{j-1}-p_j)\right|
+=\frac{|p_0-p_t|}{t}.
+\]
+
+This defines one efficient uniform reduction. Polynomial \(t\) preserves
+negligibility, proving security of \(G^{[t]}\).
+
+* Variants and limits
+
+Taking \(t=n\) gives a doubling generator. Projecting away the final state
+preserves pseudorandomness of the remaining output. The same proof works for
+block output \(G:S\to R\times S\), with both spaces uniformly sampleable.
+
+There is no theorem here for exponentially many iterations. The number of
+steps controls both running time and reduction loss.
+
+* Connections
+
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] explain the general random-transition pattern.
+- [[id:9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1][Stateful stream encryption]] applies the block-output version.
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] uses a doubling generator in a balanced tree.
+
+* Sources
+
+#+print_bibliography: :heading none

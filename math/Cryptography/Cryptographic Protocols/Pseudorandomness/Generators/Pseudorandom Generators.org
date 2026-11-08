@@ -1,0 +1,77 @@
+:PROPERTIES:
+:ID: 22E49935-1278-487C-AB40-7F33726C5C6B
+:ROAM_ALIASES: "PRG"
+:END:
+#+title: Pseudorandom Generators
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+A pseudorandom generator expands a short uniform seed into a longer string
+that looks uniform to efficient observers. It creates computationally useful
+randomness, not new information-theoretic entropy.
+
+* Definition and distinguishing experiment
+
+Let \(L(n)>n\) be efficiently computable and polynomially bounded. A PRG is
+an efficient deterministic function
+
+\[
+G:\{0,1\}^n\longrightarrow\{0,1\}^{L(n)}
+\]
+
+whose output on a uniform seed is computationally indistinguishable from a
+uniform \(L(n)\)-bit string. For a PPT test \(A\), define
+
+\[
+\operatorname{PRGAdv}[A,G]
+=\left|\Pr[A(G(S))=1]-\Pr[A(R)=1]\right|,
+\]
+
+where \(S\) and \(R\) are independent uniform strings of lengths \(n\) and
+\(L(n)\). The parameter is also available to \(A\). Security requires
+negligible advantage for every such \(A\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.3.1].
+
+The same definition applies to efficiently represented and uniformly sampleable
+finite spaces \(G:S\to R\), using uniform distributions on those spaces.
+Expansion then means \(|R|>|S|\).
+
+* Why the output is not actually uniform
+
+There are at most \(2^n\) possible outputs. A test for membership in
+\(\operatorname{Im}(G)\) always accepts a generated sample and accepts a
+uniform sample with probability at most \(2^{n-L}\). Its advantage is at
+least \(1-2^{n-L}\). Enumerating all seeds implements this test, but generally
+takes exponential time.
+
+Thus the output's Shannon entropy is at most \(n\) bits even though efficient
+tests cannot detect the deficit. Statistical difference and computational
+indistinguishability are compatible.
+
+* Examples and non-examples
+
+The map \(s\mapsto s\mathbin\Vert s\) is not a secure generator: checking
+equality of the two halves distinguishes it from uniform with advantage
+\(1-2^{-n}\). Correct length and balanced individual bits are not enough.
+
+If \(f\) is a one-way permutation and \(h\) is hard-core for it, then
+\(G(s)=f(s)\mathbin\Vert h(s)\) is a secure one-bit expansion. The hard-core
+property replaces \(h(s)\) by an independent uniform bit; permutation
+uniformity makes the resulting whole string uniform.
+
+General OWFs also suffice for PRGs by the HILL theorem. That theorem needs
+additional ideas and is not proved by merely appending a hard-core bit to an
+arbitrary OWF [cite:@fioreCryptographicProtocolosApplicatons secs. 2.4 and 3.1].
+
+* Connections
+
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][Stretch amplification]] gives any polynomial output length.
+- [[id:A8AB1A75-CEE1-597B-84E5-778793675D87][Blum-Micali]], [[id:50375158-9DAE-5BF7-B385-B98313B01181][Blum-Blum-Shub]], and the [[id:EC8B9223-9A14-5900-9EBA-2650847BCF7C][DDH generator]] are conditional examples.
+- [[id:2F9A15B8-0CFB-5D9F-8EA3-F33BCA747C70][One-time encryption]] and [[id:DD4FB7B7-4B47-51F5-A360-F801A0997C19][Naor's commitment]] are applications.
+
+* Sources
+
+#+print_bibliography: :heading none

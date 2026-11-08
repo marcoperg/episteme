@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID: 8C825859-C9CD-5610-A7CF-5626E7864E10
+:END:
+#+title: Computational Indistinguishability
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Two distributions are computationally indistinguishable when no efficient test
+can tell which one supplied its sample with non-negligible advantage. They need
+not be equal, or even statistically close.
+
+* Definition
+
+Let \(X=(X_\lambda)_\lambda\) and \(Y=(Y_\lambda)_\lambda\) be families of
+distributions on efficiently represented strings of polynomially bounded
+length. For a PPT algorithm \(A\), define
+
+\[
+\Delta_A(X,Y;\lambda)=
+\left|\Pr[A(1^\lambda,X_\lambda)=1]
+-\Pr[A(1^\lambda,Y_\lambda)=1]\right|.
+\]
+
+We write \(X\approx_c Y\) if this quantity is negligible for every PPT
+\(A\). Probabilities include the sampled input and the coins of \(A\).
+This is the common distributional form underlying the course's encryption,
+PRG, and hard-core experiments
+[cite:@fioreCryptographicProtocolosApplicatons secs. 2.2, 2.3.1 and 2.6].
+
+* Distinguishing experiment
+
+For a fixed bit \(b\), the challenger samples from \(X_\lambda\) when
+\(b=0\) and from \(Y_\lambda\) when \(b=1\), and gives the sample to \(A\).
+The advantage is the absolute difference between the probabilities that \(A\)
+outputs \(1\). A single-sample definition does not automatically give an
+oracle-access guarantee.
+
+* Examples and limits
+
+Equal distributions are computationally indistinguishable, with zero advantage.
+A secure PRG gives a more interesting example:
+\(G(U_n)\approx_c U_{L(n)}\), although its output has at most \(2^n\)
+possible values. An unbounded test can enumerate those values.
+
+The adversary's information is part of the definition. Indistinguishability of
+\(X\) and \(Y\) does not justify attaching arbitrary correlated side
+information and assuming that \((X,Z)\approx_c(Y,Z)\).
+
+* Useful properties
+
+- *Symmetry:* \(X\approx_c Y\) implies \(Y\approx_c X\).
+- *Transitivity:* if \(X\approx_c Y\) and \(Y\approx_c Z\), then
+  \(X\approx_c Z\), by the triangle inequality.
+- *Efficient processing:* if \(T\) is an efficient randomized transformation,
+  using fresh independent coins, then \(T(X)\approx_c T(Y)\). A distinguisher
+  for the outputs could be composed with \(T\) to distinguish the inputs.
+
+Polynomially long chains need a uniform reduction and a controlled loss, not
+merely a separate asymptotic statement about every fixed adjacent pair.
+
+* Connections
+
+- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom generators]] compare generated strings with uniform strings.
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] compares encryption experiments.
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] organize longer indistinguishability proofs.
+
+* Sources
+
+#+print_bibliography: :heading none

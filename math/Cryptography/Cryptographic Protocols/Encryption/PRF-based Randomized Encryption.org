@@ -1,0 +1,77 @@
+:PROPERTIES:
+:ID: 6E3E2890-5C13-5C37-A28C-D49B951F2F1B
+:END:
+#+title: PRF-based Randomized Encryption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A PRF provides secret pads indexed by public addresses. Choosing a fresh random
+address for each encryption permits many messages under one fixed key without
+a synchronized stream position.
+
+* Construction and correctness
+
+Let \(F:\mathcal K\times\{0,1\}^d\to\{0,1\}^{\ell}\) be a secure PRF.
+To encrypt \(m\in\{0,1\}^{\ell}\), sample uniform \(r\in\{0,1\}^d\)
+independently on every call and output
+
+\[
+E(k,m)=(r,F(k,r)\oplus m).
+\]
+
+Decrypt by \(D(k,(r,c))=F(k,r)\oplus c\), rejecting malformed encodings.
+XOR cancellation proves correctness. The public index \(r\) identifies a
+pad; it does not reveal its value
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.3].
+
+* CPA-security theorem
+
+For every adversary \(A\) making at most \(Q\) encryption queries, there is
+a PRF distinguisher \(B\) making at most \(Q\) oracle queries such that
+
+\[
+\operatorname{CPAAdv}[A,\Pi]
+\leq 2\operatorname{PRFAdv}[B,F]+\frac{Q(Q-1)}{2^d}.
+\]
+
+Thus the scheme is CPA secure if \(2^d\) is super-polynomial in the security
+parameter. The query bound \(Q\) is polynomial, as the adversary is PPT.
+
+* Proof by three games
+
+1. *Real:* answer queries with pads \(F(k,r_i)\).
+2. *Random function:* replace \(F_k\) by one random function \(R\). A PRF
+   distinguisher chooses its own hidden bit, simulates encryption using its
+   oracle, and outputs whether \(A\) guessed that bit. The change in winning
+   probability is \(\operatorname{PRFAdv}[B,F]\).
+3. *Independent pads:* use a fresh uniform pad on every query, even at repeated
+   indices. Couple this with game 2 until some \(r_i=r_j\). The collision
+   probability is at most \(\binom Q2/2^d\). In game 3 the transcript is
+   independent of the hidden bit, even for adaptive plaintext queries.
+
+The guessing advantage is at most the PRF term plus the collision probability.
+Multiplication by two gives the stated distinguishing bound.
+
+* Limits and counterexamples
+
+Distinct indices give independent pads only in the random-function game.
+Random indices can repeat: then \(c_i\oplus c_j=m_i\oplus m_j\).
+Security therefore has a usage-dependent collision term.
+
+The XOR construction needs a bitstring-output PRF. Arbitrary encodings of
+group-valued PRFs are not automatically uniform-looking bitstrings. Also,
+\((r,c\oplus\Delta)\) decrypts to \(m\oplus\Delta\), so the construction
+does not authenticate ciphertexts.
+
+* Connections
+
+- [[id:BD515EED-D4EE-5541-B811-27DFC400D695][Pseudorandom functions]] supply the oracle guarantee.
+- [[id:93DB4F31-F879-5414-8DDD-01533DC62F0E][Chosen-plaintext security]] specifies the encryption game.
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Birthday bounds and collision events]] explain the second security term.
+
+* Sources
+
+#+print_bibliography: :heading none

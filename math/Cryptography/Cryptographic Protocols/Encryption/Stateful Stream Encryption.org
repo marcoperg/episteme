@@ -1,0 +1,70 @@
+:PROPERTIES:
+:ID: 9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1
+:END:
+#+title: Stateful Stream Encryption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A stateful stream cipher evolves a shared secret state, using each generated
+pad block once. It processes data online without fixing the final stream
+length in advance, but requires sender and receiver to remain synchronized.
+
+* Construction and correctness
+
+Let \(G:\{0,1\}^n\to\{0,1\}^n\times\{0,1\}^B\) be a secure generator,
+where \(B\geq1\) is polynomially bounded. Both parties start with the same
+uniform state \(s_0\). For block \(m_i\in\{0,1\}^B\), compute
+
+\[
+(s_{i+1},z_i)=G(s_i),\qquad c_i=m_i\oplus z_i.
+\]
+
+The sender sends \(c_i\) and advances its state. The receiver computes the
+same pair, recovers \(m_i=c_i\oplus z_i\), and also advances. Induction on
+the block number proves correctness when blocks arrive in order
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.5].
+
+* Security experiment
+
+Fix one hidden bit \(b\). At step \(i\), the adversary chooses two
+\(B\)-bit blocks \((m_{i,0},m_{i,1})\), possibly using earlier ciphertexts.
+The challenger returns \(m_{i,b}\oplus z_i\) and updates its state. After a
+polynomially bounded number \(T\) of steps, the adversary outputs a bit.
+Security means negligible difference between its output probabilities for
+\(b=0\) and \(b=1\).
+
+* Why the generator suffices
+
+Sequential composition gives
+
+\[
+(z_0,\ldots,z_{T-1},s_T)\approx_c U_{BT+n}.
+\]
+
+Projecting away the final state preserves indistinguishability. A reduction
+uses its supplied pad sequence to answer the adaptive encryption queries.
+With independent uniform pads, each new ciphertext is uniform conditional on
+the preceding transcript, so that transcript hides \(b\). An observable gap
+would distinguish the generated keystream from random.
+
+* Operational limits
+
+- Losing, duplicating, or reordering blocks can desynchronize the states.
+- Reaching a distant block normally requires all preceding state updates.
+- Reinitializing a previously used state repeats pads.
+- A fixed finite-state generator eventually repeats a state. The theorem
+  concerns polynomially many blocks, not literally unlimited use.
+- Bit flips remain undetected: \(c_i\oplus\Delta\) decrypts to
+  \(m_i\oplus\Delta\).
+
+* Connections
+
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG stretch amplification]] supplies the sequential-composition proof.
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] avoids synchronized stream positions.
+
+* Sources
+
+#+print_bibliography: :heading none

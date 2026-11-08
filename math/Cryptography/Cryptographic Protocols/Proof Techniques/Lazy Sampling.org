@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID: A598EE1B-88F0-56FC-9D8F-11450D19A783
+:END:
+#+title: Lazy Sampling
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Lazy sampling answers queries to a random function without constructing its
+entire table. It samples only the entries that are actually requested and
+stores them for consistent reuse.
+
+* Algorithm
+
+To simulate \(R:X\to Y\), maintain an initially empty dictionary \(T\).
+On input \(x\in X\):
+
+1. If \(x\notin\operatorname{dom}(T)\), sample a fresh uniform \(y\in Y\)
+   and set \(T[x]=y\).
+2. Return \(T[x]\).
+
+Reject malformed inputs consistently with the declared oracle interface. The
+dictionary is indexed by inputs, not outputs
+[cite:@fioreCryptographicProtocolosApplicatons sec. 4.3.3].
+
+* Exactness under adaptive queries
+
+This algorithm gives exactly the same transcript distribution as choosing one
+uniform \(R\in\operatorname{Funs}(X,Y)\) before any interaction.
+
+Prove this by induction on the query number. For an old input, both oracles
+return its already fixed output. For a new input, condition on the full
+previous transcript and the adversary's coins. The next input is fixed by that
+information, while its unassigned table entry is still independent and uniform
+in the pre-sampled random function. Lazy sampling uses precisely that law.
+
+The equality is distributional, not an approximation or a computational
+assumption.
+
+* Example and common errors
+
+Suppose the queries are \(a,b,a\). If the first two sampled answers happen
+to coincide, keep both entries: different inputs are allowed to have equal
+outputs. The third answer is exactly the stored value for \(a\).
+
+Resampling on repeated inputs gives independent noise, not a function.
+Rejecting output collisions instead gives permutation-like behaviour, not a
+random function. And if several parts of one experiment share an oracle,
+they must share the same dictionary.
+
+* Efficiency and scope
+
+After \(Q\) queries, the dictionary has at most \(Q\) entries. With
+polynomial input and output lengths and efficient sampling, polynomially many
+queries can be handled in polynomial time and space. Even a simple linear
+dictionary suffices for this asymptotic statement.
+
+Lazy sampling is a simulation technique. It does not turn a public random
+oracle into a secret-key PRF, or prove that a concrete hash function behaves
+like an ideal random function.
+
+* Connections
+
+- [[id:C4E41D16-6A88-536F-A420-586AEF9B5CCE][Uniformly random functions]] supply the underlying independence property.
+- [[id:BD515EED-D4EE-5541-B811-27DFC400D695][PRF experiments]] use the simulation for their ideal oracle.
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] samples random prefix labels in this way.
+
+* Sources
+
+#+print_bibliography: :heading none

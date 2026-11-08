@@ -1,0 +1,75 @@
+:PROPERTIES:
+:ID: BD515EED-D4EE-5541-B811-27DFC400D695
+:ROAM_ALIASES: "PRF"
+:END:
+#+title: Pseudorandom Functions
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+A PRF is a compact keyed function that behaves like a random table to an
+efficient observer with adaptive oracle access. Individual entries can be
+computed without generating the whole table.
+
+* Definition and oracle experiments
+
+Let \(F:\mathcal K\times X\to Y\) be efficient and deterministic, with
+efficiently represented parameterized finite spaces, a uniformly sampleable
+key space, and a uniformly sampleable output space. Write \(F_k(x)=F(k,x)\).
+
+- *Real:* sample uniform \(k\in\mathcal K\), then run \(A^{F_k}(1^\lambda)\).
+- *Ideal:* sample uniform \(R\in\operatorname{Funs}(X,Y)\), then run
+  \(A^R(1^\lambda)\).
+
+The adversary may choose each query using earlier responses. The challenger
+chooses its function only once. Define
+
+\[
+\operatorname{PRFAdv}[A,F]
+=\left|\Pr[A^{F_k}=1]-\Pr[A^R=1]\right|.
+\]
+
+The family is a *secure PRF* if this is negligible for every PPT oracle
+adversary. The key and complete table are not disclosed
+[cite:@fioreCryptographicProtocolosApplicatons sec. 4.3].
+
+* Why an oracle is important
+
+An exponentially large domain is allowed because one evaluation is efficient.
+A PPT adversary can inspect only polynomially many entries. Repeated queries
+must be consistent, and security must hold for related, adaptively selected
+inputs, not just a single random input.
+
+A generator whose output bits merely look individually balanced does not suffice.
+The entire accessible pattern must resist efficient tests.
+
+* A small-domain example from a PRG
+
+For a secure \(G:\{0,1\}^n\to\{0,1\}^{L(n)}\), define
+
+\[
+F(k,i)=G(k)_i,\qquad i\in\{1,\ldots,L(n)\}.
+\]
+
+A reduction given one PRG challenge \(z\) answers query \(i\) with \(z_i\).
+Generated \(z\) gives the real oracle; uniform \(z\) gives a random function
+to one-bit outputs. The simulation handles adaptive and repeated queries
+exactly [cite:@fioreCryptographicProtocolosApplicatons sec. 4.4.1].
+
+Here the domain is only polynomially large. GGM solves the harder problem of
+supporting exponentially many addresses with efficient pointwise evaluation.
+A one-bit-output PRF is still a PRF, but its output is not automatically a
+sufficiently long authentication tag or encryption pad.
+
+* Connections
+
+- [[id:C4E41D16-6A88-536F-A420-586AEF9B5CCE][Uniformly random functions]] define the ideal comparison.
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] builds large-domain PRFs from doubling PRGs.
+- [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold]] gives a DDH-based construction.
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][Randomized encryption]] uses the PRF as a source of indexed pads.
+
+* Sources
+
+#+print_bibliography: :heading none

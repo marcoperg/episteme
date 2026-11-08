@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID: AE9054EE-2979-4C79-9B85-B247C6C12C1F
+:END:
+#+title: Computational Security
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Computational security restricts attention to efficient adversaries. It is
+defined relative to an attack experiment; most short-key constructions
+establish it under computational hardness assumptions.
+
+* Definition and conventions
+
+A security parameter \(\lambda\in\mathbb N_{>0}\) indexes a family of
+constructions. Key lengths, message bounds, and public parameters depend on
+\(\lambda\); these dependencies are often suppressed in formulas.
+
+An algorithm is *probabilistic polynomial time* (PPT) if it uses random bits and
+its running time is bounded by a polynomial in its input length. Experiments
+supply \(1^\lambda\), the unary encoding of the parameter, so that polynomial
+time in \(\lambda\) is allowed. All other legitimate inputs have polynomially
+bounded length. Here adversaries are classical, uniform algorithms: one
+algorithm works for every parameter value
+[cite:@fioreCryptographicProtocolosApplicatons sec. 1.5 and Overview and notation].
+
+A security definition specifies a nonnegative quantity
+\(\operatorname{Adv}_{\Pi}(A,\lambda)\). The construction \(\Pi\) is secure
+in that definition when
+
+\[
+\forall A\text{ PPT},\qquad
+\operatorname{Adv}_{\Pi}(A,\lambda)=\operatorname{negl}(\lambda).
+\]
+
+The negligible bound may depend on \(A\). Public setup, key generation, honest
+random choices, and adversarial coins are included in the probability space.
+
+* The experiment determines the claim
+
+For a distinguishing game, advantage measures a difference in probabilities,
+not the probability of a correct guess. A random guess of a hidden bit already
+succeeds with probability \(1/2\). For an inversion game, the relevant quantity
+can instead be the success probability itself.
+
+Always state what the adversary sees, which oracles it may use, and whether the
+key is reused. One-time confidentiality, chosen-plaintext security, and
+resistance to key recovery are different claims.
+
+* Asymptotic and concrete bounds
+
+An asymptotic theorem says that advantage eventually becomes smaller than every
+inverse polynomial. It does not by itself choose a safe practical key size.
+A concrete reduction bounds advantage in terms of running time, query count,
+primitive security, and explicit error terms. For example, an encryption bound
+may contain a collision term proportional to \(Q^2/2^n\).
+
+Exact uniform sampling from general finite sets may use rejection sampling.
+Following the course convention, a sampler may have a uniformly negligible
+probability of exceeding a polynomial running-time bound. Truncating it changes
+experiment probabilities by at most that probability.
+
+* Connections
+
+- [[id:0A381DA6-37CC-54DF-9F07-F003CEA6AE31][Negligible functions]] make the asymptotic requirement precise.
+- [[id:17111DA9-A4BE-5A36-8A6B-FC32260FDE5C][Security reductions]] explain how assumptions imply guarantees.
+- [[id:2C95A77B-191B-4D39-80EE-F4084193B550][Finite-key vs Asymptotic Security Analysis]] gives related context.
+
+* Sources
+
+#+print_bibliography: :heading none

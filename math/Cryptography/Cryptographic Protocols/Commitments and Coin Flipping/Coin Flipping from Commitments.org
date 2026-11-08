@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID: F757404B-2CF2-58C0-AD16-EFCD0B88B28D
+:END:
+#+title: Coin Flipping from Commitments
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Two remote parties can combine private bits into a common coin, but a simple
+exchange lets the last sender choose the outcome. A commitment fixes one bit
+before the other is revealed. It does not force the protocol to finish.
+
+* Why a direct exchange fails
+
+If independent uniform bits \(b_1,b_2\) are combined as
+\(b=b_1\oplus b_2\), the result is uniform. Independence is the difficulty.
+After seeing \(b_1\), Bob can force target \(v\) by setting
+\(b_2=b_1\oplus v\). Reversing the order just changes who can cheat.
+
+* Protocol
+
+Use Naor's computationally hiding, statistically binding commitment:
+
+1. Bob sends the random commitment challenge \(r\).
+2. Alice samples uniform \(b_1\), commits to it using a fresh seed, and sends
+   the commitment \(c\).
+3. Bob samples an independent uniform \(b_2\) and sends it to Alice.
+4. Alice opens \(c\) by sending \((b_1,s)\).
+5. Bob verifies. On acceptance, the agreed output is \(b_1\oplus b_2\);
+   on an invalid or missing opening, Bob outputs \(\bot\).
+
+Honest execution gives the same exactly uniform bit to both parties
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.4.4].
+
+* Security objective and reasoning
+
+For each fixed target \(v\in\{0,1\}\), a PPT cheating participant can make
+the honest participant output \(v\) with probability at most
+\(1/2+\operatorname{negl}(n)\). An abort is a separate outcome \(\bot\),
+not a successful target bit.
+
+Against cheating Alice, statistical binding fixes any acceptable \(b_1\)
+before Bob sends his independent \(b_2\), except on a negligible set of
+challenges. Alice may decline to open, but cannot usually change her bit.
+
+Against cheating Bob, computational hiding prevents his choice of \(b_2\)
+from usefully correlating with Alice's hidden uniform \(b_1\). An
+improvement in forcing a chosen XOR value would predict \(b_1\) and violate
+hiding. Bob's earlier choice of challenge is included in the malicious
+receiver's view.
+
+* Selective abort: an important limitation
+
+Alice learns the prospective result when \(b_2\) arrives. She can open only
+when \(b_1\oplus b_2=0\). Then every completed execution produces \(0\),
+while the other executions abort.
+
+This does not exceed probability \(1/2\) of making Bob output \(0\), but
+it makes the result completely biased *conditioned on completion*. The
+protocol provides a coin flip with abort, not guaranteed delivery of a fair
+coin. Hiding and binding alone do not supply that stronger fairness property.
+
+* Connections
+
+- [[id:45474AD9-A163-4CC9-983A-78EFD52E93C9][Bit commitment]] separates the two underlying security goals.
+- [[id:DD4FB7B7-4B47-51F5-A360-F801A0997C19][Naor's commitment]] supplies their concrete realization.
+
+* Sources
+
+#+print_bibliography: :heading none

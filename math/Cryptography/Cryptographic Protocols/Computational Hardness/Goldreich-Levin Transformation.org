@@ -1,0 +1,78 @@
+:PROPERTIES:
+:ID: DE2F10E2-AC2E-5735-8CD7-98A04040D891
+:END:
+#+title: Goldreich-Levin Transformation
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Goldreich-Levin gives every one-way function a hard-core predicate after a
+uniform extension of its input. The extension is essential: the theorem does
+not say that one fixed bit of the original input is always hidden.
+
+* Construction and theorem
+
+Given a one-way family \(f_n:\{0,1\}^n\to\{0,1\}^{m(n)}\), define
+
+\[
+\overline f_n(x,r)=(f_n(x),r),\qquad
+h(x,r)=\langle x,r\rangle=\bigoplus_{i=1}^n x_i r_i.
+\]
+
+Both \(x\) and \(r\) are independent uniform \(n\)-bit strings. The theorem
+states that \(\overline f\) is one-way and \(h\) is hard-core for it.
+In particular,
+
+\[
+(f_n(X),R,\langle X,R\rangle)
+\approx_c(f_n(X),R,U_1),
+\]
+
+with an independent uniform bit \(U_1\). The parameter is \(n\), while the
+extended input length is \(2n\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.6.4].
+
+* Public randomness does not make the bit public
+
+The vector \(r\) is included in the challenge. The adversary knows which
+parity of \(x\) is requested, but only sees \(f_n(x)\), not \(x\).
+For example, \(x=101\), \(r=110\) gives
+\(\langle x,r\rangle=1\). This illustrates the operation, not security at
+these tiny lengths.
+
+* What the proof establishes
+
+One-wayness of \(\overline f\) follows directly. Given \(f_n(x)\), sample
+an independent \(r\), run an inverter on \((f_n(x),r)\), and extract the
+returned preimage of \(f_n(x)\).
+
+The hard-core assertion is deeper. A predictor with inverse-polynomial
+advantage can be turned into an efficient list-recovery procedure for \(x\);
+candidates can then be checked by evaluating \(f_n\). This note states that
+theorem and its mechanism, rather than claiming to supply the full
+list-recovery proof.
+
+* Consequence for one-way permutations
+
+If \(f_n\) is a permutation, so is \(\overline f_n\) on
+\(\{0,1\}^{2n}\). Therefore
+
+\[
+G(x,r)=f_n(x)\mathbin\Vert r\mathbin\Vert\langle x,r\rangle
+\]
+
+is a PRG from \(2n\) to \(2n+1\) bits. For a general OWF, the image
+\(f_n(U_n)\) need not be uniform, so this expression is not automatically
+a PRG.
+
+* Connections
+
+- [[id:EF6900D1-B10A-5186-86D5-716555729BAD][Hard-core predicates]] define the distinguishing and prediction guarantees.
+- [[id:C43C8CF7-FADC-51D8-B380-715240FA3F51][One-way permutations]] provide the uniformity needed for expansion.
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG stretch amplification]] turns one extra bit into polynomial stretch.
+
+* Sources
+
+#+print_bibliography: :heading none

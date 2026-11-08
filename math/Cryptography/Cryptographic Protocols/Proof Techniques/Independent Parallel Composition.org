@@ -1,0 +1,78 @@
+:PROPERTIES:
+:ID: 51CA79F8-4291-5B5D-8526-4868010DE372
+:END:
+#+title: Independent Parallel Composition
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Polynomially many independent samples from a secure generator remain
+indistinguishable from independent uniform samples. Independence is a premise,
+not a consequence of each sample looking random on its own.
+
+* Statement
+
+Let \(G:S\to R\) be a secure generator on efficiently represented and
+uniformly sampleable finite spaces. For efficiently computable, polynomially
+bounded \(Q\geq1\), define
+
+\[
+G^{\parallel Q}(s_1,\ldots,s_Q)
+=(G(s_1),\ldots,G(s_Q)).
+\]
+
+With independent uniform seeds, this is indistinguishable from \(Q\)
+independent uniform elements of \(R\). For every distinguisher \(C\), there
+is an efficient \(B\) with
+
+\[
+\operatorname{PRGAdv}[C,G^{\parallel Q}]
+=Q\operatorname{PRGAdv}[B,G]
+\]
+
+This is the independent-sample composition theorem
+[cite:@fioreCryptographicProtocolosApplicatons sec. 4.5.3].
+
+* Hybrids and reduction
+
+Let \(H_i\) contain \(i\) independent uniform elements of \(R\), followed
+by \(Q-i\) independent generated samples. Write
+\(p_i=\Pr[C(H_i)=1]\).
+
+Given a single challenge \(z\in R\), \(B\) chooses uniform
+\(I\in\{1,\ldots,Q\}\), puts \(z\) in position \(I\), samples independent
+uniform entries before it, and generates independent entries after it. It
+returns \(C\)'s output.
+
+A generated challenge simulates \(H_{I-1}\); a uniform challenge simulates
+\(H_I\). Therefore
+
+\[
+\operatorname{PRGAdv}[B,G]
+=\left|\frac1Q\sum_{i=1}^Q(p_{i-1}-p_i)\right|
+=\frac{|p_0-p_Q|}{Q}.
+\]
+
+The loss and simulation costs are polynomial, proving the claim.
+
+* Counterexample without independence
+
+Repeating one generated value produces \((G(S),G(S))\). Testing equality
+always accepts. Two independent uniform elements of \(R\) are equal with
+probability \(1/|R|\), so the gap is \(1-1/|R|\). This test works even if
+each individual generated sample is secure.
+
+This lemma therefore cannot justify collections with a shared seed or a shared
+algebraic exponent. Those require a different theorem.
+
+* Connections
+
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] give the general telescoping method.
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] uses this lemma for independent labels at one depth.
+- [[id:4A4F6050-66F5-5B95-9F1E-250038585F28][Shared-exponent DDH]] treats a specific correlated collection instead.
+
+* Sources
+
+#+print_bibliography: :heading none

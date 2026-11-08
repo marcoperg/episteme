@@ -1,0 +1,76 @@
+:PROPERTIES:
+:ID: 50375158-9DAE-5BF7-B385-B98313B01181
+:ROAM_ALIASES: "BBS"
+:END:
+#+title: Blum-Blum-Shub Generator
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+Blum-Blum-Shub generates bits by repeated squaring modulo a composite integer.
+Its security uses a precise state space and a hard-core theorem related to
+factoring, not just the apparent complexity of modular arithmetic.
+
+* State space and initialization
+
+Let \(N=pq\), where \(p,q\) are distinct primes satisfying
+\(p\equiv q\equiv3\pmod4\). Such an \(N\) is a *Blum integer*. Its
+factorization is secret. Let
+
+\[
+\operatorname{QR}_N=\{z^2\bmod N:z\in\mathbb Z_N^*\}.
+\]
+
+Sample uniform \(z\in\mathbb Z_N^*\), and set \(s_0=z^2\bmod N\).
+Each quadratic residue has exactly four roots in \(\mathbb Z_N^*\), so this
+gives a uniform initial state in \(\operatorname{QR}_N\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.3.2].
+
+* Why squaring is a permutation
+
+The Chinese remainder theorem identifies \(\operatorname{QR}_N\) with
+\(\operatorname{QR}_p\times\operatorname{QR}_q\). Its order is odd because
+both \((p-1)/2\) and \((q-1)/2\) are odd.
+
+If \(x^2=y^2\) in this group, then \((xy^{-1})^2=1\). An odd-order group
+has no nonidentity element of order two, so \(x=y\). Squaring is therefore
+injective, hence bijective on this finite group. It is *not* a permutation on
+all of \(\mathbb Z_N^*\).
+
+* Generator and security statement
+
+For the canonical integer representative, let \(\operatorname{LSB}(s)=s\bmod2\).
+Iterate
+
+\[
+r_i=\operatorname{LSB}(s_{i-1}),\qquad s_i=s_{i-1}^2\bmod N,
+\]
+
+and output the emitted bits. The hard-core theorem for the squaring
+permutation says that predicting this bit with inverse-polynomial advantage
+would enable factoring for the specified Blum-modulus family. Under that
+factoring assumption, the one-step pair is pseudorandom relative to
+\(\{0,1\}\times\operatorname{QR}_N\).
+
+Sequential composition and projection give pseudorandom output bits for every
+polynomially bounded iteration count. The algebraic permutation proof above
+does not prove the hard-core theorem; it supplies one of its prerequisites.
+
+* Small example and limitations
+
+For \(N=7\cdot11=77\) and \(s_0=4\), the states are
+\(4,16,25,9,4,\ldots\), giving bits \(0011\ldots\). This small periodic
+example is not secure. Proper parameter generation and a secret uniform state
+are essential, and a finite state space never justifies unlimited output.
+
+* Connections
+
+- [[id:69560A39-4283-597D-9A11-69E69EFE6B78][Factoring]] fixes the distribution-dependent assumption.
+- [[id:C43C8CF7-FADC-51D8-B380-715240FA3F51][One-way permutations]] explain why the domain restriction matters.
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][Stretch amplification]] gives the generic iteration argument.
+
+* Sources
+
+#+print_bibliography: :heading none

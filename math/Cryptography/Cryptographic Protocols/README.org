@@ -1,4 +1,13 @@
+:PROPERTIES:
+:ID: DFF83724-01D6-4E89-BB26-E94B0F809D15
+:END:
 #+title: Cryptographic Protocols
+#+SETUPFILE: ../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../bibliotheca/zotero-library.bib
+#+latex_header: \usepackage{multicol}
 
 :CONTEXT_RELATIONS:
 - informed-by :: [cite:@bonehGraduateCourseApplied]
@@ -7,26 +16,114 @@
 
 * About these notes
 
-These notes were taken during the Cryptographic Protocols and Applications
-class of the Formal Methods for Computer Science master's program in the
-2026/27 academic year.
+Concept-oriented notes from the Cryptographic Protocols and Applications
+course in the Formal Methods for Computer Science master's program, 2026/27.
+Each note explains one main notion, construction, or proof technique, with
+precise definitions, experiments where relevant, examples, and explicit limits.
 
-Most lectures are based on D. Boneh and V. Shoup's /A Graduate Course in
-Applied Cryptography/, which is freely available at
-[[https://toc.cryptobook.us][toc.cryptobook.us]].
+The course follows Boneh and Shoup's /A Graduate Course in Applied
+Cryptography/, available at [[https://toc.cryptobook.us][toc.cryptobook.us]]
+[cite:@bonehGraduateCourseApplied]. Claim-level references point to the
+course manuscript [cite:@fioreCryptographicProtocolosApplicatons].
 
-* Covered material
+* Scope and conventions
 
-Lectures 1--3 progress from perfect secrecy to computational
-indistinguishability, pseudorandom generators, one-way assumptions, stretch
-amplification, and applications to commitments and stream encryption.
+These 35 notes cover computational security, one-way assumptions, PRGs,
+commitments, PRFs, and the basic PRF-based CPA-secure cipher. Perfect secrecy
+is reused from [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information-theoretic security]], rather than duplicated.
 
-* Notes
+The current BibTeX attachment is an 86-page manuscript. Its chapters 1--4 and
+sections 5.1--5.3 are the main source for this selection. Later material on
+modes, authentication, RSA, and public-key encryption is outside this pass.
+Bibliotheca's Org catalogue still lists an older 41-page attachment; section
+locators here refer to the newer manuscript. Bibliographic titles and citekeys
+are retained as catalogued, including existing spelling errors in source titles.
 
-- [[id:C4E605D8-8C61-4069-ACEA-93F81165C05F][Encryption Schemes and Security Goals]]
-- [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information Theoretic Security]]
-- [[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational Security and Indistinguishability]]
-- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom Generators and Computational Encryption]]
-- [[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way Functions and Hard-core Predicates]]
-- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG Stretch Amplification and Hybrid Arguments]]
-- [[id:45474AD9-A163-4CC9-983A-78EFD52E93C9][Bit Commitments and Coin Flipping]]
+The security parameter is \(\lambda\), or \(n\) when seed length indexes the
+family. Uniform samples are independent unless a dependence is stated.
+\(U_t\) denotes a uniform \(t\)-bit string; \(\Vert\) is concatenation and
+\(\oplus\) is bitwise XOR. Public setup is available to the adversary.
+Computational adversaries are classical and uniform. Every security claim is
+relative to its stated experiment; confidentiality does not imply authenticity.
+
+* Suggested reading route
+
+1. Encryption schemes, one-time pad, and perfect secrecy.
+2. Computational security, negligible functions, indistinguishability, and
+   one-time semantic security.
+3. One-way functions and permutations, hard-core predicates, Goldreich-Levin,
+   and pseudorandom generators.
+4. Stretch amplification, reductions, and hybrid arguments; then encryption,
+   stream ciphers, and commitments as applications.
+5. Random functions, lazy sampling, PRFs, GGM, and Naor-Reingold.
+6. Chosen-plaintext security and randomized PRF-based encryption, including
+   their collision bounds.
+
+#+latex: \newpage
+#+latex: \begin{multicols}{2}
+
+* Security notions
+
+- [[id:AE9054EE-2979-4C79-9B85-B247C6C12C1F][Computational security]]
+- [[id:0A381DA6-37CC-54DF-9F07-F003CEA6AE31][Negligible functions]]
+- [[id:8C825859-C9CD-5610-A7CF-5626E7864E10][Computational indistinguishability]]
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]]
+- [[id:93DB4F31-F879-5414-8DDD-01533DC62F0E][Chosen-plaintext security]]
+
+* Encryption
+
+- [[id:C4E605D8-8C61-4069-ACEA-93F81165C05F][Encryption schemes]]
+- [[id:1A9739E1-DEC0-5D22-8A85-A78669876A3D][One-time pad]]
+- [[id:2F9A15B8-0CFB-5D9F-8EA3-F33BCA747C70][PRG-based one-time encryption]]
+- [[id:9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1][Stateful stream encryption]]
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]]
+
+* Computational hardness
+
+- [[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way functions]]
+- [[id:C43C8CF7-FADC-51D8-B380-715240FA3F51][One-way permutations]]
+- [[id:EF6900D1-B10A-5186-86D5-716555729BAD][Hard-core predicates]]
+- [[id:DE2F10E2-AC2E-5735-8CD7-98A04040D891][Goldreich-Levin transformation]]
+- [[id:F0DC1C09-62D0-5AD3-B854-7EA46C9F8371][Discrete logarithm assumption]]
+- [[id:69560A39-4283-597D-9A11-69E69EFE6B78][Factoring assumption]]
+- [[id:11862CED-F757-5A19-878C-5B8FCAA2F1F9][Decisional Diffie-Hellman assumption]]
+
+#+latex: \columnbreak
+
+* Pseudorandomness
+
+** Generators
+
+- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom generators]]
+- [[id:A0997AA0-C919-44A4-BF11-86385CB65969][PRG stretch amplification]]
+- [[id:A8AB1A75-CEE1-597B-84E5-778793675D87][Blum-Micali generator]]
+- [[id:50375158-9DAE-5BF7-B385-B98313B01181][Blum-Blum-Shub generator]]
+- [[id:EC8B9223-9A14-5900-9EBA-2650847BCF7C][DDH-based generator]]
+
+** Functions
+
+- [[id:C4E41D16-6A88-536F-A420-586AEF9B5CCE][Uniformly random functions]]
+- [[id:BD515EED-D4EE-5541-B811-27DFC400D695][Pseudorandom functions]]
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM construction]]
+- [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold function]]
+
+* Commitments and coin flipping
+
+- [[id:45474AD9-A163-4CC9-983A-78EFD52E93C9][Bit commitment]]
+- [[id:DD4FB7B7-4B47-51F5-A360-F801A0997C19][Naor's PRG-based commitment]]
+- [[id:F757404B-2CF2-58C0-AD16-EFCD0B88B28D][Coin flipping from commitments]]
+
+* Proof techniques
+
+- [[id:17111DA9-A4BE-5A36-8A6B-FC32260FDE5C][Security reductions]]
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]]
+- [[id:51CA79F8-4291-5B5D-8526-4868010DE372][Independent parallel composition]]
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]]
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Birthday bounds and collision events]]
+- [[id:4A4F6050-66F5-5B95-9F1E-250038585F28][Shared-exponent DDH]]
+
+#+latex: \end{multicols}
+
+* Sources
+
+#+print_bibliography: :heading none

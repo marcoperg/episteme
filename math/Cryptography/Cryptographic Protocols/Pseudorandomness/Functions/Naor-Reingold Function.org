@@ -1,0 +1,91 @@
+:PROPERTIES:
+:ID: C8291648-12DF-50C0-878F-D80D6F0279AC
+:END:
+#+title: Naor-Reingold Function
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+Naor-Reingold constructs a group-valued PRF from DDH. Its tree uses the same
+secret exponent at every node of a given depth, so its proof needs a
+shared-exponent lemma rather than a direct application of ordinary GGM.
+
+* Construction
+
+Let \(\mathbb G=\langle g\rangle\) have prime order \(q\), and fix a
+positive polynomially bounded input length \(d\). Sample independent uniform key
+coordinates \(k_0,\ldots,k_d\in\mathbb Z_q\). Define
+
+\[
+F_{\mathrm{NR}}(k,x)
+=g^{\,k_0\prod_{\{i:x_i=1\}}k_i},\qquad x\in\{0,1\}^d.
+\]
+
+Exponent arithmetic is in \(\mathbb Z_q\); an empty product is \(1\).
+Evaluation uses at most \(d\) modular multiplications and one exponentiation
+[cite:@fioreCryptographicProtocolosApplicatons sec. 4.6].
+
+For \(d=2\), the values at \(00,01,10,11\) are respectively
+
+\[
+g^{k_0},\qquad g^{k_0k_2},\qquad
+g^{k_0k_1},\qquad g^{k_0k_1k_2}.
+\]
+
+* Augmented-tree interpretation
+
+Start with label \(g^{k_0}\). At depth \(i\), expand a label \(z\) to
+\((z,z^{k_i})\). The input bit chooses one child. All expansions at that
+depth share \(k_i\), so ordinary independent-seed PRG composition is not the
+right premise. Shared-exponent DDH makes a polynomial collection of these
+child pairs indistinguishable from independent uniform pairs.
+
+#+latex: \newpage
+
+* Security theorem and proof outline
+
+Under DDH, \(F_{\mathrm{NR}}\) is a secure PRF. For a \(Q\)-query
+adversary \(A\), there is an efficient DDH distinguisher \(B\) with
+
+\[
+\operatorname{PRFAdv}[A,F_{\mathrm{NR}}]
+\leq d\left(\operatorname{DDHAdv}[B,\mathbb G]+\frac1q\right).
+\]
+
+At level \(j\), replace the labels of all \(j\)-bit prefixes by a random
+function \(R_j:\{0,1\}^j\to\mathbb G\), retaining independent suffix keys.
+The resulting oracle is
+
+\[
+H_j(x)=R_j(x_1\cdots x_j)^{\,
+\prod_{\{i>j:x_i=1\}} k_i}.
+\]
+
+The endpoints are the real PRF and a random function. Choose a random level,
+assign each encountered parent prefix one of \(Q\) supplied child pairs,
+and evaluate the remaining suffix. Shared-exponent pairs simulate the earlier
+hybrid; uniform pairs simulate the next. The signed gaps telescope, giving a
+factor \(d\); the shared-exponent DDH lemma gives the displayed bound.
+Only queried prefixes are stored, so adaptive simulation remains efficient.
+
+* Limits
+
+Keys with a zero coordinate can be degenerate. Their probability is at most
+\((d+1)/q\), negligible for the stated family. Security averages over random
+keys; it does not promise equally good behaviour for every individual key.
+
+The output space is \(\mathbb G\), not a uniform bitstring space. An XOR
+encryption application needs a distribution-preserving conversion, not just
+an arbitrary encoding of group elements.
+
+* Connections
+
+- [[id:4A4F6050-66F5-5B95-9F1E-250038585F28][Shared-exponent DDH]] contains the full pair-distribution reduction.
+- [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] provides the ordinary balanced-tree comparison.
+- [[id:BD515EED-D4EE-5541-B811-27DFC400D695][Pseudorandom functions]] define the adaptive oracle guarantee.
+
+* Sources
+
+#+print_bibliography: :heading none

@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID: 17111DA9-A4BE-5A36-8A6B-FC32260FDE5C
+:END:
+#+title: Security Reductions
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A security reduction turns an attack on a construction into an attack on an
+underlying primitive. It explains why breaking the construction would
+contradict a stated hardness assumption.
+
+Given an adversary \(A\) against construction \(\Pi\), define a concrete
+algorithm \(B\) for a primitive's security experiment. A typical bound is
+
+\[
+\operatorname{Adv}_{\Pi}[A]
+\leq c(\lambda)\operatorname{Adv}_{P}[B]+\delta(\lambda).
+\]
+
+Here \(c\) is a controlled loss and \(\delta\) an explicit error term.
+If \(B\) is efficient, \(c\) polynomially bounded, the primitive secure,
+and \(\delta\) negligible, then \(A\)'s advantage is negligible. This
+pattern underlies the course's PRG-encryption and PRF-encryption proofs
+[cite:@fioreCryptographicProtocolosApplicatons secs. 2.3.2 and 5.3].
+
+* Simulation checklist
+
+1. *Inputs:* state exactly what \(B\) receives from its challenger.
+2. *Embedding:* explain where that challenge enters \(A\)'s execution.
+3. *Answers:* simulate all of \(A\)'s permitted interactions, preserving
+   randomness, correlations, and repeated-query consistency.
+4. *Output:* specify how \(B\) turns \(A\)'s behaviour into its own answer.
+5. *Distributions:* show which real or ideal game is simulated in each case.
+6. *Cost:* bound running time, queries, storage, advantage loss, and errors.
+
+An efficient adversary wrapped in an exponential-time simulator does not
+contradict a polynomial-time security assumption.
+
+* Example: computational OTP
+
+A PRG test receives a string \(z\), chooses its own hidden bit \(b\), and
+gives the encryption adversary \(z\oplus m_b\). It outputs whether the
+adversary guessed \(b\). Generated \(z\) gives real encryption; uniform
+\(z\) gives an OTP. Thus \(\operatorname{SSAdv}[A,\Pi]
+=2\operatorname{PRGAdv}[B,G]\).
+
+The factor comes from the two advantage conventions, not from an additional
+hardness assumption.
+
+* Common mistakes
+
+- Revealing an unknown secret while claiming to simulate its secrecy game.
+- Replacing a random function by independent answers on repeated inputs.
+- Assuming adaptively chosen messages were fixed before earlier responses.
+- Ignoring collisions, rejection events, or allowed message-length leakage.
+- Choosing a different helpful hybrid index for every parameter without
+  explaining how one uniform reduction finds it.
+
+Concrete losses matter when selecting practical parameters, even if both sides
+of a theorem are negligible asymptotically.
+
+* Connections
+
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] organize reductions through intermediate experiments.
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] implements consistent ideal oracles efficiently.
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Collision bounds]] supply explicit statistical error terms.
+
+* Sources
+
+#+print_bibliography: :heading none

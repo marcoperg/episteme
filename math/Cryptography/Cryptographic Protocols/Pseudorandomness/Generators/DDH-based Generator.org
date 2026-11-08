@@ -1,0 +1,69 @@
+:PROPERTIES:
+:ID: EC8B9223-9A14-5900-9EBA-2650847BCF7C
+:END:
+#+title: DDH-based Generator
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+A decisional assumption can directly supply a generator: its real experiment
+already compares a deterministic output with an appropriate uniform object.
+
+* Construction
+
+Let \(\mathbb G=\langle g\rangle\) be a public cyclic group of prime order
+\(q\). Define
+
+\[
+G_{\mathrm{DH}}:\mathbb Z_q^2\longrightarrow\mathbb G^3,
+\qquad G_{\mathrm{DH}}(a,b)=(g^a,g^b,g^{ab}).
+\]
+
+The seed is a pair of independent uniform exponents. The output is three group
+elements. This expands the sampled space from cardinality \(q^2\) to
+\(q^3\) [cite:@fioreCryptographicProtocolosApplicatons sec. 3.3.3].
+
+* Security experiment and proof
+
+The real experiment gives \(A\) the generated triple. The ideal experiment
+gives three independent uniform group elements. Public parameters are supplied
+in both. For independent uniform \(a,b,c\in\mathbb Z_q\),
+\((g^a,g^b,g^c)\) is exactly uniform on \(\mathbb G^3\). Therefore
+
+\[
+\operatorname{PRGAdv}[A,G_{\mathrm{DH}}]
+=\operatorname{DDHAdv}[A,\mathbb G].
+\]
+
+Under DDH, the generator is secure in the generalized finite-space definition.
+This reduction has no advantage loss beyond the identical experiment.
+
+* A statistical test exists
+
+The image has exactly \(q^2\) elements: the first two coordinates uniquely
+determine the exponents. An unbounded test can recover those exponents and
+check the third coordinate. A uniform triple satisfies the relation with
+probability \(1/q\), giving distinguishing advantage \(1-1/q\).
+
+This does not contradict DDH, which restricts the test to polynomial time in
+the security parameter.
+
+* Representation caveat
+
+The natural ideal output is uniform on \(\mathbb G^3\). Encoding the three
+elements as fixed-width binary strings need not give a uniform distribution
+over all strings of that length. An application requiring uniform-looking
+binary pads needs an appropriate conversion and a proof for that distribution.
+One must not substitute XOR encryption solely on the strength of the formula.
+
+* Connections
+
+- [[id:11862CED-F757-5A19-878C-5B8FCAA2F1F9][DDH]] is exactly the security assumption used here.
+- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][Pseudorandom generators]] include the generalized finite-space definition.
+- [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold]] obtains a group-valued PRF from DDH.
+
+* Sources
+
+#+print_bibliography: :heading none

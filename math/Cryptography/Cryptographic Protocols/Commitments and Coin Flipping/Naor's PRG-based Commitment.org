@@ -1,0 +1,77 @@
+:PROPERTIES:
+:ID: DD4FB7B7-4B47-51F5-A360-F801A0997C19
+:END:
+#+title: Naor's PRG-based Commitment
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Naor's commitment uses a long pseudorandom string to hide a bit and a receiver's
+random challenge to make double openings statistically unlikely.
+
+* Protocol
+
+Let \(G:\{0,1\}^n\to\{0,1\}^L\) be a secure PRG, with polynomially
+bounded \(L\geq3n\). Alice commits to \(b\in\{0,1\}\):
+
+1. Bob samples uniform \(r\in\{0,1\}^L\) and sends it to Alice.
+2. Alice rejects a malformed challenge. Otherwise she samples a fresh uniform
+   \(s\in\{0,1\}^n\) and sends \(c=G(s)\oplus(b\cdot r)\).
+3. To open, Alice sends \((b,s)\). Bob checks their types and accepts exactly
+   when \(c=G(s)\oplus(b\cdot r)\).
+
+Here \(0\cdot r=0^L\) and \(1\cdot r=r\). Correctness follows by
+recomputing the commitment equation
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.4.3].
+
+* Computational hiding
+
+Replace \(G(s)\) with an independent uniform \(U\in\{0,1\}^L\).
+Conditional on \(r\) and any prior receiver state, \(U\oplus(b\cdot r)\)
+is uniform for either bit. Thus the two ideal views coincide.
+
+For each fixed bit, distinguishing its real and ideal views gives a PRG test:
+simulate the receiver to obtain \(r\), use the PRG challenge as the pad, and
+continue its computation. A triangle inequality over these two replacements
+proves hiding. This works even for a malicious receiver choosing \(r\),
+because its challenge precedes the committer's fresh seed.
+
+* Statistical binding
+
+A commitment that opens both ways has seeds \(s_0,s_1\) satisfying
+
+\[
+c=G(s_0)=G(s_1)\oplus r,
+\qquad r=G(s_0)\oplus G(s_1).
+\]
+
+There are at most \(2^{2n}\) such challenges, one per ordered seed pair.
+With an honest uniform \(r\),
+
+\[
+\Pr[\text{some commitment admits both openings}]
+\leq 2^{2n-L}\leq2^{-n}.
+\]
+
+Outside this bad set, no computation can find a double opening because none
+exists. Binding is therefore statistical, and does not itself use PRG
+hardness. The count is an upper bound: different seed pairs can give the same
+challenge.
+
+* Different adversarial roles
+
+Binding requires an honest receiver's random challenge. For \(r=0^L\),
+both bit formulas are identical, so binding fails. This does not contradict
+hiding against a malicious receiver; the two properties protect different
+participants under different honesty assumptions.
+
+* Connections
+
+- [[id:45474AD9-A163-4CC9-983A-78EFD52E93C9][Bit commitment]] defines the hiding and binding experiments.
+- [[id:F757404B-2CF2-58C0-AD16-EFCD0B88B28D][Coin flipping]] uses this protocol to fix one participant's bit.
+
+* Sources
+
+#+print_bibliography: :heading none

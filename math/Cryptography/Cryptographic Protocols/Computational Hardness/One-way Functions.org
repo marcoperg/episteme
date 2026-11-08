@@ -1,0 +1,70 @@
+:PROPERTIES:
+:ID: 91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8
+:ROAM_ALIASES: "OWF"
+:END:
+#+title: One-way Functions
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A one-way function is easy to evaluate but hard to invert on a randomly
+generated challenge. Hardness concerns the input distribution, not just the
+existence of a few difficult instances.
+
+* Definition
+
+Let \(f_n:\{0,1\}^n\to\{0,1\}^{m(n)}\) be a deterministic
+polynomial-time family, with polynomially bounded output length. Its inversion
+experiment with adversary \(I\) is:
+
+1. Sample uniform \(x\in\{0,1\}^n\) and compute \(y=f_n(x)\).
+2. Give \((1^n,y)\) to \(I\), which returns \(x'\).
+3. Accept exactly when \(x'\in\{0,1\}^n\) and \(f_n(x')=y\).
+
+The family is *one-way* if the acceptance probability is negligible for every
+PPT inverter. Finding any valid preimage wins; recovering the originally
+sampled \(x\) is not required
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.4.1].
+
+Publicly indexed families also give the adversary a public function
+description. Setup randomness is included in the experiment. For more general
+finite domains, efficient representation, membership tests, and the input
+sampling distribution must be specified.
+
+* Examples and non-examples
+
+Discrete-logarithm exponentiation and multiplication of two suitably sampled
+primes are candidates under their respective assumptions. Neither is an
+unconditionally proved one-way function.
+
+The identity function is not one-way. Nor does difficulty on a few rare inputs
+suffice: the adversary must have negligible success over the actual random
+challenge distribution. That image distribution need not be uniform.
+
+* One-wayness does not hide every property
+
+If \(g\) is one-way, then \(f(b,x)=(b,g(x))\) remains one-way but exposes
+\(b\). Thus inversion hardness does not imply that every input bit is hidden.
+A hidden bit requires the stronger hard-core property.
+
+* Relationship with complexity theory
+
+If \(\mathsf{P}=\mathsf{NP}\), a preimage can be found efficiently by deciding, bit by bit,
+whether a proposed prefix extends to some \(n\)-bit \(x\) with \(f_n(x)=y\).
+Each decision is in NP, since a candidate preimage is efficiently checkable.
+Hence one-way functions imply \(\mathsf{P}\ne\mathsf{NP}\).
+
+The converse is unknown: worst-case hardness alone does not give the required
+average-case inversion hardness.
+
+* Connections
+
+- [[id:C43C8CF7-FADC-51D8-B380-715240FA3F51][One-way permutations]] add bijectivity.
+- [[id:EF6900D1-B10A-5186-86D5-716555729BAD][Hard-core predicates]] isolate computationally hidden bits.
+- [[id:F0DC1C09-62D0-5AD3-B854-7EA46C9F8371][Discrete logarithm]] and [[id:69560A39-4283-597D-9A11-69E69EFE6B78][factoring]] give concrete candidates.
+
+* Sources
+
+#+print_bibliography: :heading none

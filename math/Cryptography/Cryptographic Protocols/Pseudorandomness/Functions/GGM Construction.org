@@ -1,0 +1,89 @@
+:PROPERTIES:
+:ID: 7C1C69E5-24B9-53B2-9044-5B43F3C9EABA
+:ROAM_ALIASES: "Goldreich-Goldwasser-Micali construction"
+:END:
+#+title: GGM Construction
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+Goldreich-Goldwasser-Micali constructs a PRF by placing a doubling PRG in a
+balanced binary tree. A short address selects one root-to-leaf path, so an
+exponentially large table can be accessed efficiently.
+
+* Construction
+
+Let \(G:\{0,1\}^n\to\{0,1\}^n\times\{0,1\}^n\) be a secure PRG,
+written \(G(s)=(G_0(s),G_1(s))\). Fix a positive polynomially bounded input
+length \(d\). For key \(s\) and address \(x=x_1\cdots x_d\), set
+
+\[
+t_0=s,\qquad t_i=G_{x_i}(t_{i-1})\ (1\leq i\leq d),\qquad F(s,x)=t_d.
+\]
+
+The key is uniform in \(\{0,1\}^n\); inputs have \(d\) bits and outputs
+have \(n\) bits. Evaluating one input takes \(d\) PRG calls. For example,
+\(F(s,101)=G_1(G_0(G_1(s)))\): read the address from left to right
+[cite:@fioreCryptographicProtocolosApplicatons sec. 4.5].
+
+* Security theorem
+
+For every adversary \(A\) making at most \(Q\geq1\) queries, there is an
+efficient PRG distinguisher \(B\) such that
+
+\[
+\operatorname{PRFAdv}[A,F]=dQ\operatorname{PRGAdv}[B,G].
+\]
+
+The loss depends on query count and path length, not on the \(2^d\) leaves.
+Replacing every node individually would give exponentially many hybrids and
+would not establish this efficient reduction.
+
+* Level hybrids
+
+Let \(G_v^*(t)\) mean following the path \(v\) from label \(t\), with
+\(G_\epsilon^*(t)=t\). For \(0\leq j\leq d\), choose a random function
+\(R_j:\{0,1\}^j\to\{0,1\}^n\), and define the oracle
+
+\[
+H_j(x)=G_{x_{j+1}\cdots x_d}^*\bigl(R_j(x_1\cdots x_j)\bigr).
+\]
+
+Each hybrid uses one consistent \(R_j\), sampled lazily. \(H_0\) is the
+real PRF and \(H_d\) is a random function.
+
+#+latex: \newpage
+
+* Efficient simulation of a transition
+
+Suppose \(C\) receives \(Q\) independent pairs \((z_{i,0},z_{i,1})\).
+Choose uniform \(J\in\{1,\ldots,d\}\). Associate each newly queried prefix
+\(u\) of length \(J-1\) with the next unused pair. For a query
+\(x=u\mathbin\Vert b\mathbin\Vert v\), answer \(G_v^*(z_{i,b})\).
+Repeated prefixes reuse their pair, even if a later query takes the other
+child. At most \(Q\) pairs are needed.
+
+Generated pairs \(G(U_n)\) simulate \(H_{J-1}\); independent uniform pairs
+simulate \(H_J\). Unused pairs are independent of the adaptive transcript.
+The random-level telescoping sum gives
+
+\[
+\operatorname{Adv}[C]
+=\frac{\operatorname{PRFAdv}[A,F]}d.
+\]
+
+Independent parallel composition reduces these \(Q\) pairs to one PRG
+challenge with another factor \(Q\), proving the theorem. The simulation uses
+polynomial storage and \(O(Qd)\) PRG evaluations, never the full tree.
+
+* Connections
+
+- [[id:51CA79F8-4291-5B5D-8526-4868010DE372][Independent parallel composition]] supplies the second reduction.
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] ensures consistent random prefix labels.
+- [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold]] uses a related tree with shared level keys.
+
+* Sources
+
+#+print_bibliography: :heading none

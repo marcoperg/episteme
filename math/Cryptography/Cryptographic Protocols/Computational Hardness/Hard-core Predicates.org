@@ -1,0 +1,79 @@
+:PROPERTIES:
+:ID: EF6900D1-B10A-5186-86D5-716555729BAD
+:END:
+#+title: Hard-core Predicates
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A hard-core predicate is an efficiently computable bit of an input that looks
+random even to an efficient observer who knows the function value. One-wayness
+alone does not identify such a bit.
+
+* Definition and experiment
+
+Let \(f_n\) be efficiently computable, and let
+\(h_n:\{0,1\}^n\to\{0,1\}\) be an efficient predicate. Sample uniform
+independent \(X\in\{0,1\}^n\) and \(R\in\{0,1\}\). The real experiment
+gives \(A\) the pair \((f_n(X),h_n(X))\); the ideal experiment gives
+\((f_n(X),R)\). Both also supply the parameter and any public description.
+Define
+
+\begin{equation*}
+\begin{aligned}
+\operatorname{HCAdv}[A;f,h]=\big|&\Pr[A(f_n(X),h_n(X))=1]\\
+&-\Pr[A(f_n(X),R)=1]\big|.
+\end{aligned}
+\end{equation*}
+
+The predicate is *hard-core for \(f\)* if this is negligible for every PPT
+\(A\). Equivalently, every PPT predictor \(P\) has negligible advantage
+\(|\Pr[P(f_n(X))=h_n(X)]-1/2|\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 2.6].
+
+* Why distinguishing and prediction agree
+
+A predictor gives a test that accepts when the supplied bit equals its
+prediction. With an independent bit, this happens with probability \(1/2\).
+
+Conversely, for a test \(D\), let its signed real-minus-ideal gap be
+\(\delta\). Sample a random bit \(r\), run \(D(f_n(X),r)\), and predict
+\(r\) if it accepts and \(1-r\) otherwise. Averaging over \(r\) and the
+test's coins gives prediction success \(1/2+\delta\). Taking absolute
+advantages proves equivalence.
+
+* Counterexamples clarify the quantifiers
+
+An arbitrary coordinate need not be hard-core: \(f(b,x)=(b,g(x))\) exposes
+\(b\) while retaining inversion hardness of \(g\).
+
+Even the claim that *some* input coordinate must be hard-core can fail.
+For one-way \(g\), the function
+
+\begin{equation*}
+f(b,x,y)=
+\begin{cases}
+(0,g(x),y),&b=0,\\
+(1,x,g(y)),&b=1
+\end{cases}
+\end{equation*}
+
+is one-way. The branch bit is exposed; each coordinate of \(x\) or \(y\)
+is exposed half the time and can otherwise be guessed, giving success at least
+\(3/4\). Inverting either branch would invert \(g\).
+
+Nor can one fixed efficient predicate \(h\) work for every unmodified OWF.
+Given one-way \(g\), set \(f(x)=(g(x),h(x))\). An inverter for \(f\)
+would invert \(g\) by guessing the extra bit, yet \(h(x)\) is exposed.
+
+* Connections
+
+- [[id:DE2F10E2-AC2E-5735-8CD7-98A04040D891][Goldreich-Levin]] transforms a function to obtain a universal predicate.
+- [[id:A8AB1A75-CEE1-597B-84E5-778793675D87][Blum-Micali]] uses a specific predicate under discrete-log hardness.
+- [[id:22E49935-1278-487C-AB40-7F33726C5C6B][PRGs]] use a hard-core bit together with a uniform permutation image.
+
+* Sources
+
+#+print_bibliography: :heading none

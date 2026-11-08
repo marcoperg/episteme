@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID: C4E41D16-6A88-536F-A420-586AEF9B5CCE
+:END:
+#+title: Uniformly Random Functions
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+A uniformly random function is an ideal random table: each input has an
+independent uniform output, but asking about the same input again returns the
+same value.
+
+* Definition
+
+For finite nonempty sets \(X,Y\), let
+
+\[
+\operatorname{Funs}(X,Y)=\{R\mid R:X\to Y\}.
+\]
+
+There are \(|Y|^{|X|}\) functions, because each input independently chooses
+one of \(|Y|\) outputs. A *uniformly random function* is sampled uniformly
+from this finite set, once for the whole experiment
+[cite:@fioreCryptographicProtocolosApplicatons sec. 4.3.1].
+
+* Distribution of answers
+
+For distinct inputs \(x_1,\ldots,x_t\) and prescribed outputs
+\(y_1,\ldots,y_t\), exactly \(|Y|^{|X|-t}\) functions satisfy all the
+constraints. Hence
+
+\[
+\Pr[R(x_1)=y_1,\ldots,R(x_t)=y_t]=|Y|^{-t}.
+\]
+
+Thus outputs at distinct inputs are independent and uniform. Repeated inputs
+return the same output. After an adaptive transcript fixes some table
+entries, every unqueried entry remains independent and uniform.
+
+* Example and non-example
+
+For \(X=\{a,b,c\}\) and \(Y=\{0,1\}\), there are eight functions, each
+equally likely. Querying \(a,b,a\) gives a uniform first bit, an independent
+uniform second bit, and the first bit again. The first two answers coincide
+with probability \(1/2\); a random function need not have distinct outputs.
+
+Sampling a fresh independent bit on *every* query is not a random-function
+oracle, because it may answer repeated inputs inconsistently. A random
+permutation is also different: its outputs at distinct inputs cannot collide.
+
+* Efficient access without a full table
+
+The entire function table may be exponentially large. Lazy sampling stores
+only queried entries and samples each entry when first needed. It gives
+exactly the same transcript distribution, not merely an approximation.
+
+Random functions in PRF experiments are ideal secret tables accessible through
+an oracle. A public random oracle is a different usage model: adversaries and
+honest algorithms share access to it. Random-function properties alone do not
+identify these security settings.
+
+* Connections
+
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] implements adaptive access efficiently.
+- [[id:BD515EED-D4EE-5541-B811-27DFC400D695][Pseudorandom functions]] approximate the oracle behaviour computationally.
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Collision bounds]] quantify repetitions rather than assuming them away.
+
+* Sources
+
+#+print_bibliography: :heading none

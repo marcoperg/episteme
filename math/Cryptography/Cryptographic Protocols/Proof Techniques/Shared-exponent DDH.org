@@ -1,0 +1,87 @@
+:PROPERTIES:
+:ID: 4A4F6050-66F5-5B95-9F1E-250038585F28
+:ROAM_ALIASES: "multi-DDH"
+:END:
+#+title: Shared-exponent DDH
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Ordinary DDH also hides polynomially many pairs sharing one secret exponent.
+This is a correlated-sample theorem; independent parallel composition alone
+does not justify it.
+
+* Statement
+
+In a public prime-order group \(\mathbb G=\langle g\rangle\), sample
+independent uniform \(a,b_1,\ldots,b_Q,c_1,\ldots,c_Q\in\mathbb Z_q\).
+Compare
+
+\[
+D_Q=((g^{b_i},g^{ab_i}))_{i=1}^Q,
+\qquad U_Q=((g^{b_i},g^{c_i}))_{i=1}^Q.
+\]
+
+For polynomially bounded \(Q\), DDH implies \(D_Q\approx_c U_Q\).
+More precisely, for every test \(C\) with gap
+\(\Delta=|\Pr[C(D_Q)=1]-\Pr[C(U_Q)=1]|\), there is an efficient DDH
+test \(B\) such that
+
+\[
+\Delta\leq\operatorname{DDHAdv}[B,\mathbb G]+\frac1q.
+\]
+
+The shared exponent \(a\) and its value \(g^a\) are not part of these pair
+distributions [cite:@fioreCryptographicProtocolosApplicatons sec. 4.6.3].
+
+* Random self-reduction
+
+Given a DDH challenge \((U,V,W)=(g^a,g^b,g^c)\), sample fresh independent
+\(\rho_i,\sigma_i\in\mathbb Z_q\) and compute
+
+\[
+V_i=g^{\rho_i}V^{\sigma_i},\qquad
+W_i=U^{\rho_i}W^{\sigma_i}.
+\]
+
+Give the pairs \(((V_i,W_i))_i\) to \(C\), returning its bit.
+
+If \(c=ab\), then \(W_i=V_i^a\). The exponents
+\(\rho_i+b\sigma_i\) are independent uniform, so this is exactly \(D_Q\).
+
+If \(c\ne ab\), the exponent map has matrix
+
+\begin{equation*}
+\begin{pmatrix}1&b\\a&c\end{pmatrix}
+\end{equation*}
+
+over \(\mathbb Z_q\), with nonzero determinant \(c-ab\). It is invertible,
+so every pair is independent uniform on \(\mathbb G^2\), even conditional
+on the challenge. The whole collection is exactly \(U_Q\).
+
+* Accounting for the exceptional event
+
+In the random DDH experiment, \(c=ab\) with probability \(1/q\). Its
+simulated distribution is therefore a mixture of \(D_Q\) with weight
+\(1/q\) and \(U_Q\) with weight \(1-1/q\). Consequently,
+
+\[
+\operatorname{DDHAdv}[B,\mathbb G]=(1-1/q)\Delta,
+\qquad \Delta\leq\operatorname{DDHAdv}[B,\mathbb G]+1/q.
+\]
+
+For a cryptographically hard group family, \(1/q\) is negligible. The
+reduction processes \(Q\) pairs, so \(Q\) affects its running time but
+does not introduce an additional multiplicative advantage loss here.
+
+* Connections
+
+- [[id:11862CED-F757-5A19-878C-5B8FCAA2F1F9][DDH]] defines the single-triple challenge.
+- [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold]] uses the pairs for all queried parents at one depth.
+- [[id:51CA79F8-4291-5B5D-8526-4868010DE372][Independent parallel composition]] has a different independence premise.
+
+* Sources
+
+#+print_bibliography: :heading none

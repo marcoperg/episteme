@@ -1,0 +1,65 @@
+:PROPERTIES:
+:ID: 11862CED-F757-5A19-878C-5B8FCAA2F1F9
+:ROAM_ALIASES: "DDH"
+:END:
+#+title: Decisional Diffie-Hellman Assumption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+The DDH assumption says that the algebraic relation in a Diffie-Hellman triple
+cannot be detected efficiently in the chosen group family.
+
+* Definition and experiments
+
+Public setup generates an efficiently represented cyclic group
+\(\mathbb G=\langle g\rangle\) of prime order \(q\). Its description,
+order, and generator are given to every algorithm. Sample independent uniform
+\(a,b,c\in\mathbb Z_q\).
+
+- *Real:* give \((g^a,g^b,g^{ab})\) to \(A\).
+- *Random:* give \((g^a,g^b,g^c)\) to \(A\).
+
+Define
+
+\begin{equation*}
+\begin{aligned}
+\operatorname{DDHAdv}[A,\mathbb G]=\big|&\Pr[A(g^a,g^b,g^{ab})=1]\\
+&-\Pr[A(g^a,g^b,g^c)=1]\big|.
+\end{aligned}
+\end{equation*}
+
+DDH holds for the parameter family if this is negligible for every PPT \(A\).
+Probabilities also include public setup and adversarial coins
+[cite:@fioreCryptographicProtocolosApplicatons sec. 3.3.3].
+
+* What is being hidden?
+
+Every component is a group element. In the random experiment, all three are
+independent and uniform in \(\mathbb G\). The real triple is not actually
+independent: its third exponent is the product of the first two. DDH says that
+an efficient observer cannot exploit this difference.
+
+A binary encoding of a uniform group element need not be uniform on all
+bitstrings of that encoding length. The ideal distribution must match the
+represented space, not a convenient but different bitstring space.
+
+* Decisional versus computational assumptions
+
+Computational Diffie-Hellman asks for \(g^{ab}\) given \(g^a,g^b\).
+Discrete logarithm asks for an exponent such as \(a\). Either efficient
+computation would enable a test for DDH triples, but the reverse implications
+are not supplied by this definition. A group may permit efficient DDH testing
+even when discrete logarithms are believed hard.
+
+* Connections
+
+- [[id:EC8B9223-9A14-5900-9EBA-2650847BCF7C][DDH-based generator]] is an immediate application of this experiment.
+- [[id:4A4F6050-66F5-5B95-9F1E-250038585F28][Shared-exponent DDH]] extends it to correlated collections of pairs.
+- [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold]] uses that extension to construct a PRF.
+
+* Sources
+
+#+print_bibliography: :heading none
