@@ -1,0 +1,83 @@
+:PROPERTIES:
+:ID: 1CCFC6B2-5276-497F-AD9C-37CD379270F3
+:END:
+#+title: Fixed-domain RSA
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Ordinary RSA permutes the key-dependent space \(\mathbb Z_N\). A fixed-domain
+extension applies RSA inside complete blocks of a common space and fixes the
+incomplete tail. That easy tail must have negligible measure.
+
+* Construction
+
+For moduli made from two \(\ell\)-bit primes, choose \(s>2\ell\) and set
+
+\[
+M=2^s,\quad\mathcal X=\mathcal Y=\{0,\ldots,M-1\},
+\quad a=\lfloor M/N\rfloor,\quad r=M-aN<N.
+\]
+
+For \(x=jN+u\), where \(0\leq u<N\), define
+
+\begin{equation*}
+F^*((N,e),x)=
+\begin{cases}
+jN+(u^e\bmod N),&0\leq j<a,\\
+x,&aN\leq x<M.
+\end{cases}
+\end{equation*}
+
+Inversion uses exponent \(d\) within complete blocks and the identity on the
+tail. Quotient/remainder arithmetic is efficient
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.8].
+
+These disjoint blocks exhaust the domain. Permuting each complete block and
+fixing the tail proves correctness and bijectivity on the /same/ \(s\)-bit
+space for every key.
+
+* Why a merely larger domain is insufficient
+
+The tail is publicly invertible. A uniform input lands there with probability
+\(r/M<N/M\).
+
+The condition \(M>N\) alone does not make that probability negligible. Taking
+\(s=2\ell+\lambda\), with \(N<2^{2\ell}\), ensures
+\(N/M<2^{-\lambda}\). Representation length stays polynomial even though
+the domain has exponentially many elements.
+
+* Reduction to RSA inversion
+
+For every inverter \(A\), there is an RSA inverter \(B\) such that
+
+\[
+\operatorname{OWAdv}[A,\mathcal T^*]
+\leq\operatorname{RSAAdv}[B]+\mathbb E_N[N/M].
+\]
+
+Condition on \(N\). Let \(\alpha_N\) be success on a uniform complete-block
+input. Total success is at most
+\((aN/M)\alpha_N+r/M\leq\alpha_N+N/M\).
+
+Given \((N,e,Y)\), choose uniform \(j\in\{0,\ldots,a-1\}\), run \(A\)
+on \(jN+Y\), and return the remainder of a valid inverse in that block. This
+exactly simulates a uniform complete-block challenge, giving success
+\(\alpha_N\). Averaging over keys proves the bound
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.9.2].
+
+Under the RSA assumption and the stated choice of \(s\), both terms are
+negligible. The identity tail preserves bijectivity; its negligible probability
+is what preserves inversion hardness.
+
+* Connections
+
+- [[id:B1DB580A-05A3-4611-924C-158512AE4BF2][Trapdoor functions]] distinguish fixed and key-dependent spaces.
+- [[id:3BB000A4-FE20-4007-9ED5-B50327711562][Ordinary RSA]] supplies the within-block permutation.
+- [[id:2A2A474A-B195-47F5-BF96-D5BBA96BDE60][The RSA assumption]] supplies the computational term, not the tail estimate.
+
+* Sources
+
+#+print_bibliography: :heading none

@@ -1,0 +1,74 @@
+:PROPERTIES:
+:ID: A1068D82-0787-4A9A-AB6F-FD1B9DAE608F
+:END:
+#+title: Trapdoor-based Key Establishment
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A one-way trapdoor scheme establishes a random preimage resistant to passive
+full recovery, not necessarily an indistinguishable or authenticated session key.
+
+* Protocol and correctness
+
+For a trapdoor scheme \(\mathcal T=(G,F,I)\):
+
+1. Alice generates \((pk,sk)\leftarrow G(1^\lambda)\) and sends \(pk\).
+2. Bob samples uniform \(X\in\mathcal X\), sends \(Y=F(pk,X)\), and
+   outputs \(X\).
+3. Alice outputs \(X'=I(sk,Y)\).
+
+Bob uses \(\mathcal X_{pk}\) for a key-dependent domain. Trapdoor correctness
+gives \(X'=X\); the public transcript is \((pk,Y)\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.3].
+
+* An exact passive-recovery reduction
+
+An inverter \(B\) gives passive recovery adversary \(A\) its challenge
+\((pk,F(pk,X))\) as a transcript and returns its guess. The challenge
+distributions and winning events coincide:
+
+\[
+\operatorname{KEAdv}[A,\mathcal P_{\mathcal T}]
+=\operatorname{OWAdv}[B,\mathcal T].
+\]
+
+There is no guessing loss. For RSA, the transcript is \((N,e,X^e\bmod N)\)
+and recovery advantage equals RSA inversion advantage
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.10].
+
+* Why the raw output is not a pseudorandom session key
+
+Given the transcript and a proposed key \(Z\), anyone can test \(F(pk,Z)=Y\).
+
+It accepts the real \(Z=X\) with probability \(1\), but an independent
+uniform \(Z\) with probability \(1/|\mathcal X|\), by injectivity. This
+distinguishes the joint distributions with advantage \(1-1/|\mathcal X|\)
+without finding \(X\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.3.1].
+
+Key derivation needs its own model and proof. The
+[[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][one-way-function note]] gives a separate input-bit leakage example.
+
+* Active substitution is outside the theorem
+
+On a common fixed domain, substitute the attacker's public key for Alice's,
+invert Bob's reply with the attacker's trapdoor, then re-encode \(X\) under
+Alice's real key. Both parties agree, but the attacker knows their secret.
+
+Substituting an RSA modulus likewise exposes Bob's output. Different moduli
+give different domains, so relaying the /same/ raw value to Alice is not
+automatic. Neither theorem supplies authentication
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.10.1].
+
+* Connections
+
+- [[id:E6B58119-5DF8-4AA0-A78C-C5EE26209157][Anonymous key exchange]] separates recovery, indistinguishability, and active security.
+- [[id:B1DB580A-05A3-4611-924C-158512AE4BF2][Trapdoor functions]] specify the challenge distribution.
+- [[id:835B6886-C943-41E5-BCEB-9B0D7F6BBF4D][Trapdoor-based hybrid encryption]] derives a symmetric key and proves message hiding in the random-oracle model.
+
+* Sources
+
+#+print_bibliography: :heading none

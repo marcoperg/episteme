@@ -1,0 +1,75 @@
+:PROPERTIES:
+:ID: 993CEADF-0C35-43BE-9208-7B89AB14E2E9
+:ROAM_ALIASES: "PRP" "block cipher"
+:END:
+#+title: Block Ciphers and Pseudorandom Permutations
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+A block cipher is an efficiently invertible keyed permutation. PRP security
+adds a computational requirement: without the key, its forward interface must
+look like one uniformly chosen permutation, not merely like an invertible map.
+
+* Syntax
+
+On a finite, efficiently represented block space \(\mathcal X\), a block
+cipher consists of efficient deterministic algorithms \(P,P^{-1}\) and a
+uniformly sampleable key space \(\mathcal K\). For every key \(k\),
+
+\[
+P_k:\mathcal X\to\mathcal X,
+\qquad P_k^{-1}(P_k(x))=x.
+\]
+
+Thus \(P_k\) is a permutation and \(P_k^{-1}\) is its efficient inverse.
+The usual block space is \(\{0,1\}^n\). Correctness alone gives no secrecy:
+the identity permutation satisfies this syntax.
+
+* Forward-oracle PRP experiment
+
+Let \(\pi\) be uniform in \(\operatorname{Perms}(\mathcal X)\). Define
+
+\[
+\operatorname{PRPAdv}[A,P]
+=\left|\Pr_{k}[A^{P_k}=1]-\Pr_{\pi}[A^{\pi}=1]\right|.
+\]
+
+The adversary knows the algorithms and public parameters, but not the sampled
+key or permutation. It may adaptively query the forward oracle. Repeated
+inputs return the same output. Security means negligible advantage for every
+PPT oracle adversary [cite:@fioreCryptographicProtocolosApplicatons sec. 5.6].
+
+Legitimate parties knowing \(k\) can evaluate both directions. That does not
+give the adversary an inverse oracle. Indistinguishability with /both/ forward
+and inverse oracles is *strong PRP security*, a different definition.
+
+* A permutation is not a random function
+
+A random function may collide on distinct inputs; a permutation cannot. A lazy
+permutation oracle therefore samples a fresh output from the /unused/ values,
+whereas a lazy random function samples from all of \(\mathcal X\).
+
+For at most \(q\) forward queries on a space of size \(N\), their acceptance
+probabilities differ by at most \(\binom q2/N\). Consequently, on a
+super-polynomial-size block space, secure PRPs and secure forward PRFs coincide
+as properties of a block cipher. This is a switching theorem, not an identity
+of the two ideal experiments
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.6.1].
+
+* Primitive versus encryption scheme
+
+A block cipher is deterministic on one block. Applying it directly to every
+plaintext block leaks equality patterns, even if it is an ideal PRP. A secure
+mode supplies the additional randomness and message-processing rule.
+
+- [[id:5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54][PRP-PRF switching]] proves the concrete statistical bound.
+- [[id:082A5D5A-8E70-4B76-8064-D5737CD81021][Luby-Rackoff]] builds a forward-secure PRP from independent PRF rounds.
+- [[id:AB969B16-22B7-43A9-85EE-5391DB520C1E][ECB]] demonstrates an insecure use of a secure primitive.
+- [[id:6CA56394-A696-45F1-A951-4EBA81362803][Randomized CBC]] uses the efficient inverse for decryption.
+
+* Sources
+
+#+print_bibliography: :heading none

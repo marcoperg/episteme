@@ -1,0 +1,109 @@
+:PROPERTIES:
+:ID: 3031DBC4-B836-4310-B183-D852D366E379
+:END:
+#+title: Modular Arithmetic for RSA
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+RSA needs three distinct facts: arithmetic modulo a public integer is
+efficient; units admit exponent reduction; and a secret factorization makes an
+inverse exponent computable. These statements have different hypotheses.
+
+* Residues, units, and division
+
+Represent \(\mathbb Z_N=\mathbb Z/N\mathbb Z\), for \(N\geq2\), by
+\(0,\ldots,N-1\). It is a commutative ring. Its multiplicative group is
+
+\[
+\mathbb Z_N^*=\{x\in\mathbb Z_N:\gcd(x,N)=1\}.
+\]
+
+An element \(x\) has a multiplicative inverse exactly when
+\(\gcd(x,N)=1\): the extended Euclidean algorithm then finds \(u,v\) with
+\(ux+vN=1\), so \(u\bmod N=x^{-1}\). Conversely, an inverse gives such
+an integer identity, forcing the gcd to be \(1\).
+
+Division by a unit means \(y/x=yx^{-1}\pmod N\), not real division followed
+by a remainder. For example, \(3^{-1}=7\pmod{10}\), so
+\(8/3=6\pmod{10}\). The nonunit \(4\) has no inverse modulo \(10\);
+\(4u=8\pmod{10}\) has two solutions, while \(4u=7\pmod{10}\) has none
+[cite:@fioreCryptographicProtocolosApplicatons secs. 8.4 and 8.6.1].
+
+Gcd computation tests unit membership without factoring \(N\). Rejection
+sampling uniform residues gives uniform units. For \(N=pq\) with large
+distinct primes, the acceptance probability is
+\((1-1/p)(1-1/q)\), close to \(1\).
+
+* Totients and the Chinese remainder theorem
+
+For coprime \(a,b\), reduction modulo each factor gives the ring isomorphism
+
+\[
+\mathbb Z_{ab}\cong\mathbb Z_a\times\mathbb Z_b.
+\]
+
+Equal reductions imply a difference divisible by \(a\) and \(b\), hence
+by \(ab\); injectivity and equal finite cardinalities prove bijectivity.
+Restricting to units gives
+\(\mathbb Z_{ab}^*\cong\mathbb Z_a^*\times\mathbb Z_b^*\).
+
+The totient is \(\varphi(N)=|\mathbb Z_N^*|\). If
+\(N=\prod_i p_i^{e_i}\) is its prime factorization, then
+
+\[
+\varphi(N)=\prod_i p_i^{e_i-1}(p_i-1)
+=N\prod_i\left(1-\frac1{p_i}\right).
+\]
+
+Indeed, exactly \(p^{e-1}\) residues modulo \(p^e\) are divisible by \(p\),
+and CRT multiplies the unit counts for coprime factors. In particular,
+\(\varphi(pq)=(p-1)(q-1)\) for /distinct/ primes; for a square,
+\(\varphi(p^2)=p(p-1)\) instead
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.4.1].
+
+* Euler's theorem and exponent reduction
+
+For \(x\in\mathbb Z_N^*\), multiplication by \(x\) permutes all units.
+Equating their products and cancelling the common unit product gives
+
+\[
+x^{\varphi(N)}=1\pmod N.
+\]
+
+Thus \(x^a=x^{a\bmod\varphi(N)}\pmod N\), with negative powers defined
+using inverses. For a prime \(p\), this gives Fermat's identity
+\(x^{p-1}=1\pmod p\) for nonzero residues, and \(x^p=x\pmod p\) for
+all residues after treating zero separately.
+
+Euler's identity requires a unit: \(2^{\varphi(6)}=4\ne1\pmod6\).
+Reducing exponents also requires knowing the relevant group order
+[cite:@fioreCryptographicProtocolosApplicatons secs. 8.5 and 8.6.2].
+
+* Efficient exponentiation without a factorization
+
+To compute \(x^a\bmod N\) for \(a\geq0\), initialize
+\(r=1,z=x\bmod N,e=a\). Repeatedly:
+
+1. If \(e\) is odd, set \(r\leftarrow rz\bmod N\).
+2. Set \(z\leftarrow z^2\bmod N\) and \(e\leftarrow\lfloor e/2\rfloor\).
+
+The invariant \(rz^e=x^a\pmod N\) proves correctness when \(e=0\).
+There are \(O(\log(a+1))\) modular multiplications, always on
+\(O(\log N)\)-bit residues. This is polynomial-time arithmetic, without
+constructing the enormous integer \(x^a\).
+
+Repeated squaring works for nonunits too and requires neither a factorization
+nor \(\varphi(N)\). It must not be confused with exponent reduction.
+
+* Connections
+
+- [[id:B4B385E3-0148-429F-AB99-E8A090FEEA91][Euler's totient function]] and the [[id:9ABF43C4-D701-4741-9D7B-85BD8BB2A17D][Chinese remainder theorem]] give the broader algebraic context.
+- [[id:3BB000A4-FE20-4007-9ED5-B50327711562][RSA correctness]] uses Fermat and CRT to cover all residues, not only units.
+- [[id:2A2A474A-B195-47F5-BF96-D5BBA96BDE60][The RSA assumption]] is an extra hardness claim, not an arithmetic theorem.
+
+* Sources
+
+#+print_bibliography: :heading none

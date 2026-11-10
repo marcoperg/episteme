@@ -1,0 +1,103 @@
+:PROPERTIES:
+:ID: 5CD73F38-18BB-433C-907E-F3CB4D79A03E
+:ROAM_ALIASES: "Public-key IND-CPA"
+:END:
+#+title: Public-key Chosen-plaintext Security
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+The public-key CPA adversary knows the encryption key and adaptively chooses
+messages. Public evaluation makes single-challenge semantic security sufficient
+for polynomially many challenges, with an explicit query-factor loss.
+
+* Multi-challenge experiment
+
+For a fixed hidden bit \(b\), generate \((pk,sk)\leftarrow G(1^\lambda)\)
+and give \(pk\) to \(A\). Answer each admissible equal-length pair
+\((m_{i,0},m_{i,1})\) with a fresh
+\(c_i\leftarrow E(pk,m_{i,b})\). The key and hidden bit stay the same;
+encryption coins are independent on every call.
+
+If \(p_b\) is the probability of final output \(1\), define
+
+\[
+\operatorname{CPAAdv}[A,\Pi]=|p_0-p_1|.
+\]
+
+Security means negligibility for every PPT adversary. Equal lengths permit
+length leakage; \(sk\) and a decryption oracle are never supplied
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.2].
+
+With uniform \(b\) and output interpreted as a guess, use
+\(\operatorname{CPAAdv}^{*}=|\Pr[\widehat b=b]-1/2|\). The identity
+\(\Pr[\widehat b=b]=(1-p_0+p_1)/2\) gives
+\(\operatorname{CPAAdv}=2\operatorname{CPAAdv}^{*}\), with the same
+absolute-value convention as the symmetric notes.
+
+* Single challenge and ordinary encryptions
+
+Restrict the experiment to one left-or-right pair and call its distinguishing
+advantage \(\operatorname{SSAdv}[A,\Pi]\). Arbitrary state can pass from
+message selection to the final guess. Ordinary chosen-message encryptions,
+before or after the challenge, add no capability: the adversary can simulate
+them exactly with the public algorithm and fresh coins.
+
+Those ordinary encryptions are not extra hidden-bit challenges. Single- and
+multi-challenge /security properties/ are equivalent; a particular adversary's
+advantages in the two interfaces need not be equal
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.2.2].
+
+* Reducing many challenges to one
+
+For \(Q\geq1\), define \(H_j\), \(0\leq j\leq Q\), to encrypt the
+first \(j\) query-right messages and all later query-left messages. Let
+\(p_j\) be the probability of output \(1\) in that adaptive execution.
+Then \(H_0,H_Q\) are the two CPA experiments.
+
+A single-challenge adversary \(B\) forwards its public key to \(A\) and
+chooses uniform \(J\in\{1,\ldots,Q\}\). It answers queries before \(J\)
+with local encryptions of right messages, forwards query \(J\) to its own
+challenger, and answers later queries with local encryptions of left messages.
+It returns \(A\)'s final bit.
+
+Conditioned on \(J=j\), challenge bit \(0\) simulates \(H_{j-1}\) and
+bit \(1\) simulates \(H_j\). Subtracting before taking absolute values gives
+
+\[
+\operatorname{SSAdv}[B,\Pi]
+=\left|\frac1Q\sum_{j=1}^Q(p_{j-1}-p_j)\right|
+=\frac{\operatorname{CPAAdv}[A,\Pi]}{Q}.
+\]
+
+The same relation holds for starred advantages. The reduction runs \(A\)
+once and performs at most \(Q-1\) extra public encryptions. If \(A\) stops
+before \(J\), its output is independent of \(B\)'s challenge bit; an unused
+challenge can be omitted or spent on a dummy equal-message pair.
+
+For polynomial \(Q\), single-challenge security therefore implies CPA
+security. The converse follows by restricting a CPA adversary to one query
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.4].
+
+* A shared random oracle
+
+If encryption uses a public random oracle, every simulated encryption and
+adversarial query must use the /same/ oracle. The reduction forwards queries
+and includes its own extra calls in the resource bound. Independent oracles
+per ciphertext would simulate the wrong experiment.
+
+This reduction is not generally available for secret-key single-challenge
+security: that adversary does not know the key needed for local encryptions.
+
+* Connections
+
+- [[id:E32851AD-9888-47BE-98C0-F4C89CE69FD5][Public-key encryption]] explains the perfect attack on deterministic encryption.
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] supply the random-index telescoping technique.
+- [[id:FA9F7C29-B6A2-4A74-9239-015F2A93D81B][The random-oracle model]] makes the common-oracle requirement precise.
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time symmetric security]] remains a weaker repeated-use guarantee in the secret-key setting.
+
+* Sources
+
+#+print_bibliography: :heading none

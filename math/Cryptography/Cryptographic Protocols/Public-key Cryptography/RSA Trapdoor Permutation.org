@@ -1,0 +1,94 @@
+:PROPERTIES:
+:ID: 3BB000A4-FE20-4007-9ED5-B50327711562
+:ROAM_ALIASES: "RSA"
+:END:
+#+title: RSA Trapdoor Permutation
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+RSA publicly raises a residue to an exponent modulo a composite integer. A
+secret inverse exponent reverses that map. Its correctness is algebraic; its
+one-wayness is a separate assumption, and raw RSA is not secure encryption.
+
+* Key generation and algorithms
+
+Fix an odd public exponent \(e\geq3\) and a prime bit length
+\(\ell=\ell(\lambda)\) in an efficiently sampleable parameter regime.
+
+1. Sample a uniform \(\ell\)-bit prime \(p\) with \(\gcd(e,p-1)=1\).
+2. Sample a uniform \(\ell\)-bit prime \(q\ne p\) with \(\gcd(e,q-1)=1\).
+3. Compute \(N=pq\) and the positive inverse exponent
+   \(d=e^{-1}\bmod (p-1)(q-1)\).
+4. Publish \(pk=(N,e)\) and retain \(sk=(N,d)\).
+
+The gcd conditions ensure that \(d\) exists. Distinctness of the primes is
+essential. The key-dependent domain and codomain are both \(\mathbb Z_N\):
+
+\[
+F((N,e),x)=x^e\bmod N,\qquad I((N,d),y)=y^d\bmod N.
+\]
+
+Both operations use efficient modular exponentiation. Computing \(d\) from
+the factorization uses \(\varphi(N)=(p-1)(q-1)\) and extended Euclid
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.7].
+
+* Correctness on every residue
+
+The exponent relation gives \(ed=1+a(p-1)(q-1)\) for an integer \(a\geq0\).
+For every integer \(x\), work modulo \(p\):
+
+- If \(p\mid x\), both \(x^{ed}\) and \(x\) are zero.
+- Otherwise Fermat gives
+  \(x^{ed}=x(x^{p-1})^{a(q-1)}=x\pmod p\).
+
+The same argument holds modulo \(q\). CRT therefore gives
+
+\[
+x^{ed}=x\pmod N
+\qquad\text{for every }x\in\mathbb Z_N.
+\]
+
+Hence \(I(sk,F(pk,x))=x\). Injectivity on the finite set \(\mathbb Z_N\)
+makes the public map a permutation with the stated inverse.
+
+Euler's theorem alone would prove only the unit case. Treating zero residues
+modulo each prime separately is what covers nonunits
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.7.2].
+
+* A small algebraic example
+
+Take \(p=11,q=13,e=7\). Then \(N=143\), \(\varphi(N)=120\), and
+\(d=103\), since \(7\cdot103=1+6\cdot120\). For example,
+
+\[
+42^7\bmod143=81,\qquad81^{103}\bmod143=42.
+\]
+
+The nonunit \(11\) also works: its image is \(132\), and inversion returns
+\(11\). These tiny numbers illustrate correctness only; exhaustive inversion
+is easy.
+
+* Raw RSA does not hide chosen messages
+
+The formula \(c=m^e\bmod N\) is deterministic. Given two candidate
+messages, anyone can compute their images and compare them with the challenge.
+Correctness makes the two images distinct, so this gives a perfect
+distinguishing attack.
+
+The RSA assumption instead concerns /recovering a uniformly sampled preimage/.
+It does not establish semantic security for messages chosen by an adversary
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.10.2].
+
+* Connections
+
+- [[id:3031DBC4-B836-4310-B183-D852D366E379][Modular arithmetic for RSA]] explains units, totients, CRT, and efficient evaluation.
+- [[id:2A2A474A-B195-47F5-BF96-D5BBA96BDE60][The RSA assumption]] states the required inversion hypothesis.
+- [[id:1CCFC6B2-5276-497F-AD9C-37CD379270F3][Fixed-domain RSA]] removes the public-key dependence of the domain.
+- [[id:0B65B666-FF86-4D0B-8B6D-64E4D6AB8898][RSA hybrid encryption]] adds fresh randomness and modeled key derivation.
+
+* Sources
+
+#+print_bibliography: :heading none

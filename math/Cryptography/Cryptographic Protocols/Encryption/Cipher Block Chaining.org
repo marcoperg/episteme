@@ -1,0 +1,108 @@
+:PROPERTIES:
+:ID: 6CA56394-A696-45F1-A951-4EBA81362803
+:ROAM_ALIASES: "CBC"
+:END:
+#+title: Cipher Block Chaining
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+CBC combines a fresh random IV with ciphertext feedback. Its CPA theorem
+requires the IV to be sampled after the current plaintext pair is fixed;
+merely choosing distinct IVs is insufficient.
+
+* Construction and correctness
+
+Let \(P\) be a block cipher on \(\{0,1\}^n\). For a message of at most
+\(L\) whole blocks, sample a fresh independent uniform \(c_0\) and compute
+
+\[
+c_j=P_k(m_j\oplus c_{j-1}),\qquad 1\leq j\leq v.
+\]
+
+Output \((c_0,c_1,\ldots,c_v)\). Recover
+
+\[
+m_j=P_k^{-1}(c_j)\oplus c_{j-1}.
+\]
+
+The inverse identity and XOR cancellation prove correctness. The IV adds one
+block of overhead. Non-whole-block messages require an injective, unambiguously
+removable padding rule; the following experiment uses whole blocks and
+equal-block-count messages [cite:@fioreCryptographicProtocolosApplicatons sec. 5.8].
+
+* CPA-security bound
+
+Set \(N=2^n\) and \(T=QL\), where \(Q\) bounds the number of encryption
+queries. For every \(A\), there is a forward-oracle PRP adversary \(B\)
+using at most \(T\) primitive queries such that
+
+\[
+\operatorname{CPAAdv}^{*}[A,\Pi_{\mathrm{CBC}}]
+\leq\operatorname{PRPAdv}[B,P]+\frac{T(T-1)}{N}.
+\]
+
+In particular, for the distinguishing normalization,
+
+\[
+\operatorname{CPAAdv}[A,\Pi_{\mathrm{CBC}}]
+\leq2\operatorname{PRPAdv}[B,P]+\frac{2Q^2L^2}{N}.
+\]
+
+Hence secure PRPs with super-polynomial block spaces yield CPA-secure CBC for
+polynomial \(Q,L\) [cite:@fioreCryptographicProtocolosApplicatons sec. 5.8.1].
+
+* Proof: two different statistical errors
+
+1. In the bit-guessing game, replace \(P_k\) by a random function \(R\).
+   A forward distinguisher simulates the encryption recurrence and tests the
+   final guess. PRP-PRF switching bounds the change by
+   \(\operatorname{PRPAdv}[B,P]+\binom T2/N\).
+2. Replace every IV and ciphertext block by independent uniform blocks
+   \(Y_{i,0},\ldots,Y_{i,L}\). Retain virtual primitive inputs
+   \(X_{i,j}=m_{i,b,j}\oplus Y_{i,j-1}\). Couple the games until two
+   virtual inputs coincide. Their collision probability is at most
+   \(\binom T2/N\).
+3. In the independent-block game, the complete transcript depends on lengths,
+   not on the challenge bit. Its guessing success is \(1/2\).
+
+For the collision step, condition on all earlier responses and the adversary's
+coins. The /whole current message/ is fixed before its fresh independent
+\(Y\)-blocks are sampled. Its virtual inputs are therefore independent
+uniform values, each uniform relative to any fixed earlier input. This handles
+adaptive queries without assuming that messages were fixed in advance.
+
+The random-function hybrid need not be an invertible cipher: the CPA
+adversary has no decryption oracle.
+
+* Predictable-IV attack
+
+Suppose a prior one-block query \((m,m)\) returned \((r,c)\), and the next
+IV \(r'\) is known before choosing the next messages. For nonzero
+\(\Delta\), submit
+
+\[
+m_0=m\oplus r\oplus r',\qquad m_1=m_0\oplus\Delta.
+\]
+
+The next ciphertext block equals \(c\) exactly when \(m_0\) was chosen.
+This perfectly distinguishes the bit, even if \(r'\ne r\). Randomness and
+the timing of IV selection are security conditions
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.8.2].
+
+* Limits and connections
+
+CBC encryption is sequential; decryption can evaluate its inverse calls in
+parallel. Changing only the IV to \(c_0\oplus\Delta\) changes only the
+first recovered block to \(m_1\oplus\Delta\). CBC alone supplies no integrity
+or decryption-oracle guarantee.
+
+- [[id:976069BF-8173-4ECC-8B60-C95904952A2C][Counter mode]] permits parallel computation in both directions and needs no inverse.
+- [[id:5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54][PRP-PRF switching]] accounts for the first birthday term.
+- [[id:602FA248-EC73-4A4B-B17F-41A6060AAFFF][MACs]] address a different goal: preventing accepted forgeries.
+
+* Sources
+
+#+print_bibliography: :heading none

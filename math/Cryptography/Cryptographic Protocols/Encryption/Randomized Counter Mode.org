@@ -1,0 +1,97 @@
+:PROPERTIES:
+:ID: 976069BF-8173-4ECC-8B60-C95904952A2C
+:ROAM_ALIASES: "CTR" "R-CTR"
+:END:
+#+title: Randomized Counter Mode
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Counter mode expands one public starting index into many secret pads. Its
+security depends on avoiding reuse of /any counter input/, not merely on
+choosing different starting indices.
+
+* Construction and correctness
+
+Let \(N=2^n\), identify counters with \(\mathbb Z_N\), and take a PRF
+\(F:\mathcal K\times\mathbb Z_N\to\{0,1\}^w\). For a message
+\(m=(m_1,\ldots,m_v)\) of \(w\)-bit blocks, where \(v\leq L\leq N\):
+
+1. Sample a fresh independent uniform IV \(r\in\mathbb Z_N\).
+2. Compute \(c_j=m_j\oplus F(k,r+j-1\bmod N)\), for \(1\leq j\leq v\).
+3. Output \((r,c_1,\ldots,c_v)\).
+
+Decryption applies the same XOR operations. Reject malformed encodings and
+messages outside the declared length bound. Correctness is blockwise XOR
+cancellation; neither party needs an inverse for \(F\). Counter wraparound is
+allowed, but more than \(N\) blocks would repeat a pad within one message
+[cite:@fioreCryptographicProtocolosApplicatons secs. 5.4 and 5.5].
+
+One \(n\)-bit IV serves the whole message. Pads can be computed in parallel or
+in advance, and any block can be decrypted directly. A partial final block can
+use the corresponding prefix of its pad; the theorem below is stated for whole
+blocks and equal-block-count challenge messages.
+
+* The right collision event
+
+A message beginning at \(r\) uses a cyclic interval of counter inputs. For
+example, messages starting at \(r\) and \(r+1\) reuse pads even though their
+IVs differ. Reused pads reveal the XOR of the corresponding plaintext blocks.
+
+For independent uniform starts \(r,r'\), two length-\(L\) cyclic intervals
+intersect exactly when
+
+\[
+r'-r\in\{-(L-1),\ldots,L-1\}\pmod N.
+\]
+
+If \(2L\leq N\), there are \(2L-1\) such residues. Among \(Q\) starts,
+the union bound therefore gives
+
+\[
+\Pr[\mathsf{Overlap}]
+\leq\binom Q2\frac{2L-1}{N}\leq\frac{Q^2L}{N}.
+\]
+
+This also covers adaptive, variable-length messages: pre-sample all \(Q\)
+starts and extend every used interval to length \(L\), including unused
+positions [cite:@fioreCryptographicProtocolosApplicatons sec. 5.5.1].
+
+* CPA-security bound and proof
+
+Assume \(2L\leq N\). For every \(A\) making at most \(Q\) encryption queries, there is
+a PRF distinguisher \(B\), using at most \(QL\) primitive queries, such that
+
+\[
+\operatorname{CPAAdv}[A,\Pi_{\mathrm{CTR}}]
+\leq 2\operatorname{PRFAdv}[B,F]
+ +2\binom Q2\frac{2L-1}{N}
+\leq 2\operatorname{PRFAdv}[B,F]+\frac{2Q^2L}{N}.
+\]
+
+In the bit-guessing game, first replace \(F_k\) by a random function. A PRF
+distinguisher samples the hidden bit and tests whether \(A\) guesses it, so
+the change in winning probability is its PRF advantage. Next replace every
+block pad by an independent uniform value. Couple the games until a counter
+input repeats; the overlap bound controls their divergence. Independent pads
+give a transcript independent of the hidden bit. Doubling the resulting
+guessing bound gives the displayed distinguishing bound.
+
+For polynomial \(Q,L\) and super-polynomial \(N\), the statistical term is
+negligible. Usage limits are part of the theorem, not an optional engineering
+detail.
+
+* Limits and connections
+
+Changing \(c_j\) to \(c_j\oplus\Delta\) changes \(m_j\) to
+\(m_j\oplus\Delta\). Counter mode does not authenticate ciphertexts.
+
+- [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] uses one independently sampled index per block.
+- [[id:6CA56394-A696-45F1-A951-4EBA81362803][CBC]] has different IV requirements and a total-block birthday bound.
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Birthday bounds and collision events]] explain the coupling method.
+
+* Sources
+
+#+print_bibliography: :heading none

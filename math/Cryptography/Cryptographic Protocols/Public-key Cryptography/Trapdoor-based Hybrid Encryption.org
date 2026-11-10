@@ -1,0 +1,96 @@
+:PROPERTIES:
+:ID: 835B6886-C943-41E5-BCEB-9B0D7F6BBF4D
+:END:
+#+title: Trapdoor-based Hybrid Encryption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Hybrid encryption transports a fresh random preimage using a trapdoor map,
+derives a symmetric key from it, and encrypts the actual message with that key.
+The preimage is not the message and is not used directly as the symmetric key.
+
+* Components and algorithms
+
+Take a trapdoor scheme \(\mathcal T=(G,F,I)\) over
+\((\mathcal X,\mathcal Y)\), a symmetric cipher
+\(\Pi_s=(E_s,D_s)\) over \((\mathcal K,\mathcal M,\mathcal C_s)\), and
+\(H:\mathcal X\to\mathcal K\). The trapdoor and symmetric algorithms are
+independent of \(H\) and do not query it internally.
+
+Key generation runs \(G\). To encrypt \(m\) under \(pk\):
+
+\[
+x\leftarrow U_{\mathcal X},\qquad y=F(pk,x),\qquad
+k=H(x),\qquad c\leftarrow E_s(k,m).
+\]
+
+Output \((y,c)\). To decrypt, compute
+
+\[
+x=I(sk,y),\qquad k=H(x),\qquad m=D_s(k,c).
+\]
+
+Reject malformed ciphertexts and inversion results outside \(\mathcal X\)
+before evaluating \(H\). Sample a fresh \(x\) for every encryption and use
+fresh symmetric encryption coins when \(E_s\) is randomized
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.6].
+
+For a key-dependent domain, sample uniformly from \(\mathcal X_{pk}\) and
+specify its public encoding into the hash domain. The RSA instantiation spells
+out this convention rather than identifying residues with arbitrary bitstrings.
+
+* Correctness needs no random oracle
+
+For every fixed function \(H\), trapdoor correctness recovers the original
+\(x\), so both parties derive the same \(H(x)\). Then symmetric correctness
+gives
+
+\[
+D_s\bigl(H(I(sk,F(pk,x))),E_s(H(x),m)\bigr)=m.
+\]
+
+This holds for every generated key pair, message, preimage, and honest choice
+of encryption coins. Surjectivity onto \(\mathcal Y\) is unnecessary because
+honest images always lie in \(\operatorname{Im}(F_{pk})\).
+
+* Security theorem and its assumptions
+
+Model \(H\) as a public random oracle. If \(\mathcal T\) is one-way and
+\(\Pi_s\) is one-time semantically secure, then the hybrid is single-challenge
+secure, and hence CPA secure, in that model. For every single-challenge
+adversary \(A\), there are efficient \(B_{\mathrm{ow}},B_s\) such that
+
+\[
+\operatorname{SSAdv}_{\mathrm{RO}}[A,\Pi_{\mathrm{hyb}}]
+\leq2\operatorname{OWAdv}[B_{\mathrm{ow}},\mathcal T]
++\operatorname{SSAdv}[B_s,\Pi_s].
+\]
+
+In the proof, a challenge using \(H(x)\) is replaced by one using an
+independent uniform key. The executions agree until a query reveals the hidden
+preimage. Such a query can be tested publicly and yields an inverter
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.7].
+
+Only one symmetric challenge is used in the reduction: repeated-use CPA
+security of \(\Pi_s\) is not required. The public-key one-to-many reduction
+then gives, for \(Q\) challenges, the bound \(Q\) times the displayed
+right-hand side, for the corresponding composed reductions. It uses one
+shared random oracle throughout.
+
+* Limits and connections
+
+Correctness is unconditional once the components are correct. Confidentiality
+depends on one-wayness and the ideal-oracle model. Neither result implies
+sender authentication, ciphertext integrity, or chosen-ciphertext security.
+
+- [[id:1F0A5557-D927-473E-8B79-B60A6714165F][Hidden-preimage hybrid encryption proof]] gives the games, extraction, and resource bounds.
+- [[id:0B65B666-FF86-4D0B-8B6D-64E4D6AB8898][RSA hybrid encryption]] supplies a concrete algebraic instantiation and an OTP example.
+- [[id:A1068D82-0787-4A9A-AB6F-FD1B9DAE608F][Raw trapdoor key establishment]] explains why an unrecoverable preimage alone is not an indistinguishable key.
+- [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] is the exact symmetric premise.
+
+* Sources
+
+#+print_bibliography: :heading none

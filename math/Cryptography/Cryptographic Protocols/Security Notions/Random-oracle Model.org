@@ -1,0 +1,76 @@
+:PROPERTIES:
+:ID: FA9F7C29-B6A2-4A74-9239-015F2A93D81B
+:ROAM_ALIASES: "ROM" "random oracle"
+:END:
+#+title: Random-oracle Model
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+The random-oracle model replaces a publicly evaluable function by one uniformly
+sampled function available to everyone. The adversary can query it too: security
+must come from difficulty of finding a relevant input, not secrecy of the oracle.
+
+* The common public function
+
+For the finite parameterized spaces used here, sample
+
+\[
+H\ \leftarrow\ \operatorname{Funs}(\mathcal X,\mathcal K)
+\quad\text{uniformly}.
+\]
+
+All honest algorithms and the adversary use this /same/ \(H\). Distinct
+inputs have independent uniform outputs; repeated inputs return the same
+output. Queries can be adaptive and interleaved before and after an encryption
+challenge [cite:@fioreCryptographicProtocolosApplicatons sec. 9.5].
+
+For public-key encryption, run the usual semantic-security or CPA experiment
+with this additional oracle access. Probabilities now include \(H\). Write
+\(\operatorname{SSAdv}_{\mathrm{RO}}\) and
+\(\operatorname{CPAAdv}_{\mathrm{RO}}\) for distinguishing advantages;
+the absolute bit-guessing advantages remain half as large.
+
+* Efficient exact simulation
+
+Maintain an initially empty dictionary \(L\). On input \(z\):
+
+1. If \(z\notin\operatorname{dom}(L)\), sample uniform
+   \(L[z]\in\mathcal K\).
+2. Return \(L[z]\).
+
+Lazy sampling produces exactly the uniform-function experiment, even for
+adaptive queries. After \(q_H\) distinct inputs, it stores at most \(q_H\)
+entries rather than an exponentially large truth table
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.5.1].
+
+The dictionary is keyed by /inputs/. Distinct inputs can receive the same
+output; collisions in the range are not suppressed.
+
+* What the theorem does not assert
+
+- This is not a secretly keyed PRF. Oracle access is public, and the adversary
+  can evaluate \(H\) on any admissible input it chooses.
+- Collision resistance does not imply independent uniform outputs or justify
+  the substitution used in these proofs.
+- A theorem about the ideal oracle is not automatically a theorem about any
+  particular implemented hash function. Instantiation is a further modeling
+  step.
+- These notes consider classical queries and classical adversaries, not a
+  quantum-access random oracle.
+
+These distinctions are part of the model, not merely implementation caveats
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.5.2].
+
+* Connections
+
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] supplies the adaptive-table argument.
+- [[id:5CD73F38-18BB-433C-907E-F3CB4D79A03E][Public-key CPA security]] requires the same oracle in local and challenge encryptions.
+- [[id:835B6886-C943-41E5-BCEB-9B0D7F6BBF4D][Hybrid encryption]] derives a key from a hard-to-find preimage.
+- [[id:1F0A5557-D927-473E-8B79-B60A6714165F][The hidden-preimage proof]] uses queried inputs as publicly testable inversion witnesses.
+
+* Sources
+
+#+print_bibliography: :heading none

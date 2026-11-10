@@ -1,0 +1,137 @@
+:PROPERTIES:
+:ID: 1F0A5557-D927-473E-8B79-B60A6714165F
+:END:
+#+title: Hidden-preimage Hybrid Encryption Proof
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+The hybrid-encryption proof turns a potentially dangerous random-oracle query
+into an inversion witness. Its central separation is between /knowing the
+challenge image/ and /knowing its hidden preimage/.
+
+* The theorem
+
+Let \(\Pi_{\mathrm{hyb}}\) encrypt as
+\((F(pk,x),E_s(H(x),m))\). Assume a one-way injective trapdoor scheme
+\(\mathcal T\), one-time secure symmetric \(\Pi_s\), and a common random
+oracle \(H\). For every single-challenge \(A\), there are efficient
+reductions with
+
+\[
+\operatorname{SSAdv}^{*}_{\mathrm{RO}}[A,\Pi_{\mathrm{hyb}}]
+\leq\operatorname{OWAdv}[B_{\mathrm{ow}},\mathcal T]
++\operatorname{SSAdv}^{*}[B_s,\Pi_s].
+\]
+
+Multiplying by two gives the unstarred bound. Starred quantities use absolute
+bias from \(1/2\), as in the other security notes
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.7].
+
+* Two games differing at one oracle entry
+
+Sample \((pk,sk)\), uniform \(x^*\), its image \(y^*=F(pk,x^*)\), an
+independent uniform key \(k^*\), and a uniform challenge bit \(b\). The
+challenge ciphertext will be \((y^*,E_s(k^*,m_b))\).
+
+- *Game 0:* initialize the lazy oracle table with \(H(x^*)=k^*\).
+- *Game 1:* initialize an empty table; the challenge key \(k^*\) is
+  independent of the entire oracle, including its value at \(x^*\).
+
+Game 0 is exact real hybrid encryption: conditionally on any \(x^*\),
+assigning an independent uniform value there and independent uniform values
+elsewhere samples a random function. Preselecting \(x^*\) before message
+selection is valid because it is independent of the oracle and the adversary's
+choices [cite:@fioreCryptographicProtocolosApplicatons sec. 9.7.1].
+
+Let \(W_i\) be the event that \(A\) guesses \(b\) in Game \(i\), and let
+\(\mathsf{Hit}\) mean that it ever queries the oracle at \(x^*\). This
+includes calls before the challenge and calls during its local public
+encryptions.
+
+* Couple until the first hit
+
+Use identical randomness and identical oracle values away from \(x^*\).
+Until the first query at \(x^*\), the transcripts and adversarial states
+agree, so that first query is issued in both executions before any differing
+answer. Without a hit, the success indicators agree. Hence
+
+\[
+\left|\Pr[W_0]-\Pr[W_1]\right|
+\leq\Pr_1[\mathsf{Hit}].
+\]
+
+This compares unconditional probabilities. It does not assume that guessing
+success is independent of whether a hit occurs, nor assert equal success
+probabilities /after/ a hit
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.7.2].
+
+* Extract an inverse without guessing a query
+
+Given an inversion challenge \((pk,y^*)\), \(B_{\mathrm{ow}}\) samples its
+own uniform \(k^*,b\), runs \(A\), and simulates Game 1 with an empty lazy
+oracle table. It can encrypt the challenge under its known \(k^*\), without
+knowing \(x^*\) or \(sk\).
+
+Retain every admissible queried input \(z\), before and after the challenge.
+Test \(F(pk,z)=y^*\). Injectivity means any passing value is exactly the
+hidden \(x^*\), so
+
+\[
+\Pr_1[\mathsf{Hit}]
+\leq\operatorname{OWAdv}[B_{\mathrm{ow}},\mathcal T].
+\]
+
+There is no multiplicative \(q_H\) loss from guessing which query matters:
+public evaluation identifies a valid preimage. At most \(q_H\) candidate
+tests affect running time. A fallback guess may also succeed, which is why the
+displayed relation can be an inequality
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.7.3].
+
+* Reduce the independent-key game to symmetric security
+
+The reduction \(B_s\) generates its own trapdoor keys and \(x^*,y^*\), then
+simulates the public oracle with an empty independent table. It forwards
+\(A\)'s message pair to its one-time symmetric challenger and wraps the
+returned \(c^*\) as \((y^*,c^*)\). Finally it returns \(A\)'s guess.
+
+It knows neither its challenger's key nor hidden bit, but needs neither. This
+is exactly Game 1, so
+
+\[
+\left|\Pr[W_1]-\tfrac12\right|
+=\operatorname{SSAdv}^{*}[B_s,\Pi_s].
+\]
+
+Combining the two game comparisons with the triangle inequality proves the
+theorem. No repeated-use symmetric oracle is needed
+[cite:@fioreCryptographicProtocolosApplicatons secs. 9.7.4 and 9.7.5].
+
+* Multi-challenge resources
+
+For a \(Q\)-query public-key CPA adversary, first apply the one-to-many
+challenge reduction, then this proof. The resulting distinguishing bound is
+
+\[
+\operatorname{CPAAdv}_{\mathrm{RO}}[A,\Pi_{\mathrm{hyb}}]
+\leq Q\bigl(2\operatorname{OWAdv}[B_{\mathrm{ow}},\mathcal T]
++\operatorname{SSAdv}[B_s,\Pi_s]\bigr).
+\]
+
+If \(A\) makes at most \(q_H\) oracle calls, including local computations,
+the intermediate reduction uses at most \(q_H+Q-1\) calls: each extra public
+encryption derives one key. All calls use the same oracle. The proof does not
+assume that sampled preimages or derived keys are all distinct.
+
+* Connections
+
+- [[id:835B6886-C943-41E5-BCEB-9B0D7F6BBF4D][Hybrid encryption]] defines the algorithms and correctness conditions.
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Bad-event comparisons]] justify the unconditional coupling inequality.
+- [[id:5CD73F38-18BB-433C-907E-F3CB4D79A03E][Public-key CPA security]] proves the factor-\(Q\) reduction.
+- [[id:FA9F7C29-B6A2-4A74-9239-015F2A93D81B][The random-oracle model]] explains the idealization on which the argument depends.
+
+* Sources
+
+#+print_bibliography: :heading none

@@ -66,6 +66,8 @@ malleable.
 - [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] has only one challenge ciphertext.
 - [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] gives a construction and concrete bound.
 - [[id:9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1][Stateful stream encryption]] uses evolving state instead of independent calls.
+- [[id:976069BF-8173-4ECC-8B60-C95904952A2C][Randomized counter mode]] and [[id:6CA56394-A696-45F1-A951-4EBA81362803][CBC]] extend the message space with explicit usage bounds.
+- [[id:5CD73F38-18BB-433C-907E-F3CB4D79A03E][Public-key CPA security]] gives the adversary the encryption key and permits a one-to-many challenge reduction.
 
 * Sources
 

@@ -58,6 +58,7 @@ the RSA assumption.
 
 - [[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way functions]] clarify what counts as a valid inverse.
 - [[id:50375158-9DAE-5BF7-B385-B98313B01181][Blum-Blum-Shub]] uses the factoring assumption for Blum moduli.
+- [[id:2A2A474A-B195-47F5-BF96-D5BBA96BDE60][The RSA assumption]] states inversion hardness for the prescribed RSA sampler; it is not derived from factoring hardness.
 
 * Sources
 

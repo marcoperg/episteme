@@ -1,0 +1,77 @@
+:PROPERTIES:
+:ID: 5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54
+:END:
+#+title: PRP-PRF Switching
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Switching replaces a uniform random permutation by a uniform random function
+in a forward-oracle proof. The error is bounded by the probability that the
+random function repeats an output on distinct inputs.
+
+* Switching lemma
+
+Let \(|\mathcal X|=N\), let \(\pi\) be a uniform permutation of
+\(\mathcal X\), and let \(R\) be a uniform function from \(\mathcal X\)
+to itself. For any adaptive forward-oracle adversary making at most \(q\)
+queries,
+
+\[
+\left|\Pr[A^{\pi}=1]-\Pr[A^R=1]\right|
+\leq\frac{\binom q2}{N}.
+\]
+
+Repeated inputs are cached, so only distinct queries count. If \(q>N\), the
+bound is already trivial; the useful regime has \(q\ll\sqrt N\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.6.1].
+
+* Coupling proof
+
+On the \(j\)-th new input, draw \(y\) uniformly from \(\mathcal X\)
+for the function oracle.
+
+- If \(y\) is unused, return the same value from the permutation oracle.
+- Otherwise declare \(\mathsf{Bad}\), and give the permutation a uniform
+  unused output. The two oracles may subsequently be continued independently.
+
+Before the first bad event, this gives correct marginal distributions: for
+each unused \(z\), its probability under the permutation rule is
+
+\[
+\frac1N+\frac{j-1}{N}\frac1{N-j+1}=\frac1{N-j+1}.
+\]
+
+The next function output collides with an earlier output with probability
+\((j-1)/N\). Sum over at most \(q\) new inputs to obtain \(\binom q2/N\).
+Until that event the transcripts, adaptive choices, and final outputs agree.
+The bad-event comparison proves the lemma.
+
+* Translating a primitive's advantage
+
+For a block cipher \(P\), evaluated as a forward function, the reverse
+triangle inequality gives
+
+\[
+\left|\operatorname{PRPAdv}[A,P]-\operatorname{PRFAdv}[A,P]\right|
+\leq\frac{\binom q2}{N}.
+\]
+
+Thus a secure PRP is also a secure forward PRF, and conversely, when \(N\)
+is super-polynomial and \(q\) is polynomial. A birthday-size observer can
+distinguish the ideal objects by looking for an output collision.
+
+This lemma supplies no inverse oracle for a random function. It must not be
+used as an unqualified switch inside a strong-PRP or decryption-oracle proof.
+
+* Connections
+
+- [[id:993CEADF-0C35-43BE-9208-7B89AB14E2E9][PRPs]] specify the permutation experiment.
+- [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Birthday bounds]] distinguish output collisions here from reused input pads.
+- [[id:6CA56394-A696-45F1-A951-4EBA81362803][CBC]] uses switching before analyzing its random-function hybrid.
+
+* Sources
+
+#+print_bibliography: :heading none

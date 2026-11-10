@@ -1,0 +1,100 @@
+:PROPERTIES:
+:ID: 082A5D5A-8E70-4B76-8064-D5737CD81021
+:ROAM_ALIASES: "Feistel construction"
+:END:
+#+title: Luby-Rackoff Construction
+#+SETUPFILE: ../../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../../bibliotheca/zotero-library.bib
+
+The Feistel transformation makes an arbitrary function invertible on a doubled
+domain. Three independently keyed PRF rounds turn that algebraic permutation
+into a secure /forward-oracle/ PRP.
+
+* One Feistel round
+
+For any \(f:\{0,1\}^n\to\{0,1\}^n\), define
+
+\[
+\Phi_f(u,v)=(v,u\oplus f(v)),
+\qquad\Phi_f^{-1}(a,b)=(b\oplus f(a),a).
+\]
+
+Substitution verifies the inverse. Inverting the round requires only forward
+evaluation of \(f\), not inversion of \(f\). One round is not a secure
+PRP: its first output half is the second input half.
+
+* Three-round construction
+
+Let \(F:\mathcal K\times\{0,1\}^n\to\{0,1\}^n\) be a PRF and sample
+independent uniform \(k_1,k_2,k_3\). Compute
+
+\begin{align*}
+w&=u\oplus F(k_1,v),\\
+x&=v\oplus F(k_2,w),\\
+y&=w\oplus F(k_3,x),\qquad P_k(u,v)=(x,y).
+\end{align*}
+
+Invert by computing \(w=y\oplus F(k_3,x)\), then
+\(v=x\oplus F(k_2,w)\), then \(u=w\oplus F(k_1,v)\).
+Thus \(P_k=\Phi_{F_{k_3}}\circ\Phi_{F_{k_2}}\circ\Phi_{F_{k_1}}\)
+is a permutation on \(2n\)-bit blocks
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.9].
+
+* Security theorem
+
+Write \(N=2^n\). For every \(q\)-query forward adversary \(A\), there is
+an efficient PRF distinguisher \(B\) such that
+
+\[
+\operatorname{PRPAdv}[A,P]
+\leq3\operatorname{PRFAdv}[B,F]
++\frac{q(q-1)}{N}+\frac{q(q-1)}{2N^2}.
+\]
+
+For polynomial \(q\) and super-polynomial \(N\), this is negligible. The
+round keys must be independent; the proof does not analyze reuse of one key.
+
+* Proof outline with the bad events
+
+Cache repeated input pairs, so only distinct \((u_i,v_i)\) require analysis.
+
+1. Replace the rounds successively by independent random functions
+   \(f_1,f_2,f_3\). A random-round reduction simulates earlier random rounds
+   lazily and later rounds with fresh independent keys. Its signed gaps
+   telescope, giving \(3\operatorname{PRFAdv}[B,F]\).
+2. Keep \(f_1\), but replace each invocation of the other two rounds by
+   independent uniform masks \(U_i,V_i\), even at repeated internal inputs:
+   \(w_i=u_i\oplus f_1(v_i)\), \(x_i=v_i\oplus U_i\),
+   \(y_i=w_i\oplus V_i\). Each output pair is independent uniform, also
+   independent of \(f_1\). With the input-pair cache, this is a random
+   function on \(N^2\) points.
+3. Couple the consistent-round and ideal games until some \(w_i=w_j\) or
+   \(x_i=x_j\). The \(x\)-collision probability is at most
+   \(\binom q2/N\). For the \(w\)'s, condition on the ideal transcript
+   and adversary's coins: input pairs are fixed, while \(f_1\) remains
+   independent. Equal \(v\)'s and distinct input pairs force unequal
+   \(w\)'s; unequal \(v\)'s give equality with probability \(1/N\).
+   This contributes another \(\binom q2/N\).
+4. Switch the resulting random function on \(N^2\) points to a random
+   permutation, adding \(\binom q2/N^2\).
+
+Only polynomially many table entries are needed. In particular, adaptive input
+selection does not require constructing an exponentially large round table.
+
+* Scope and connections
+
+This is not a strong-PRP theorem: the adversary receives no inverse oracle.
+The result, together with switching, establishes equivalence of PRF and PRP
+/existence/ in the large-domain setting, allowing changes of block and key
+lengths. It does not identify their syntax.
+
+- [[id:993CEADF-0C35-43BE-9208-7B89AB14E2E9][Block ciphers and PRPs]] specify the target security experiment.
+- [[id:5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54][PRP-PRF switching]] supplies the final statistical term.
+- [[id:7CFA08F5-5923-55CA-B112-FB80F1D875F3][Hybrid arguments]] explain why signed gaps are combined before taking absolute values.
+
+* Sources
+
+#+print_bibliography: :heading none

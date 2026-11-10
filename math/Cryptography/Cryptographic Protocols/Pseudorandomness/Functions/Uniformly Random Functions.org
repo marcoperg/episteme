@@ -66,6 +66,8 @@ identify these security settings.
 - [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] implements adaptive access efficiently.
 - [[id:BD515EED-D4EE-5541-B811-27DFC400D695][Pseudorandom functions]] approximate the oracle behaviour computationally.
 - [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Collision bounds]] quantify repetitions rather than assuming them away.
+- [[id:5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54][PRP-PRF switching]] couples random functions with random permutations until an output collision.
+- [[id:FA9F7C29-B6A2-4A74-9239-015F2A93D81B][The random-oracle model]] gives the ideal function to both honest algorithms and the adversary.
 
 * Sources
 

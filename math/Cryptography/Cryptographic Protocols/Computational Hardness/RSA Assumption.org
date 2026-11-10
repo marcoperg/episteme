@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID: 2A2A474A-B195-47F5-BF96-D5BBA96BDE60
+:END:
+#+title: RSA Assumption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+The RSA assumption asserts average-case inversion hardness for one specified
+RSA key-generation family. It is not proved by the algebraic correctness of
+RSA and must not be replaced by the weaker assertion that factoring is hard.
+
+* Inversion experiment
+
+Fix the prime-length function \(\ell(\lambda)\), public odd exponent \(e\),
+and admissible-prime sampler of RSA key generation.
+
+1. Generate \(N=pq\) and \(d\) using that sampler.
+2. Sample uniform \(X\in\mathbb Z_N\) and compute \(Y=X^e\bmod N\).
+3. Give \((N,e,Y)\), with public parameters, to \(A\).
+4. Accept if it returns \(\widehat X\in\mathbb Z_N\) with
+   \(\widehat X^e=Y\pmod N\).
+
+Because RSA is a permutation, acceptance is equivalent to
+\(\widehat X=X\). Define \(\operatorname{RSAAdv}[A]\) as this success
+probability. The assumption says it is negligible for every PPT adversary
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.9].
+
+This formulation samples from /all/ residues, not just \(\mathbb Z_N^*\).
+Conditionally on \(N\), the image \(Y\) is also uniform on \(\mathbb Z_N\).
+The probability includes prime generation, the sampled input, and adversarial
+coins. Easy individual inputs such as \(0\) or \(1\) do not refute an
+average-case hypothesis when their total probability is negligible.
+
+* The direction of the factoring implication
+
+An efficient factorer for the same modulus distribution gives an RSA inverter:
+recover \(p,q\), compute \(\varphi(N)=(p-1)(q-1)\), compute
+\(d=e^{-1}\bmod\varphi(N)\), and return \(Y^d\bmod N\).
+
+Every successful factorization yields a successful inversion. Therefore
+
+\[
+\text{efficient factoring}\ \Longrightarrow\ \text{efficient RSA inversion},
+\]
+
+or, contrapositively,
+
+\[
+\text{RSA inversion hardness}\ \Longrightarrow\ \text{factoring hardness}.
+\]
+
+The reverse implication is not established: there could be an inverter that
+does not reveal a factorization. RSA-based reductions here assume RSA
+one-wayness itself, not merely factoring hardness
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.9.1].
+
+* Scope and connections
+
+The parameter-generation distribution matters. A claim for one exponent or
+modulus family must not silently be transferred to another. Nor does inversion
+hardness make deterministic raw RSA a semantically secure cipher.
+
+- [[id:3BB000A4-FE20-4007-9ED5-B50327711562][The RSA trapdoor permutation]] proves correctness without assuming hardness.
+- [[id:69560A39-4283-597D-9A11-69E69EFE6B78][Factoring]] has its own experiment and sampling conditions.
+- [[id:A1068D82-0787-4A9A-AB6F-FD1B9DAE608F][Trapdoor-based key establishment]] inherits exactly the passive full-preimage-recovery guarantee.
+- [[id:0B65B666-FF86-4D0B-8B6D-64E4D6AB8898][RSA hybrid encryption]] needs this hypothesis and a random-oracle model for confidentiality.
+
+* Sources
+
+#+print_bibliography: :heading none

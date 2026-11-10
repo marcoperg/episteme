@@ -70,6 +70,8 @@ a message but permits predictable bit flips in its decryption.
 - [[id:1A9739E1-DEC0-5D22-8A85-A78669876A3D][One-time pad]] is a simple Shannon cipher.
 - [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information-theoretic security]] defines perfect secrecy.
 - [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]] supplies a computational confidentiality game.
+- [[id:602FA248-EC73-4A4B-B17F-41A6060AAFFF][Message authentication codes]] target accepted forgeries rather than message hiding.
+- [[id:E32851AD-9888-47BE-98C0-F4C89CE69FD5][Public-key encryption]] replaces the shared-key interface by generated public and secret keys.
 
 * Sources
 

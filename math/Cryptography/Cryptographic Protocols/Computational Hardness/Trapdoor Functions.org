@@ -1,0 +1,79 @@
+:PROPERTIES:
+:ID: B1DB580A-05A3-4611-924C-158512AE4BF2
+:ROAM_ALIASES: "TDF" "trapdoor permutation"
+:END:
+#+title: Trapdoor Functions
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A trapdoor scheme makes evaluation public and authorized inversion efficient,
+while conjecturally keeping public inversion hard on random challenges. Here
+correctness recovers the original input, so each generated public map is
+injective.
+
+* Algorithms and spaces
+
+For parameterized nonempty finite spaces \(\mathcal X,\mathcal Y\), define
+efficient algorithms \(\mathcal T=(G,F,I)\):
+
+- \((pk,sk)\leftarrow G(1^\lambda)\): probabilistic key generation.
+- \(F(pk,x)\in\mathcal Y\): deterministic public evaluation.
+- \(I(sk,y)\): deterministic inversion using the secret trapdoor.
+
+For every generated key pair and every \(x\in\mathcal X\), require
+
+\[
+I(sk,F(pk,x))=x.
+\]
+
+Both spaces are efficiently recognizable; the domain is uniformly sampleable.
+Representations and key lengths are polynomially bounded. Outside the image,
+inversion may reject or return an arbitrary domain element
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.1].
+
+Correctness implies injectivity: applying \(I(sk,\cdot)\) to equal images
+recovers equal inputs. If \(\mathcal X=\mathcal Y\), finiteness gives a
+*trapdoor permutation scheme*.
+
+* One-wayness experiment
+
+Generate \((pk,sk)\leftarrow G(1^\lambda)\), sample uniform
+\(X\in\mathcal X\), and compute \(Y=F(pk,X)\). Give \((pk,Y)\), with
+public parameters, to \(A\); accept exactly when it returns \(X\).
+
+Define \(\operatorname{OWAdv}[A,\mathcal T]=\Pr[\widehat X=X]\).
+One-wayness requires negligible success for every PPT adversary. Injectivity
+makes any valid preimage the original input. The image is uniform on
+\(\operatorname{Im}(F_{pk})\), not necessarily on all of \(\mathcal Y\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.2].
+
+Independent guessing succeeds with probability \(1/|\mathcal X|\); a
+polynomial-size domain therefore cannot satisfy this definition. The efficient
+inverse /with/ \(sk\) is compatible with hardness /without/ \(sk\).
+
+* Key-dependent domains
+
+RSA uses \(\mathcal X_{pk}=\mathcal Y_{pk}=\mathbb Z_N\), determined by the
+public modulus. Recognition and uniform sampling use \(pk\); generate the
+key /before/ sampling \(X\in\mathcal X_{pk}\) in the inversion experiment.
+
+Key-dependent and fixed-space syntax must not be silently interchanged. A
+separate fixed-domain RSA extension makes that distinction explicit
+[cite:@fioreCryptographicProtocolosApplicatons sec. 8.1.1].
+
+* Limits and connections
+
+An ordinary one-way function need not have a trapdoor. A trapdoor need not hide
+all input properties or encrypt chosen messages securely.
+
+- [[id:91B8E8A6-F67B-4918-AFB4-6AD0087AC6C8][One-way functions]] can have multiple preimages and no trapdoor.
+- [[id:3BB000A4-FE20-4007-9ED5-B50327711562][RSA]] is an algebraic key-dependent permutation with assumed one-wayness.
+- [[id:1CCFC6B2-5276-497F-AD9C-37CD379270F3][Fixed-domain RSA]] must bound its easy tail.
+- [[id:835B6886-C943-41E5-BCEB-9B0D7F6BBF4D][Hybrid encryption]] adds randomization and modeled key derivation.
+
+* Sources
+
+#+print_bibliography: :heading none

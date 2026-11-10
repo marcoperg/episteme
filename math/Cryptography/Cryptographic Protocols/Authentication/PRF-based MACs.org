@@ -1,0 +1,79 @@
+:PROPERTIES:
+:ID: 634DD54F-4F7C-4B70-A782-305FD9491771
+:END:
+#+title: PRF-based MACs
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+A PRF authenticates a message by making its tag look like an unpredictable
+table entry. Tagging other messages must not reveal the value at a fresh one.
+
+* Construction
+
+Let \(F:\mathcal K\times\mathcal M\to\{0,1\}^t\) be a secure PRF.
+Define
+
+\[
+\mathsf{Tag}(k,m)=F(k,m),\qquad
+\mathsf{Ver}(k,m,\tau)=\mathbf1_{\{\tau=F(k,m)\}}.
+\]
+
+Reject malformed inputs. Equality verification gives correctness and unique
+tags. An \(\ell\)-bit-input PRF authenticates exactly \(\ell\)-bit messages,
+not arbitrary-length strings
+[cite:@fioreCryptographicProtocolosApplicatons sec. 6.4].
+
+* Forgery bound
+
+For every adversary \(A\) making at most \(Q\) tagging queries, there is a
+PRF distinguisher \(B\) making at most \(Q+1\) oracle queries such that
+
+\[
+\operatorname{MACAdv}[A,\mathcal I]
+=\operatorname{sMACAdv}[A,\mathcal I]
+\leq\operatorname{PRFAdv}[B,F]+2^{-t}.
+\]
+
+Unique tags give the equality. Forgery success probabilities need no factor of
+two.
+
+* Reduction and the fresh-entry argument
+
+Given oracle \(O\), answer tagging queries with \(O(m)\) and record their
+messages. Reject a malformed or nonfresh candidate \((m^*,\tau^*)\); otherwise
+query \(O(m^*)\) once and test equality with \(\tau^*\).
+
+- With \(O=F_k\), acceptance is exactly the real forgery event.
+- With \(O=R\), a random function, condition on the full view and the legal
+  fresh candidate. Lazy sampling has not assigned \(R(m^*)\); it is still
+  independent uniform in \(\{0,1\}^t\). The chance of guessing it is
+  \(2^{-t}\).
+
+Illegal or nonfresh candidates make random-game acceptance /at most/
+\(2^{-t}\), not necessarily equal to it. PRF security bounds the change in
+acceptance probability, proving the inequality.
+
+* Tag length is a separate requirement
+
+Blind guessing on a fresh message succeeds with probability exactly \(2^{-t}\),
+even for a random function. One-bit tags therefore permit forgery with probability
+\(1/2\).
+
+For asymptotic security, require \(2^{-t(\lambda)}\) negligible, equivalently
+\(t(\lambda)=\omega(\log\lambda)\). A fixed multiple
+\(t=c\log_2\lambda\) gives the non-negligible probability \(\lambda^{-c}\)
+[cite:@fioreCryptographicProtocolosApplicatons sec. 6.4.1].
+
+* Connections
+
+- [[id:BD515EED-D4EE-5541-B811-27DFC400D695][PRFs]] supply the computational term.
+- [[id:760CE136-3F26-4E7C-AE36-0379856225ED][Unforgeability]] specifies freshness and the strong variant.
+- [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] explains independence at an adaptively selected fresh input.
+- [[id:602FA248-EC73-4A4B-B17F-41A6060AAFFF][MAC limitations]] separate this theorem from confidentiality and replay protection.
+
+* Sources
+
+#+print_bibliography: :heading none

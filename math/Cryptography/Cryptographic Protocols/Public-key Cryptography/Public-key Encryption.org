@@ -1,0 +1,75 @@
+:PROPERTIES:
+:ID: E32851AD-9888-47BE-98C0-F4C89CE69FD5
+:ROAM_ALIASES: "PKE"
+:END:
+#+title: Public-key Encryption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Public-key encryption lets anyone encrypt for a recipient using public
+information, while decryption requires the corresponding secret key. Its
+message-hiding goal is stronger than making a random preimage hard to recover.
+
+* Syntax and correctness
+
+A scheme \(\Pi=(G,E,D)\) has efficient interfaces
+
+\[
+(pk,sk)\leftarrow G(1^\lambda),\qquad
+c\leftarrow E(pk,m),\qquad D(sk,c)\in\mathcal M\cup\{\bot\}.
+\]
+
+Key generation and encryption may be probabilistic; decryption is deterministic.
+Spaces have efficient representations, membership tests, and message lengths.
+For /every/ generated key pair and admissible message,
+
+\[
+\Pr[D(sk,E(pk,m))=m]=1
+\]
+
+over encryption coins. This is not just average correctness over messages or
+keys. Malformed ciphertexts may be rejected
+[cite:@fioreCryptographicProtocolosApplicatons secs. 7.3 and 9.1].
+
+For a fixed key pair, distinct messages have disjoint ciphertext supports:
+otherwise one ciphertext would have to decrypt to both. Computational security
+does not require overlapping supports; determining the relevant support can
+be infeasible without the secret key.
+
+* Why deterministic encryption fails
+
+After receiving \(pk\), choose efficiently constructible distinct equal-length
+messages \(m_0,m_1\). Compute \(c_0=E(pk,m_0)\) publicly. If encryption is
+deterministic, a challenge encrypting one of these messages equals \(c_0\)
+exactly when \(m_0\) was chosen, by correctness.
+
+This gives distinguishing advantage \(1\) with one challenge and no preliminary
+encryption oracle. Random key generation does not help: the attacker knows the
+particular public key used in the experiment
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.3].
+
+Randomizing encryption defeats this equality test but is not sufficient by
+itself. Returning \((m,r)\) for a fresh random \(r\) is randomized and
+completely reveals \(m\). A theorem must analyze the entire distribution.
+
+* Public encryption is not sender authentication
+
+Anyone with \(pk\) can create ciphertexts, so successful decryption does not
+identify the sender. The standard confidentiality game supplies an honestly
+generated public key; it does not prove resistance to public-key substitution
+or provide a decryption oracle
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.10].
+
+* Connections
+
+- [[id:5CD73F38-18BB-433C-907E-F3CB4D79A03E][Public-key CPA security]] defines message hiding and the one-to-many challenge reduction.
+- [[id:B1DB580A-05A3-4611-924C-158512AE4BF2][Trapdoor functions]] have deterministic public evaluation and a different security experiment.
+- [[id:835B6886-C943-41E5-BCEB-9B0D7F6BBF4D][Hybrid encryption]] separates transport of a fresh secret from encryption of the actual message.
+- [[id:C4E605D8-8C61-4069-ACEA-93F81165C05F][Encryption schemes]] introduce the contrasting shared-key interface.
+
+* Sources
+
+#+print_bibliography: :heading none

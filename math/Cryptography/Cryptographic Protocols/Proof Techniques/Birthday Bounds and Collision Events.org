@@ -72,6 +72,9 @@ birthday term to an unspecified repetition.
 - [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]] includes the bound in its CPA theorem.
 - [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]] makes repeated-input consistency explicit.
 - [[id:17111DA9-A4BE-5A36-8A6B-FC32260FDE5C][Security reductions]] combine statistical errors with computational assumptions.
+- [[id:976069BF-8173-4ECC-8B60-C95904952A2C][Counter mode]] needs an interval-overlap bound, not just equality of IVs.
+- [[id:5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54][PRP-PRF switching]] counts output collisions at distinct inputs.
+- [[id:1F0A5557-D927-473E-8B79-B60A6714165F][The hidden-preimage proof]] uses an oracle-query event rather than a birthday event.
 
 * Sources
 

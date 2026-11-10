@@ -63,6 +63,7 @@ average-case inversion hardness.
 
 - [[id:C43C8CF7-FADC-51D8-B380-715240FA3F51][One-way permutations]] add bijectivity.
 - [[id:EF6900D1-B10A-5186-86D5-716555729BAD][Hard-core predicates]] isolate computationally hidden bits.
+- [[id:B1DB580A-05A3-4611-924C-158512AE4BF2][Trapdoor functions]] add efficient inversion with a generated secret and require injectivity in the course's formulation.
 - [[id:F0DC1C09-62D0-5AD3-B854-7EA46C9F8371][Discrete logarithm]] and [[id:69560A39-4283-597D-9A11-69E69EFE6B78][factoring]] give concrete candidates.
 
 * Sources

@@ -69,6 +69,8 @@ sufficiently long authentication tag or encryption pad.
 - [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM]] builds large-domain PRFs from doubling PRGs.
 - [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold]] gives a DDH-based construction.
 - [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][Randomized encryption]] uses the PRF as a source of indexed pads.
+- [[id:634DD54F-4F7C-4B70-A782-305FD9491771][PRF-based MACs]] use fresh message entries as tags, with a separate tag-guessing term.
+- [[id:082A5D5A-8E70-4B76-8064-D5737CD81021][Luby-Rackoff]] converts independent PRF rounds into a forward-secure PRP.
 
 * Sources
 

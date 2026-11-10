@@ -1,0 +1,121 @@
+:PROPERTIES:
+:ID: 0B65B666-FF86-4D0B-8B6D-64E4D6AB8898
+:END:
+#+title: RSA Hybrid Encryption
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+RSA hybrid encryption applies RSA to fresh random material, not directly to
+the plaintext. A public random oracle derives the symmetric key. The resulting
+CPA theorem is a computational, ideal-oracle statement, not a claim of perfect
+secrecy or ciphertext authentication.
+
+* Domains, encoding, and algorithms
+
+Generate \(pk=(N,e),sk=(N,d)\) with distinct \(\ell\)-bit primes as in
+RSA key generation. Since \(N<2^{2\ell}\), every residue has a canonical
+\(2\ell\)-bit encoding. Define
+
+\[
+\mathcal U_\ell=\{0,1\}^{2\ell},\qquad
+H:\mathcal U_\ell\to\mathcal K.
+\]
+
+Write \(H(x)\) for hashing that canonical encoding. The trapdoor domain is
+\(\mathbb Z_N\), not all of \(\mathcal U_\ell\).
+
+To encrypt \(m\), sample uniform \(x\in\mathbb Z_N\) and compute
+
+\[
+y=x^e\bmod N,\qquad k=H(x),\qquad c\leftarrow E_s(k,m).
+\]
+
+Output the encoded pair \((y,c)\). Decryption checks the encoding and
+\(0\leq y<N\), then computes \(x=y^d\bmod N\), \(k=H(x)\), and
+\(D_s(k,c)\). RSA correctness recovers \(x\) even for nonunits, so both
+sides derive the same key. Extra oracle inputs encoding integers at least
+\(N\) remain independent table entries, not additional RSA residues
+[cite:@fioreCryptographicProtocolosApplicatons secs. 9.8 and 9.8.1].
+
+* Security and the right assumption
+
+Under the RSA assumption for the specified sampler, one-time semantic security
+of \(\Pi_s\), and the random-oracle model for \(H\), there are efficient
+reductions such that
+
+\[
+\operatorname{SSAdv}_{\mathrm{RO}}[A,\Pi_{\mathrm{RSA}}]
+\leq2\operatorname{RSAAdv}[B_{\mathrm{rsa}}]
++\operatorname{SSAdv}[B_s,\Pi_s].
+\]
+
+The inverter tests every oracle input encoding a valid residue \(z\) for
+\(z^e=y^*\pmod N\). A passing value is the hidden preimage, because RSA
+is a permutation of all residues. The generic hidden-preimage proof then
+applies, and the public-key hybrid argument supplies CPA security.
+
+The computational hypothesis is RSA inversion hardness. Factoring hardness
+alone is not the established premise of this theorem.
+
+* One-time-pad instantiation
+
+For a fixed polynomially bounded message length \(r\), choose
+\(H:\mathcal U_\ell\to\{0,1\}^r\) and take the inner cipher to be the OTP:
+
+\[
+E(pk,m)=(x^e\bmod N,H(x)\oplus m),
+\qquad D(sk,(y,c))=H(y^d\bmod N)\oplus c.
+\]
+
+Public-key encryption is randomized through fresh \(x\), although the inner
+OTP is deterministic for a fixed key. Its one-time advantage is zero, yielding
+
+\[
+\operatorname{SSAdv}_{\mathrm{RO}}[A,\Pi_{\mathrm{RSA}}]
+\leq2\operatorname{RSAAdv}[B],\qquad
+\operatorname{CPAAdv}_{\mathrm{RO}}[A,\Pi_{\mathrm{RSA}}]
+\leq2Q\operatorname{RSAAdv}[B'].
+\]
+
+Here \(Q\) bounds public-key left-or-right queries. Repeated sampling of a
+preimage is handled by the reduction, not ruled out by an unstated uniqueness
+assumption [cite:@fioreCryptographicProtocolosApplicatons sec. 9.9].
+
+* Worked execution
+
+Use the insecure toy values \(N=143,e=7,d=103\), an eight-bit message
+\(m=\mathtt{01101001}\), and one possible sampled residue \(x=42\).
+Suppose this oracle table has \(H(42)=\mathtt{10110100}\). Then
+
+\[
+y=81,\quad c=\mathtt{11011101},\quad
+81^{103}\bmod143=42,
+\]
+
+and \(\mathtt{10110100}\oplus\mathtt{11011101}=\mathtt{01101001}\).
+The example fixes one execution, not a deterministic choice of \(x\) for a
+real scheme. Tiny moduli are not secure parameters.
+
+* Limits and connections
+
+Changing \((y,c)\) to \((y,c\oplus\Delta)\) changes the plaintext to
+\(m\oplus\Delta\). Anyone knowing \(pk\) can generate ciphertexts.
+Thus CPA confidentiality supplies neither integrity nor sender authentication,
+and the theorem gives no decryption-oracle or public-key-substitution guarantee
+[cite:@fioreCryptographicProtocolosApplicatons sec. 9.10].
+
+An unbounded observer can invert RSA and recover the pad. Perfect secrecy of
+the /inner/ OTP does not make the public-key construction perfectly secret.
+This is the course's ideal-oracle construction, not a production padding or
+authenticated-encryption specification.
+
+- [[id:3BB000A4-FE20-4007-9ED5-B50327711562][RSA as a trapdoor permutation]] provides the algebra.
+- [[id:1F0A5557-D927-473E-8B79-B60A6714165F][The hidden-preimage proof]] explains why there is no query-guessing loss.
+- [[id:1A9739E1-DEC0-5D22-8A85-A78669876A3D][The one-time pad]] supplies the zero one-time-security term.
+
+* Sources
+
+#+print_bibliography: :heading none

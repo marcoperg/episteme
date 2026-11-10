@@ -1,0 +1,80 @@
+:PROPERTIES:
+:ID: 760CE136-3F26-4E7C-AE36-0379856225ED
+:ROAM_ALIASES: "UF-CMA" "EUF-CMA" "SUF-CMA"
+:END:
+#+title: Unforgeability under Chosen-message Attack
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Chosen-message unforgeability asks whether access to authentic tags enables a
+new accepted forgery. The meaning of /new/ must be explicit: a fresh message
+and a fresh message-tag pair give different security notions.
+
+* Fresh-message experiment
+
+For a MAC \(\mathcal I=(\mathsf{Tag},\mathsf{Ver})\):
+
+1. Sample a uniform key \(k\) and initialize \(S=\varnothing\).
+2. Give \(A\) a tagging oracle. On each message \(m\), record \(m\in S\)
+   and return a fresh \(t\leftarrow\mathsf{Tag}(k,m)\). Queries can be
+   adaptive and repeated.
+3. Receive a final candidate \((m^*,t^*)\).
+4. Accept exactly when the candidate is well formed, \(m^*\notin S\), and
+   \(\mathsf{Ver}(k,m^*,t^*)=1\).
+
+Define \(\operatorname{MACAdv}[A,\mathcal I]\) as the success probability.
+Fresh-message *UF-CMA security* requires negligible success for every PPT
+adversary, over the key, tagging coins, and adversarial coins. No \(1/2\)
+baseline is subtracted [cite:@fioreCryptographicProtocolosApplicatons sec. 6.3].
+
+The attacker may forge /any/ new message, not just a prescribed meaningful
+message. This experiment provides no verification oracle and permits only one
+final forgery attempt. Other interfaces need separate analysis.
+
+* Strong, fresh-pair experiment
+
+Instead record the set \(S_{\mathrm{pair}}\) of all message-tag pairs actually
+returned by the tagging oracle. A valid final pair wins when
+
+\[
+(m^*,t^*)\notin S_{\mathrm{pair}},
+\]
+
+even if \(m^*\) was queried before. Denote this probability by
+\(\operatorname{sMACAdv}[A,\mathcal I]\). Negligibility defines strong
+unforgeability. Every fresh-message forgery is a fresh-pair forgery, so strong
+security implies fresh-message security
+[cite:@fioreCryptographicProtocolosApplicatons sec. 6.3.1].
+
+* Exactly when the notions coincide
+
+If every \((k,m)\) has exactly one valid tag, the winning events are identical.
+A valid tag on an already queried message must equal the correct tag previously
+returned by the oracle; that pair is not fresh. Hence, for every adversary,
+
+\[
+\operatorname{MACAdv}[A,\mathcal I]
+=\operatorname{sMACAdv}[A,\mathcal I].
+\]
+
+Uniqueness is essential. Take a secure unique-tag MAC, output \((t,0)\), and
+let verification ignore the last bit. Fresh-message forgeries still require
+valid base tags. But changing an observed \((t,0)\) to \((t,1)\) gives a
+fresh valid pair with probability \(1\). Deterministic tagging need not give
+strong unforgeability.
+
+Both games exclude unchanged replays; neither supplies receiver-side replay
+protection.
+
+* Connections
+
+- [[id:602FA248-EC73-4A4B-B17F-41A6060AAFFF][MAC syntax and correctness]] explain unique valid tags.
+- [[id:634DD54F-4F7C-4B70-A782-305FD9491771][PRF-based MACs]] satisfy both notions with the same bound.
+- [[id:93DB4F31-F879-5414-8DDD-01533DC62F0E][Chosen-plaintext security]] is a confidentiality experiment, not a forgery experiment.
+
+* Sources
+
+#+print_bibliography: :heading none

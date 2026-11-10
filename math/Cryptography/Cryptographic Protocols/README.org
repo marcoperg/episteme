@@ -28,16 +28,20 @@ course manuscript [cite:@fioreCryptographicProtocolosApplicatons].
 
 * Scope and conventions
 
-These 35 notes cover computational security, one-way assumptions, PRGs,
-commitments, PRFs, and the basic PRF-based CPA-secure cipher. Perfect secrecy
-is reused from [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information-theoretic security]], rather than duplicated.
+These 57 concept notes cover chapters 1--9 of the course manuscript: computational
+security, one-way assumptions, PRGs, commitments, PRFs and PRPs, secret-key
+encryption and modes, MACs, trapdoors and RSA, and public-key hybrid encryption.
+Perfect secrecy is reused from [[id:64853E70-8C7D-44AF-B1C4-DFE3B3FCFABC][Information-theoretic security]], rather than
+duplicated. The RSA arithmetic note links to the existing algebraic context.
 
-The current BibTeX attachment is an 86-page manuscript. Its chapters 1--4 and
-sections 5.1--5.3 are the main source for this selection. Later material on
-modes, authentication, RSA, and public-key encryption is outside this pass.
-Bibliotheca's Org catalogue still lists an older 41-page attachment; section
-locators here refer to the newer manuscript. Bibliographic titles and citekeys
-are retained as catalogued, including existing spelling errors in source titles.
+Section locators refer to the manuscript currently attached to the course's
+Better BibTeX entry. Bibliographic titles and citekeys are retained as catalogued,
+including existing spelling errors. Definitions and concrete bounds keep the
+manuscript's distinction between distinguishing and bit-guessing advantages.
+
+Digital signatures, authenticated key exchange, authenticated encryption, and
+chosen-ciphertext security remain outside the established constructions here.
+They are not consequences of the CPA, MAC, or passive-recovery theorems.
 
 The security parameter is \(\lambda\), or \(n\) when seed length indexes the
 family. Uniform samples are independent unless a dependence is stated.
@@ -56,8 +60,14 @@ relative to its stated experiment; confidentiality does not imply authenticity.
 4. Stretch amplification, reductions, and hybrid arguments; then encryption,
    stream ciphers, and commitments as applications.
 5. Random functions, lazy sampling, PRFs, GGM, and Naor-Reingold.
-6. Chosen-plaintext security and randomized PRF-based encryption, including
-   their collision bounds.
+6. Secret-key chosen-plaintext security and randomized PRF-based encryption;
+   then PRPs, switching, CTR, ECB's failure, CBC, and Luby-Rackoff.
+7. MAC syntax, fresh-message versus strong unforgeability, and PRF-based tags.
+8. Anonymous key exchange and trapdoors; modular arithmetic, RSA correctness
+   and its inversion assumption, then fixed-domain RSA and raw key establishment.
+9. Public-key encryption and the one-to-many challenge reduction; the
+   random-oracle model, hybrid encryption, its hidden-preimage proof, and RSA
+   instantiated with a one-time pad.
 
 #+latex: \newpage
 #+latex: \begin{multicols}{2}
@@ -69,6 +79,9 @@ relative to its stated experiment; confidentiality does not imply authenticity.
 - [[id:8C825859-C9CD-5610-A7CF-5626E7864E10][Computational indistinguishability]]
 - [[id:6FE5EB3F-7AC7-5CD3-A0D6-9E05FE87F649][One-time semantic security]]
 - [[id:93DB4F31-F879-5414-8DDD-01533DC62F0E][Chosen-plaintext security]]
+- [[id:760CE136-3F26-4E7C-AE36-0379856225ED][Unforgeability under chosen-message attack]]
+- [[id:5CD73F38-18BB-433C-907E-F3CB4D79A03E][Public-key chosen-plaintext security]]
+- [[id:FA9F7C29-B6A2-4A74-9239-015F2A93D81B][Random-oracle model]]
 
 * Encryption
 
@@ -77,6 +90,9 @@ relative to its stated experiment; confidentiality does not imply authenticity.
 - [[id:2F9A15B8-0CFB-5D9F-8EA3-F33BCA747C70][PRG-based one-time encryption]]
 - [[id:9AE2A4F6-8B4E-5A2C-87AC-75EFC5FEEDD1][Stateful stream encryption]]
 - [[id:6E3E2890-5C13-5C37-A28C-D49B951F2F1B][PRF-based randomized encryption]]
+- [[id:976069BF-8173-4ECC-8B60-C95904952A2C][Randomized counter mode]]
+- [[id:AB969B16-22B7-43A9-85EE-5391DB520C1E][Electronic codebook mode]]
+- [[id:6CA56394-A696-45F1-A951-4EBA81362803][Cipher block chaining]]
 
 * Computational hardness
 
@@ -87,8 +103,8 @@ relative to its stated experiment; confidentiality does not imply authenticity.
 - [[id:F0DC1C09-62D0-5AD3-B854-7EA46C9F8371][Discrete logarithm assumption]]
 - [[id:69560A39-4283-597D-9A11-69E69EFE6B78][Factoring assumption]]
 - [[id:11862CED-F757-5A19-878C-5B8FCAA2F1F9][Decisional Diffie-Hellman assumption]]
-
-#+latex: \columnbreak
+- [[id:B1DB580A-05A3-4611-924C-158512AE4BF2][Trapdoor functions]]
+- [[id:2A2A474A-B195-47F5-BF96-D5BBA96BDE60][RSA assumption]]
 
 * Pseudorandomness
 
@@ -107,6 +123,27 @@ relative to its stated experiment; confidentiality does not imply authenticity.
 - [[id:7C1C69E5-24B9-53B2-9044-5B43F3C9EABA][GGM construction]]
 - [[id:C8291648-12DF-50C0-878F-D80D6F0279AC][Naor-Reingold function]]
 
+** Permutations
+
+- [[id:993CEADF-0C35-43BE-9208-7B89AB14E2E9][Block ciphers and pseudorandom permutations]]
+- [[id:082A5D5A-8E70-4B76-8064-D5737CD81021][Luby-Rackoff construction]]
+
+* Authentication
+
+- [[id:602FA248-EC73-4A4B-B17F-41A6060AAFFF][Message authentication codes]]
+- [[id:634DD54F-4F7C-4B70-A782-305FD9491771][PRF-based MACs]]
+
+* Public-key cryptography
+
+- [[id:E6B58119-5DF8-4AA0-A78C-C5EE26209157][Anonymous key exchange]]
+- [[id:A1068D82-0787-4A9A-AB6F-FD1B9DAE608F][Trapdoor-based key establishment]]
+- [[id:3031DBC4-B836-4310-B183-D852D366E379][Modular arithmetic for RSA]]
+- [[id:3BB000A4-FE20-4007-9ED5-B50327711562][RSA trapdoor permutation]]
+- [[id:1CCFC6B2-5276-497F-AD9C-37CD379270F3][Fixed-domain RSA]]
+- [[id:E32851AD-9888-47BE-98C0-F4C89CE69FD5][Public-key encryption]]
+- [[id:835B6886-C943-41E5-BCEB-9B0D7F6BBF4D][Trapdoor-based hybrid encryption]]
+- [[id:0B65B666-FF86-4D0B-8B6D-64E4D6AB8898][RSA hybrid encryption]]
+
 * Commitments and coin flipping
 
 - [[id:45474AD9-A163-4CC9-983A-78EFD52E93C9][Bit commitment]]
@@ -121,6 +158,8 @@ relative to its stated experiment; confidentiality does not imply authenticity.
 - [[id:A598EE1B-88F0-56FC-9D8F-11450D19A783][Lazy sampling]]
 - [[id:DE553E9B-D6F5-5CA5-82F4-AA6D667B0C44][Birthday bounds and collision events]]
 - [[id:4A4F6050-66F5-5B95-9F1E-250038585F28][Shared-exponent DDH]]
+- [[id:5C5419BF-79B9-4F55-8FF5-6C31F8A5FB54][PRP-PRF switching]]
+- [[id:1F0A5557-D927-473E-8B79-B60A6714165F][Hidden-preimage hybrid encryption proof]]
 
 #+latex: \end{multicols}
 

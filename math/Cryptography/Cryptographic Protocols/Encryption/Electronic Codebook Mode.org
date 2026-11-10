@@ -1,0 +1,58 @@
+:PROPERTIES:
+:ID: AB969B16-22B7-43A9-85EE-5391DB520C1E
+:ROAM_ALIASES: "ECB"
+:END:
+#+title: Electronic Codebook Mode
+#+SETUPFILE: ../../../../setup.org
+#+options: toc:nil num:nil author:nil date:nil ^:{} d:nil prop:nil
+#+cite_export: biblatex numeric
+#+latex_class_options: [11pt,a4paper]
+#+bibliography: ../../../../../bibliotheca/zotero-library.bib
+
+Electronic codebook mode applies a block cipher independently to each message
+block. It is correct and parallelizable, but reveals plaintext equality
+patterns and is not CPA secure.
+
+* Construction
+
+For a block cipher \(P\) and a whole-block message \((m_1,\ldots,m_v)\),
+
+\[
+E_{\mathrm{ECB}}(k,m)=(P_k(m_1),\ldots,P_k(m_v)).
+\]
+
+Decryption applies \(P_k^{-1}\) to each ciphertext block. Correctness follows
+from the inverse identities. There is no IV or per-encryption randomness
+[cite:@fioreCryptographicProtocolosApplicatons sec. 5.7].
+
+* A one-challenge attack
+
+Choose distinct blocks \(u,v\) and submit equal-length challenge messages
+
+\[
+m_0=(u,u),\qquad m_1=(u,v).
+\]
+
+For every key, injectivity gives
+
+\[
+c_1=c_2\quad\Longleftrightarrow\quad m_{b,1}=m_{b,2}.
+\]
+
+Guess \(b=0\) exactly when the two ciphertext blocks match. This is always
+correct, yielding distinguishing advantage \(1\) and guessing advantage
+\(1/2\). No key recovery and no preliminary oracle query are needed.
+
+The attack still works if \(P_k\) is replaced by a perfect random
+permutation. The failure lies in the mode, not necessarily in the primitive.
+Padding does not remove the repeated-block leakage.
+
+* Connections
+
+- [[id:993CEADF-0C35-43BE-9208-7B89AB14E2E9][Block ciphers and PRPs]] separate invertibility from encryption security.
+- [[id:93DB4F31-F879-5414-8DDD-01533DC62F0E][Chosen-plaintext security]] also rules out stateless deterministic secret-key encryption.
+- [[id:976069BF-8173-4ECC-8B60-C95904952A2C][Randomized counter mode]] and [[id:6CA56394-A696-45F1-A951-4EBA81362803][CBC]] use fresh IVs with explicit security conditions.
+
+* Sources
+
+#+print_bibliography: :heading none
